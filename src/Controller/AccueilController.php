@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Participant;
+use App\Form\TriSortiesType;
 use App\Repository\SiteRepository;
 use App\Repository\SortieRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,6 +16,7 @@ final class AccueilController extends AbstractController
     public function index(SortieRepository $sortieRepository, SiteRepository $siteRepository): Response
     {
         $today = new \DateTime();
+        $triForm = $this->createForm(TriSortiesType::class);
         // TODO: get connected user here
 //        $participant = new Participant();
 //        $participant->setSite($siteRepository->findOneByNom('NANTES'));
@@ -28,6 +30,7 @@ final class AccueilController extends AbstractController
         return $this->render('accueil/index.html.twig', [
             'sorties' => $sorties,
             'today' => $today,
+            'tri_form' => $triForm->createView(),
         ]);
     }
 }

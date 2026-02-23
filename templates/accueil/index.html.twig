@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello AccueilController!{% endblock %}
+{% block title %}{{ parent() }} | Accueil - Liste des Sorties{% endblock %}
 
 {% block body %}
     <div>
@@ -8,8 +8,46 @@
             <p>Date du jour: {{ today | date('d/m/Y') }}</p>
     </div>
 
-    <h1>voici les sorties</h1>
+<section>
+    {{ form(tri_form) }}
+</section>
+
+
+<section>
+<table>
+    <tr>
+        <th scope="col">Nom de la sortie</th>
+        <th scope="col">Date de la sortie</th>
+        <th scope="col">Clôture</th>
+        <th scope="col">Inscrits/Places</th>
+        <th scope="col">Etat</th>
+        <th scope="col">Inscrit</th>
+        <th scope="col">Organisateur</th>
+        <th scope="col">Actions</th>
+    </tr>
     {% for sortie in sorties %}
-        <h2>{{ sortie.nom }}</h2>
+        <tr>
+            <th><a class="link-light link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="{{ path('wish_detail', {id : item.id}) }}">{{ item.title }}</a></th>
+            <th>{{ sortie.nom }}</th>
+            <th>{{ sortie.dateDebut | date('d/m/Y') }}</th>
+            <th>{{ sortie.dateCloture | date('d/m/Y') }}</th>
+            <th>{{ sortie.participants.count }} / {{ sortie.nbInscriptionsMax }}</th>
+            <th>{{ sortie.etat }}</th>
+            <th>TODO: CET UTILISATEUR EST INSCRIT</th>
+            <th>{{ sortie.organisateur.prenom }} {{ sortie.organisateur.nom|first|upper }}</th>
+            <th>TODO: actions selon si admin/organisateur...</th>
+        </tr>
     {% endfor %}
+</table>
+</section>
+
+
+<section>
+    <button>Créer une sortie</button>
+</section>
+
+
+
+
+
 {% endblock %}
