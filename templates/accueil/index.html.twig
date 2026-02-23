@@ -3,8 +3,12 @@
 {% block title %}Hello AccueilController!{% endblock %}
 
 {% block body %}
+    <div>
+            <p>Participant: ---</p>
+            <p>Date du jour: {{ today | date('d/m/Y') }}</p>
+    </div>
 
-    <h1>voici les sorties. wow</h1>
+    <h1>voici les sorties</h1>
     {% for sortie in sorties %}
         <h2>{{ sortie.nom }}</h2>
     {% endfor %}

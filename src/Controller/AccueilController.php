@@ -14,6 +14,7 @@ final class AccueilController extends AbstractController
     #[Route('/accueil', name: 'app_accueil')]
     public function index(SortieRepository $sortieRepository, SiteRepository $siteRepository): Response
     {
+        $today = new \DateTime();
         // TODO: get connected user here
 //        $participant = new Participant();
 //        $participant->setSite($siteRepository->findOneByNom('NANTES'));
@@ -26,6 +27,7 @@ final class AccueilController extends AbstractController
 
         return $this->render('accueil/index.html.twig', [
             'sorties' => $sorties,
+            'today' => $today,
         ]);
     }
 }
