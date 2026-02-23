@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20260223111135 extends AbstractMigration
+final class Version20260223135045 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -19,9 +19,8 @@ final class Version20260223111135 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        // this up() migration is auto-generated, please modify it to your needs
+        $this->addSql("INSERT INTO etat (libelle) VALUES ('CREEE'), ('OUVERTE'), ('EN_COURS'), ('CLOTUREE'), ('PASSEE'),('ANNULEE')");
         $this->addSql("INSERT INTO site (nom) VALUES ('NANTES'), ('RENNES'), ('QUIMPER'), ('NIORT')");
-
     }
 
     public function down(Schema $schema): void
