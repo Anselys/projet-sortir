@@ -1,0 +1,68 @@
+<?php
+
+namespace App\Form;
+
+use App\Entity\Site;
+use Doctrine\ORM\EntityRepository;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+class TriSortiesType extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $builder
+            // TODO: réparer la selection de site
+//            ->add('Site', EntityType::class, [
+//                'class' => Site::class,
+//                'required' => false,
+//                'query_builder' => function (EntityRepository $er) {
+//                return $er->createQueryBuilder('s')->orderBy('s.nom', 'ASC');
+//                }
+//            ])
+            ->add('recherche', TextType::class, [
+                'label' => 'Le nom de la sortie contient:',
+                'required' => false,
+            ])
+            ->add('startDate', DateType::class,[
+                'label' => "Entre ",
+                'required' => false,
+            ])
+            ->add('endDate', DateType::class,[
+                'label' => " et ",
+                'required' => false,
+            ])
+            ->add('organisateur', CheckboxType::class, [
+                'label'=> 'Sorties dont je suis l\'organisateur·ice',
+            ])
+            ->add('inscrit', CheckboxType::class, [
+                'label'=> 'Sorties auxquelles je suis inscrit·e',
+            ])
+            ->add('non_inscrit', CheckboxType::class, [
+                'label'=> 'Sorties auxquelles je ne suis pas inscrit·e',
+            ])
+            ->add('passees', CheckboxType::class, [
+                'label'=> 'Sorties passées',
+            ])
+            ->add('Submit', SubmitType::class, [
+                'label' => 'Rechercher',
+//                'attr' => [
+//                    'class' => 'btn btn-primary',
+//                ]
+            ])
+        ;
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            // Configure your form options here
+        ]);
+    }
+}
