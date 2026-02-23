@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 #[ORM\Entity(repositoryClass: ParticipantRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
@@ -18,7 +20,8 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 180)]
+    #[ORM\Column(length: 50)]
+    #[Assert\Email(message: 'Cet email n\'est pas valide!')]
     private ?string $email = null;
 
     /**
@@ -54,7 +57,6 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToOne(inversedBy: 'participants')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Site $site = null;
-
 
     /**
      * @var Collection<int, Sortie>

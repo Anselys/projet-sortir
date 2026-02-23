@@ -6,11 +6,16 @@
     <h1>Inscription</h1>
     <div class="row justify-content-center">
         <div class="col-12 col-md-6">
-            {{ form(inscription_form) }}
 
+            {{ form_errors(inscription_form) }}
+            {{ form_start(inscription_form) }}
+            {{ form_widget(inscription_form) }}
             <div class="text-center">
-                <button type="submit" class="btn btn-primary">Enregistrer</button>
+                <button class="btn btn-primary">Enregistrer</button>
             </div>
+            {{ form_end(inscription_form) }}
+
+
         </div>
     </div>
 {% endblock %}
