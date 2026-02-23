@@ -19,13 +19,15 @@ class TriSortiesType extends AbstractType
     {
         $builder
             // TODO: réparer la selection de site
-//            ->add('Site', EntityType::class, [
-//                'class' => Site::class,
-//                'required' => false,
-//                'query_builder' => function (EntityRepository $er) {
-//                return $er->createQueryBuilder('s')->orderBy('s.nom', 'ASC');
-//                }
-//            ])
+            ->add('Site', EntityType::class, [
+                'class' => Site::class,
+                'choice_label' => 'nom',
+                'required' => false,
+                'placeholder' => 'TOUS LES SITES',
+                'query_builder' => function (EntityRepository $er) {
+                return $er->createQueryBuilder('s')->orderBy('s.nom', 'ASC');
+                }
+            ])
             ->add('recherche', TextType::class, [
                 'label' => 'Le nom de la sortie contient:',
                 'required' => false,
@@ -40,21 +42,26 @@ class TriSortiesType extends AbstractType
             ])
             ->add('organisateur', CheckboxType::class, [
                 'label'=> 'Sorties dont je suis l\'organisateur·ice',
+                'required' => false,
             ])
             ->add('inscrit', CheckboxType::class, [
                 'label'=> 'Sorties auxquelles je suis inscrit·e',
+                'required' => false,
             ])
             ->add('non_inscrit', CheckboxType::class, [
                 'label'=> 'Sorties auxquelles je ne suis pas inscrit·e',
+                'required' => false,
             ])
             ->add('passees', CheckboxType::class, [
                 'label'=> 'Sorties passées',
+                'required' => false,
             ])
             ->add('Submit', SubmitType::class, [
                 'label' => 'Rechercher',
-//                'attr' => [
-//                    'class' => 'btn btn-primary',
-//                ]
+                'attr' => [
+                    'class' => 'btn btn-primary',
+                ]
+
             ])
         ;
     }

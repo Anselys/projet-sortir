@@ -4,25 +4,26 @@
 
 {% block main %}
     <div>
-            <p>Participant: ---</p>
+            <p>Participant·e: {{ app.user.pseudo }}</p>
             <p>Date du jour: {{ today | date('d/m/Y') }}</p>
     </div>
 
 <section>
+    <h2>Filtrer les sorties</h2>
     {{ form(tri_form) }}
 </section>
 
 
 <section>
 <table>
-    <tr>
+    <tr class="table table-dark">
         <th scope="col">Nom de la sortie</th>
         <th scope="col">Date de la sortie</th>
         <th scope="col">Clôture</th>
         <th scope="col">Inscrits/Places</th>
         <th scope="col">Etat</th>
-        <th scope="col">Inscrit</th>
-        <th scope="col">Organisateur</th>
+        <th scope="col">Inscrit·e</th>
+        <th scope="col">Organisateur·ice</th>
         <th scope="col">Actions</th>
     </tr>
     {% for sortie in sorties %}
