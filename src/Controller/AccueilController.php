@@ -27,7 +27,7 @@ final class AccueilController extends AbstractController
             $sorties = $sortieRepository->findAll();
 
 
-        return $this->render('accueil/index.html.twig', [
+        return $this->render('accueil/edit.html.twig', [
             'sorties' => $sorties,
             'today' => $today,
             'tri_form' => $triForm->createView(),

@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SortieRepository::class)]
 class Sortie
@@ -17,15 +18,25 @@ class Sortie
     private ?int $id = null;
 
     #[ORM\Column(length: 30)]
+    #[Assert\NotBlank(message: 'La sortie doit avoir un titre !')]
+    #[Assert\Length(
+        min: 3,
+        max: 30,
+        minMessage: "Le nom de la sortie doit avoir au moins {{ limit }} caractères",
+        maxMessage: "Le nom de la sortie doit avoir au maximum {{ limit }} caractères"
+    )]
     private ?string $nom = null;
 
-    #[ORM\Column]
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Assert\GreaterThanOrEqual('today', message: 'La date de début de la sortie ne peut pas être dans le passé')]
     private ?\DateTime $dateDebut = null;
 
     #[ORM\Column(nullable: true)]
     private ?int $duree = null;
 
-    #[ORM\Column]
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Assert\Type("\DateTimeInterface")]
+    #[Assert\GreaterThan(propertyPath: 'dateDebut', message: 'La date de clôture ne peut pas être antérieure à la date de début')]
     private ?\DateTime $dateCloture = null;
 
     #[ORM\Column]
