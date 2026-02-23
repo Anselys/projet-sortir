@@ -1,20 +1,53 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello AccueilController!{% endblock %}
+{% block title %}{{ parent() }} | Accueil - Liste des Sorties{% endblock %}
 
-{% block main %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+{% block body %}
+    <div>
+            <p>Participant: ---</p>
+            <p>Date du jour: {{ today | date('d/m/Y') }}</p>
+    </div>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+<section>
+    {{ form(tri_form) }}
+</section>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>D:/11_projet symfony/projet-sortir/src/Controller/AccueilController.php</code></li>
-        <li>Your template at <code>D:/11_projet symfony/projet-sortir/templates/accueil/index.html.twig</code></li>
-    </ul>
-</div>
+
+<section>
+<table>
+    <tr>
+        <th scope="col">Nom de la sortie</th>
+        <th scope="col">Date de la sortie</th>
+        <th scope="col">Clôture</th>
+        <th scope="col">Inscrits/Places</th>
+        <th scope="col">Etat</th>
+        <th scope="col">Inscrit</th>
+        <th scope="col">Organisateur</th>
+        <th scope="col">Actions</th>
+    </tr>
+    {% for sortie in sorties %}
+        <tr>
+            <th><a class="link-light link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="{{ path('wish_detail', {id : item.id}) }}">{{ item.title }}</a></th>
+            <th>{{ sortie.nom }}</th>
+            <th>{{ sortie.dateDebut | date('d/m/Y') }}</th>
+            <th>{{ sortie.dateCloture | date('d/m/Y') }}</th>
+            <th>{{ sortie.participants.count }} / {{ sortie.nbInscriptionsMax }}</th>
+            <th>{{ sortie.etat }}</th>
+            <th>TODO: CET UTILISATEUR EST INSCRIT</th>
+            <th>{{ sortie.organisateur.prenom }} {{ sortie.organisateur.nom|first|upper }}</th>
+            <th>TODO: actions selon si admin/organisateur...</th>
+        </tr>
+    {% endfor %}
+</table>
+</section>
+
+
+<section>
+    <button>Créer une sortie</button>
+</section>
+
+
+
+
+
 {% endblock %}

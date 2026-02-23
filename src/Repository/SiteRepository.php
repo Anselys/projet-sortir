@@ -31,13 +31,13 @@ class SiteRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?Site
-    //    {
-    //        return $this->createQueryBuilder('s')
-    //            ->andWhere('s.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        public function findOneByNom(string $nom): ?Site
+        {
+            return $this->createQueryBuilder('s')
+                ->andWhere('s.nom = :nom')
+                ->setParameter('nom', $nom)
+                ->getQuery()
+                ->getOneOrNullResult()
+            ;
+        }
 }
