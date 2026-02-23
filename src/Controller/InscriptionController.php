@@ -27,11 +27,12 @@ final class InscriptionController extends AbstractController
             // encode the plain password
             $participant->setPassword($participantPasswordHasher->hashPassword($participant, $plainPassword));
 
-             $entityManager->persist($participant);
+            $entityManager->persist($participant);
             $entityManager->flush();
 
             // do anything else you need here, like send an email
 
+            $this->addFlash('success', 'Inscription réussie ! Vous pouvez vous connecter.');
             return $this->redirectToRoute('app_login');
         }
 
