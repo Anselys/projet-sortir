@@ -10,9 +10,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+#[Route('/', name: 'app_accueil')]
+#[Route('/accueil', name: 'app_accueil')]
 final class AccueilController extends AbstractController
 {
-    #[Route('/accueil', name: 'app_accueil')]
     public function index(SortieRepository $sortieRepository, SiteRepository $siteRepository): Response
     {
         $today = new \DateTime();

@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 final class InscriptionController extends AbstractController
 {
     #[Route('/inscription', name: 'app_inscription')]
-    public function register(Request $request, UserPasswordHasherInterface $participantPasswordHasher, EntityManagerInterface $entityManager): Response
+    public function inscription(Request $request, UserPasswordHasherInterface $participantPasswordHasher, EntityManagerInterface $entityManager): Response
     {
         $participant = new Participant();
         $form = $this->createForm(InscriptionType::class, $participant);
