@@ -9,7 +9,7 @@ security:
         app_user_provider:
             entity:
                 class: App\Entity\Participant
-#                property: email
+    #                property: email
 
     firewalls:
         dev:
@@ -20,8 +20,8 @@ security:
             lazy: true
             provider: app_user_provider
             remember_me:
-                secret : '%kernel.secret%'
-                lifetime : 300
+                secret: '%kernel.secret%'
+                lifetime: 300
             form_login:
                 login_path: app_login
                 check_path: app_login
@@ -36,13 +36,10 @@ security:
 
             # https://symfony.com/doc/current/security/impersonating_user.html
             # switch_user: true
-    security:
-        role_hierarchy:
-            ROLE_ORGANISATEUR: [ ROLE_USER ]
-            ROLE_ADMIN: [ ROLE_USER ]
+
 
         access_control:
-            - { path: ^/admin, roles: ROLE_ADMIN }
+#            - { path: ^/admin, roles: ROLE_ADMIN }
 #            - { path: ^/organisateur, roles: ROLE_ORGANISATEUR }
 
 
