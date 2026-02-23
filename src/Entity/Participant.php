@@ -6,14 +6,32 @@ use App\Repository\ParticipantRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: ParticipantRepository::class)]
-class Participant
+#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
+class Participant implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
+
+    #[ORM\Column(length: 180)]
+    private ?string $email = null;
+
+    /**
+     * @var list<string> The user roles
+     */
+    #[ORM\Column]
+    private array $roles = [];
+
+    /**
+     * @var string The hashed password
+     */
+    #[ORM\Column]
+    private ?string $password = null;
 
     #[ORM\Column(length: 30)]
     private ?string $pseudo = null;
@@ -27,12 +45,6 @@ class Participant
     #[ORM\Column(length: 15, nullable: true)]
     private ?string $telephone = null;
 
-    #[ORM\Column(length: 50)]
-    private ?string $mail = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $mdp = null;
-
     #[ORM\Column]
     private ?bool $isAdmin = null;
 
@@ -42,6 +54,7 @@ class Participant
     #[ORM\ManyToOne(inversedBy: 'participants')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Site $site = null;
+
 
     /**
      * @var Collection<int, Sortie>
@@ -66,100 +79,38 @@ class Participant
         return $this->id;
     }
 
-    public function getPseudo(): ?string
+    public function getEmail(): ?string
     {
-        return $this->pseudo;
+        return $this->email;
     }
 
-    public function setPseudo(string $pseudo): static
+    public function setEmail(string $email): static
     {
-        $this->pseudo = $pseudo;
+        $this->email = $email;
 
         return $this;
     }
 
-    public function getNom(): ?string
+    /**
+     * A visual identifier that represents this user.
+     *
+     * @see UserInterface
+     */
+    public function getUserIdentifier(): string
     {
-        return $this->nom;
+        return (string) $this->email;
     }
 
-    public function setNom(string $nom): static
+    /**
+     * @see UserInterface
+     */
+    public function getRoles(): array
     {
-        $this->nom = $nom;
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
 
-        return $this;
-    }
-
-    public function getPrenom(): ?string
-    {
-        return $this->prenom;
-    }
-
-    public function setPrenom(string $prenom): static
-    {
-        $this->prenom = $prenom;
-
-        return $this;
-    }
-
-    public function getTelephone(): ?string
-    {
-        return $this->telephone;
-    }
-
-    public function setTelephone(?string $telephone): static
-    {
-        $this->telephone = $telephone;
-
-        return $this;
-    }
-
-    public function getMail(): ?string
-    {
-        return $this->mail;
-    }
-
-    public function setMail(string $mail): static
-    {
-        $this->mail = $mail;
-
-        return $this;
-    }
-
-    public function getMdp(): ?string
-    {
-        return $this->mdp;
-    }
-
-    public function setMdp(string $mdp): static
-    {
-        $this->mdp = $mdp;
-
-        return $this;
-    }
-
-    public function isAdmin(): ?bool
-    {
-        return $this->isAdmin;
-    }
-
-    public function setIsAdmin(bool $isAdmin): static
-    {
-        $this->isAdmin = $isAdmin;
-
-        return $this;
-    }
-
-    public function isActif(): ?bool
-    {
-        return $this->isActif;
-    }
-
-    public function setIsActif(bool $isActif): static
-    {
-        $this->isActif = $isActif;
-
-        return $this;
+        return array_unique($roles);
     }
 
     public function getSite(): ?Site
@@ -212,22 +163,137 @@ class Participant
         return $this->sorties;
     }
 
-    public function addSorty(Sortie $sorty): static
+    public function addSortie(Sortie $sortie): static
     {
-        if (!$this->sorties->contains($sorty)) {
-            $this->sorties->add($sorty);
-            $sorty->addParticipant($this);
+        if (!$this->sorties->contains($sortie)) {
+            $this->sorties->add($sortie);
+            $sortie->addParticipant($this);
         }
 
         return $this;
     }
 
-    public function removeSorty(Sortie $sorty): static
+    public function removeSortie(Sortie $sortie): static
     {
-        if ($this->sorties->removeElement($sorty)) {
-            $sorty->removeParticipant($this);
+        if ($this->sorties->removeElement($sortie)) {
+            $sortie->removeParticipant($this);
         }
 
         return $this;
     }
+
+    /**
+     * @param list<string> $roles
+     */
+    public function setRoles(array $roles): static
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    /**
+     * @see PasswordAuthenticatedUserInterface
+     */
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): static
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    /**
+     * Ensure the session doesn't contain actual password hashes by CRC32C-hashing them, as supported since Symfony 7.3.
+     */
+    public function __serialize(): array
+    {
+        $data = (array) $this;
+        $data["\0".self::class."\0password"] = hash('crc32c', $this->password);
+
+        return $data;
+    }
+
+    #[\Deprecated]
+    public function eraseCredentials(): void
+    {
+        // @deprecated, to be removed when upgrading to Symfony 8
+    }
+
+    public function getPseudo(): ?string
+    {
+        return $this->pseudo;
+    }
+
+    public function setPseudo(string $pseudo): static
+    {
+        $this->pseudo = $pseudo;
+
+        return $this;
+    }
+
+    public function getNom(): ?string
+    {
+        return $this->nom;
+    }
+
+    public function setNom(string $nom): static
+    {
+        $this->nom = $nom;
+
+        return $this;
+    }
+
+    public function getPrenom(): ?string
+    {
+        return $this->prenom;
+    }
+
+    public function setPrenom(string $prenom): static
+    {
+        $this->prenom = $prenom;
+
+        return $this;
+    }
+
+    public function getTelephone(): ?string
+    {
+        return $this->telephone;
+    }
+
+    public function setTelephone(?string $telephone): static
+    {
+        $this->telephone = $telephone;
+
+        return $this;
+    }
+
+    public function isAdmin(): ?bool
+    {
+        return $this->isAdmin;
+    }
+
+    public function setIsAdmin(bool $isAdmin): static
+    {
+        $this->isAdmin = $isAdmin;
+
+        return $this;
+    }
+
+    public function isActif(): ?bool
+    {
+        return $this->isActif;
+    }
+
+    public function setIsActif(bool $isActif): static
+    {
+        $this->isActif = $isActif;
+
+        return $this;
+    }
+
 }
