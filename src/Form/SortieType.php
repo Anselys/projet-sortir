@@ -3,9 +3,13 @@
 namespace App\Form;
 
 
+use App\Entity\Lieu;
 use App\Entity\Site;
 use App\Entity\Sortie;
+use App\Entity\Ville;
+use App\Repository\LieuRepository;
 use App\Repository\SiteRepository;
+use App\Repository\VilleRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -27,7 +31,7 @@ class SortieType extends AbstractType
                 'label' => 'Date et heure de la sortie'
             ])
             ->add('duree', IntegerType::class, [
-                'label' => 'Durée'
+                'label' => 'Durée (en minutes)'
             ])
             ->add('dateCloture', DateType::class, [
                 'label' => 'Date limite d\'inscription'
@@ -50,19 +54,35 @@ class SortieType extends AbstractType
                 'query_builder' => function (SiteRepository $er) {
                     return $er->createQueryBuilder('site')->orderBy('site.nom', 'ASC');
                 },
+                'placeholder' => '-- Sélectionner le site --',
+            ])
+            ->add('ville', EntityType::class, [
+                'mapped' => false,
+                'label' => 'Ville',
+                'class' => Ville::class,
+                'choice_label' => 'nom',
+                'query_builder' => function (VilleRepository $er) {
+                    return $er->createQueryBuilder('ville')->orderBy('ville.nom', 'ASC');
+                },
                 'placeholder' => '-- Sélectionner la ville --',
             ])
+            ->add('lieu', EntityType::class, [
+                'mapped' => false,
+                'label' => 'Lieu',
+                'class' => Lieu::class,
+                'choice_label' => 'nom',
+                'choices' => [],
+                'placeholder' => '-- Sélectionner le lieu --',
+                ])
+
+
+
 //            ->add('participants', ChoiceType::class, [
 //                'class' => Participant::class,
 //                'choice_label' => 'id',
 //                'multiple' => true,
 //            ])
-            ->add('submit' , SubmitType::class, [
-                'label' => 'Créer la sortie',
-                'attr' => [
-                    'class' => 'btn btn-primary',
-                ]
-            ])
+
         ;
     }
 

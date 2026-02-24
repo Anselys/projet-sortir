@@ -3,9 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Sortie;
+use App\Entity\Ville;
 use App\Form\SortieType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -32,5 +34,22 @@ final class SortieController extends AbstractController
         return $this->render('sortie/edit.html.twig', [
             'sortie_form' => $sortieForm,
         ]);
+    }
+
+    #[Route('/ajax/lieux/{ville}', name: '_ajax_lieux')]
+    public function getLieuxByVille(Ville $ville): JsonResponse
+    {
+        $lieux = $ville->getLieux();
+
+        $data = [];
+
+        foreach ($lieux as $lieu) {
+            $data[] = [
+                'id' => $lieu->getId(),
+                'nom' => $lieu->getNom(),
+            ];
+        }
+
+        return $this->json($data);
     }
 }
