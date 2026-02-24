@@ -46,21 +46,20 @@ class SortieRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findByTriCustomUtilisateur(FormInterface $triForm, UserInterface $participant, $etats): array
+    public function findByTriCustomUtilisateur(FormInterface $triForm, UserInterface $participant, array $etats): array
     {
-//        dd(
-//            $etatPasse = !empty(array_filter($etats, function ( $etat ) {
-//                return $etat->getLibelle() == 'PASSEE';
-//            }))
-//        );
 
         $tri = $triForm->getData();
 
         $qb = $this->createQueryBuilder('s');
 
         if ($tri == null) {
-            // TODO: return pas tout mais que les etat : ouverte
-            return $this->findAllByEtat($etats);
+            // return que les états "OUVERTE"
+            foreach ($etats as $etat) {
+                if ($etat->getLibelle() == 'OUVERTE') {
+                    return $this->findAllByEtat($etat);
+                }
+            }
         }
 
         if ($tri['Site'] != null) {
@@ -94,24 +93,29 @@ class SortieRepository extends ServiceEntityRepository
         }
 
         if ($tri['inscrit'] != 0) {
-            // TODO: dépatouiller ça
             // if connected participant is in sortie.participants > add to filter
-//                $participant->getSortiesOrganisees()->findFirst((int)$tri['id'])->setDateFin(new \DateTime($tri['dateFin']));
-//                $qb->andWhere('s.inscrit = :inscrit')
-//                    ->setParameter('inscrit', );
+            $qb->addSelect('s.participants')
+                ->innerJoin('participant', 'participant')
+                ->andWhere('participant.id = :id')
+                ->setParameter('id', $participant->getId());
+
         }
 
         if ($tri['non_inscrit'] != 0) {
-            // TODO: dépatouiller ça
             // if connected participant is not in sortie.participants > add to filter
-//                $qb->andWhere('s.non_inscrit = :inscrit')
-//                    ->setParameter('inscrit', );
+            $qb->addSelect('s.participants')
+                ->innerJoin('participant', 'participant')
+                ->andWhere('participant.id != :id')
+                ->setParameter('id', $participant->getId());
         }
 
         if ($tri['passees'] != 0) {
-            $etatPasse = !empty(array_filter($etats, function ( $etat ) {
-                return $etat->getLibelle() == 'PASSEE';
-            }));
+            foreach ($etats as $etat) {
+                if($etat->getLibelle() == 'PASSEE'){
+                    $etatPasse = $etat;
+                    break;
+                }
+            }
             $qb->andWhere('s.etat = :etat');
             $qb->setParameter('etat', $etatPasse);
         }
