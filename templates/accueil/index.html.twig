@@ -51,7 +51,11 @@
                     <td>{{ sortie.participants.count }} / {{ sortie.nbInscriptionsMax }}</td>
                     <td>{{ sortie.etat.libelle }}</td>
                     <td>TODO: CET UTILISATEUR EST INSCRIT</td>
-                    <td>{{ sortie.organisateur.prenom }} {{ sortie.organisateur.nom|first|upper }}</td>
+                    <td>
+                        <a href="{{ path('app_profil_detail', { id: sortie.organisateur.id }) }}">
+                            {{ sortie.organisateur.prenom }} {{ sortie.organisateur.nom|first|upper }}
+                        </a>
+                    </td>
                     <td>TODO: actions selon si admin/organisateur...</td>
                 </tr>
             {% endfor %}
