@@ -22,7 +22,7 @@
             {{ form_start(tri_form) }}
             {{ form_widget(tri_form) }}
             {{ form_end(tri_form) }}
-
+            <button class="btn btn-primary">TODO: EFFACER FILTRES</button>
         </div>
     </div>
 
@@ -39,6 +39,7 @@
         <th scope="col">Inscrit·e</th>
         <th scope="col">Organisateur·ice</th>
         <th scope="col">Actions</th>
+        <th scope="col">Site</th>
     </tr>
     {% for sortie in sorties %}
         <tr>
@@ -50,6 +51,7 @@
             <th>TODO: CET UTILISATEUR EST INSCRIT</th>
             <th>{{ sortie.organisateur.prenom }} {{ sortie.organisateur.nom|first|upper }}</th>
             <th>TODO: actions selon si admin/organisateur...</th>
+            <th>{{ sortie.siteOrganisateur.nom }}</th>
         </tr>
     {% endfor %}
 </table>
