@@ -11,15 +11,19 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[IsGranted('ROLE_USER')]
 final class AccueilController extends AbstractController
 {
     #[Route('/', name: 'app_accueil')]
     public function index(Request $request, SortieRepository $sortieRepository, EtatRepository $etatRepository): Response
     {
+
         $participant = $this->getUser();
         $etats = $etatRepository->findAll();
         $today = new \DateTime();
+        $sorties = [];
         $triForm = $this->createForm(TriSortiesType::class);
         $triForm->handleRequest($request);
 
@@ -45,9 +49,6 @@ final class AccueilController extends AbstractController
                 $etatOuvert = $etatRepository->findOneByLibelle('OUVERTE');
                 $sorties = $sortieRepository->findBySiteAndEtat($participantSite, $etatOuvert);
             }
-        }
-        else{
-            return $this->redirectToRoute('app_login');
         }
 
         return $this->render('accueil/index.html.twig', [

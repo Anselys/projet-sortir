@@ -1,5 +1,7 @@
 {% extends 'base.html.twig' %}
 
+{% form_theme tri_form 'bootstrap_5_layout.html.twig' %}
+
 {% block title %}{{ parent() }} | Accueil - Liste des Sorties{% endblock %}
 
 {% block main %}
@@ -12,7 +14,18 @@
 
 <section>
     <h2>Filtrer les sorties</h2>
-    {{ form(tri_form) }}
+
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-3">
+
+            {{ form_errors(tri_form) }}
+            {{ form_start(tri_form) }}
+            {{ form_widget(tri_form) }}
+            {{ form_end(tri_form) }}
+
+        </div>
+    </div>
+
 </section>
 
 <section>
