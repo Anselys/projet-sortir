@@ -4,6 +4,19 @@
 
 {% block main %}
 
+    <h2>Profil de {{ participant.pseudo }}</h2>
 
+    <div>
+        <p>Pseudo : {{ participant.pseudo }}</p>
+        <p>Nom : {{ participant.nom }}</p>
+        <p>Prénom : {{ participant.prenom }}</p>
+        <p>Adresse mail : {{ participant.email }}</p>
+        <p>Téléphone : {{ participant.telephone }}</p>
+    </div>
+
+    {% if app.user and app.user.id == participant.id %}
+
+        <a href="{{ path('app_profil_edit', { id: participant.id }) }}">Modifier mon profil</a>
+    {% endif %}
 
 {% endblock %}
