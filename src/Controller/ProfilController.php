@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Participant;
 use App\Form\InscriptionType;
+use App\Form\ProfilType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,21 +32,23 @@ class ProfilController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function edit(Request $request, EntityManagerInterface $em, Participant $participant): Response
     {
-        if ($this->getUser() !== $participant) {
-            throw $this->createAccessDeniedException();
+        /** @var Participant $participant */
+        $participant = $this->getUser();
+
+        $profilForm = $this->createForm(ProfilType::class, $participant);
+        $profilForm->handleRequest($request);
+
+        if ($profilForm->isSubmitted() && $profilForm->isValid()) {
+
+            $em->flush(); // pas besoin de persist, l'entité existe déjà
+
+            $this->addFlash('success', 'Votre profil a été mis à jour.');
+
+            return $this->redirectToRoute('app_profil_detail');
         }
 
-        $participantForm = $this->createForm(InscriptionType::class, $participant);
-        $participantForm->handleRequest($request);
-        if ($participantForm->isSubmitted() && $participantForm->isValid()) {
-            $em->flush();
-            $this->addFlash('success', "Le profil de l'utilisateur {$participant->getPseudo()} a été modifié");
-            return $this->redirectToRoute('app_profil', ['id' => $participant->getId()]);
-        }
-
-        return $this->render('profil/profil.html.twig', [
-            'participant_form' => $participantForm,
-            'participant' => $participant,
+        return $this->render('profil/edit.html.twig', [
+            'profil_form' => $profilForm,
         ]);
     }
 
