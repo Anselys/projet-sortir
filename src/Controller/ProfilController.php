@@ -3,10 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Participant;
-use App\Form\InscriptionType;
 use App\Form\ProfilType;
+use App\Helper\FileManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -30,7 +31,7 @@ class ProfilController extends AbstractController
 
     #[Route('/{id}/edit', name: '_edit')]
     #[IsGranted('ROLE_USER')]
-    public function edit(Request $request, EntityManagerInterface $em, Participant $participant): Response
+    public function edit(Request $request, EntityManagerInterface $em, FileManager $fileManager): Response
     {
         /** @var Participant $participant */
         $participant = $this->getUser();
@@ -40,7 +41,14 @@ class ProfilController extends AbstractController
 
         if ($profilForm->isSubmitted() && $profilForm->isValid()) {
 
-            $em->flush(); // pas besoin de persist, l'entité existe déjà
+            $file = $profilForm->get('urlPhoto')->getData();
+
+            if ($file instanceof UploadedFile) {
+                $url = $fileManager->upload($file, $this->getParameter('photos_directory'), $profilForm->getName());
+                $participant->setUrlPhoto($url);
+            }
+
+            $em->flush();
 
             $this->addFlash('success', 'Votre profil a été mis à jour.');
 

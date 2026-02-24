@@ -7,6 +7,14 @@
     <h2>Profil de {{ participant.pseudo }}</h2>
 
     <div>
+        <div>
+            {% if participant.urlPhoto %}
+                <img src="{{ asset('uploads/photos/' ~ participant.urlPhoto) }}"
+                     width="250px"
+                     alt="Image de profil de {{ participant.pseudo }}"
+                     loading="lazy">
+            {% endif %}
+        </div>
         <p>Pseudo : {{ participant.pseudo }}</p>
         <p>Nom : {{ participant.nom }}</p>
         <p>Prénom : {{ participant.prenom }}</p>
