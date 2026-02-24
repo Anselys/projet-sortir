@@ -2,10 +2,12 @@
 
 namespace App\Repository;
 
+use App\Entity\Participant;
 use App\Entity\Site;
 use App\Entity\Sortie;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Form\FormInterface;
 
 /**
  * @extends ServiceEntityRepository<Sortie>
@@ -20,7 +22,7 @@ class SortieRepository extends ServiceEntityRepository
         /**
          * @return Sortie[] Returns an array of Sortie objects
          */
-        public function findBySite(Site $site): array
+        public function findBySite(Site $site, Participant $participant): array
         {
             // ajouter le tri par état plus tard???
             // TODO: fixme
@@ -33,56 +35,53 @@ class SortieRepository extends ServiceEntityRepository
             ;
         }
 
-
-
-
-        public function findByTri($result): array{
-            $task = $result->getData();
+        public function findByTri(FormInterface $result, $participant): array{
+            $tri = $result->getData();
             $qb = $this->createQueryBuilder('s');
 
-            if($task == null){
+            if($tri == null){
                 return $this->findAll();
             }
 
-            if($task['Site'] != null){
+            if($tri['Site'] != null){
                 $qb->andWhere('s.site_organisateur_Id = :siteId')
-                    ->setParameter('siteId', $task['Site']->getId());
+                    ->setParameter('siteId', $tri['Site']->getId());
             }
 
-            if($task['recherche'] != null){
+            if($tri['recherche'] != null){
                 $qb->andWhere('s.nom LIKE :recherche')
-                    ->setParameter('recherche', '%'.$task['recherche'].'%');
+                    ->setParameter('recherche', '%'.$tri['recherche'].'%');
             }
 
-            if($task['startDate'] != null){
-                $qb->andWhere('s.dateDebut >= :dateDebut')
-                    ->setParameter('dateDebut', $task['dateDebut']);
+            if($tri['startDate'] != null){
+                $qb->andWhere('s.date_debut >= :dateDebut')
+                    ->setParameter('dateDebut', $tri['dateDebut']);
             }
 
-            if($task['endDate'] != null){
-                $qb->andWhere('s.dateFin <= :dateFin')
-                    ->setParameter('dateFin', $task['dateFin']);
+            if($tri['endDate'] != null){
+                $qb->andWhere('s.date_cloture <= :dateCloture')
+                    ->setParameter('dateCloture', $tri['dateFin']);
             }
 
-            if($task['organisateur'] != 0){
-                // TODO: get connected user here
-//                $qb->andWhere('s.organisateur = :organisateur')
-//                    ->setParameter('organisateur', );
+            if($tri['organisateur'] != 0){
+                $qb->andWhere('s.organisateur_id = :organisateur')
+                    ->setParameter('organisateur', $participant->getId());
             }
 
-            if($task['inscrit'] != 0){
-                // TODO: get connected user here
+            if($tri['inscrit'] != 0){
+                // TODO: dépatouiller ça
+//                $participant->getSortiesOrganisees()->findFirst((int)$tri['id'])->setDateFin(new \DateTime($tri['dateFin']));
 //                $qb->andWhere('s.inscrit = :inscrit')
 //                    ->setParameter('inscrit', );
             }
 
-            if($task['non_inscrit'] != 0){
-                // TODO: get connected user here
+            if($tri['non_inscrit'] != 0){
+                // TODO: dépatouiller ça
 //                $qb->andWhere('s.non_inscrit = :inscrit')
 //                    ->setParameter('inscrit', );
             }
 
-            if($task['passees'] != 0){
+            if($tri['passees'] != 0){
                 $qb->andWhere('s.dateDebut < new /DateTime()');
             }
 

@@ -17,12 +17,13 @@ final class AccueilController extends AbstractController
     public function index(Request $request, SortieRepository $sortieRepository, SiteRepository $siteRepository): Response
     {
         $sorties = [];
+        $participant =  $this->getUser();
         $today = new \DateTime();
         $triForm = $this->createForm(TriSortiesType::class);
         $triForm->handleRequest($request);
 
         if ($triForm->isSubmitted() && $triForm->isValid()) {
-            $this->$sorties = $sortieRepository->findByTri($triForm);
+            $this->$sorties = $sortieRepository->findByTri($triForm, $participant);
 
             $this->addFlash('success', 'Tri activé');
             return $this->redirectToRoute('', [
@@ -42,7 +43,7 @@ final class AccueilController extends AbstractController
 //        $this->$sorties = $sortieRepository->findAll();
 
 
-        return $this->render('accueil/edit.html.twig', [
+        return $this->render('/accueil/index.html.twig', [
             'sorties' => $sorties,
             'today' => $today,
             'tri_form' => $triForm->createView(),
