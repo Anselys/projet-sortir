@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Etat;
 use App\Entity\Site;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -31,6 +32,15 @@ class TriSortiesType extends AbstractType
             ->add('recherche', TextType::class, [
                 'label' => 'Le nom de la sortie contient:',
                 'required' => false,
+            ])
+            ->add('etat', EntityType::class, [
+                'class' => Etat::class,
+                'choice_label' => 'libelle',
+                'label' => 'Etat de la sortie:',
+                'required' => false,
+                'query_builder' => function (EntityRepository $er) {
+                return $er->createQueryBuilder('s')->orderBy('s.libelle', 'ASC');
+                }
             ])
             ->add('dateDebut', DateType::class,[
                 'label' => "Entre ",
