@@ -4,7 +4,9 @@
 
 {% block main %}
     <div>
-{#            <p>Participant·e: {{ app.user.pseudo }}</p>#}
+            {% if participant != null %}
+            <p>Participant·e: {{ participant.pseudo }}</p>
+            {% endif %}
             <p>Date du jour: {{ today | date('d/m/Y') }}</p>
     </div>
 
@@ -28,7 +30,6 @@
     </tr>
     {% for sortie in sorties %}
         <tr>
-            <th><a class="link-light link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="{{ path('wish_detail', {id : item.id}) }}">{{ item.title }}</a></th>
             <th>{{ sortie.nom }}</th>
             <th>{{ sortie.dateDebut | date('d/m/Y') }}</th>
             <th>{{ sortie.dateCloture | date('d/m/Y') }}</th>
