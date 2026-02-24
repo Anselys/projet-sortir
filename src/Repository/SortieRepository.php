@@ -94,19 +94,21 @@ class SortieRepository extends ServiceEntityRepository
 
         if ($tri['inscrit'] != 0) {
             // if connected participant is in sortie.participants > add to filter
-            $qb->addSelect('s.participants')
-                ->innerJoin('participant', 'participant')
-                ->andWhere('participant.id = :id')
-                ->setParameter('id', $participant->getId());
+            // TODO: chercher comment faire les join. ça ne marche pas
+//            $qb->addSelect('s.participants')
+//                ->innerJoin('participant', 'participant')
+//                ->andWhere('participant.id = :id')
+//                ->setParameter('id', $participant->getId());
 
         }
 
         if ($tri['non_inscrit'] != 0) {
             // if connected participant is not in sortie.participants > add to filter
-            $qb->addSelect('s.participants')
-                ->innerJoin('participant', 'participant')
-                ->andWhere('participant.id != :id')
-                ->setParameter('id', $participant->getId());
+            // TODO: chercher comment faire les join. ça ne marche pas
+//            $qb->addSelect('s.participants')
+//                ->innerJoin('participant', 'participant')
+//                ->andWhere('participant.id != :id')
+//                ->setParameter('id', $participant->getId());
         }
 
         if ($tri['passees'] != 0) {

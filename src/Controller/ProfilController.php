@@ -18,16 +18,24 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class ProfilController extends AbstractController
 {
 
-    #[Route('/', name: '_detail')]
-    public function profil(): Response
-    {
-        $participant = $this->getUser();
+//    #[Route('/', name: '_detail')]
+//    public function profil(): Response
+//    {
+//        $participant = $this->getUser();
+//
+//        return $this->render('profil/profil.html.twig', [
+//            'participant' => $participant,
+//        ]);
+//    }
 
+
+    #[Route('/{id}', name: '_detail', methods: ['GET'])]
+    public function profil(Participant $participant): Response
+    {
         return $this->render('profil/profil.html.twig', [
             'participant' => $participant,
         ]);
     }
-
     #[Route('/{id}/edit', name: '_edit')]
     public function edit(Request $request, EntityManagerInterface $em, FileManager $fileManager): Response
     {

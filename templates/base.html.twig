@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Sortir{% endblock %}</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+    <link rel="icon"
+          href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
     {% block stylesheets %}
     {% endblock %}
 
@@ -13,35 +14,14 @@
 </head>
 <body>
 
-<header>
-    <h1><img src="{{ asset('images/logo.png') }}" alt="">Sortir</h1>
-
-    {% for status, messages in app.flashes %}
-        {% for message in messages %}
-            <div class="alert alert-{{ status }}">{{ message }}</div>
-        {% endfor %}
-    {% endfor %}
-
-    <nav>
-        <ul>
-            <li><a href="{{ path('app_accueil') }}">Accueil</a></li>
-            {% if is_granted('IS_AUTHENTICATED') %}
-                <li><a href="{{ path('app_profil_detail') }}">Profil</a></li>
-
-                {% if is_granted('ROLE_ADMIN') %}
-                    <li><a href="{{ path('app_inscription') }}">Ajouter un membre</a></li>
-                {% endif %}
-                <li><a href="{{ path('app_logout') }}">Déconnexion</a></li>
-            {% else %}
-                <li><a href="{{ path('app_login') }}">Connexion</a></li>
-            {% endif %}
-        </ul>
-    </nav>
-</header>
+{% include('part/_header.html.twig') %}
 
 <main>
-    {% block main %}{% endblock %}
+    {% block main %}
+    {% endblock %}
 </main>
+
+{% include('part/_footer.html.twig') %}
 
 </body>
 </html>

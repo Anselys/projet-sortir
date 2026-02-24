@@ -22,43 +22,50 @@
             {{ form_start(tri_form) }}
             {{ form_widget(tri_form) }}
             {{ form_end(tri_form) }}
-
+            <button class="btn btn-primary">TODO: EFFACER FILTRES</button>
         </div>
     </div>
 
 </section>
 
-<section>
-<table>
-    <tr class="table table-dark">
-        <th scope="col">Nom de la sortie</th>
-        <th scope="col">Date de la sortie</th>
-        <th scope="col">Clôture</th>
-        <th scope="col">Inscrits/Places</th>
-        <th scope="col">Etat</th>
-        <th scope="col">Inscrit·e</th>
-        <th scope="col">Organisateur·ice</th>
-        <th scope="col">Actions</th>
-    </tr>
-    {% for sortie in sorties %}
-        <tr>
-            <th>{{ sortie.nom }}</th>
-            <th>{{ sortie.dateDebut | date('d/m/Y') }}</th>
-            <th>{{ sortie.dateCloture | date('d/m/Y') }}</th>
-            <th>{{ sortie.participants.count }} / {{ sortie.nbInscriptionsMax }}</th>
-            <th>{{ sortie.etat.libelle }}</th>
-            <th>TODO: CET UTILISATEUR EST INSCRIT</th>
-            <th>{{ sortie.organisateur.prenom }} {{ sortie.organisateur.nom|first|upper }}</th>
-            <th>TODO: actions selon si admin/organisateur...</th>
-        </tr>
-    {% endfor %}
-</table>
-</section>
+    <section>
+        <table class="table table-dark table-striped">
+            <thead>
+            <tr>
+                <th scope="col">Nom de la sortie</th>
+                <th scope="col">Date de la sortie</th>
+                <th scope="col">Clôture</th>
+                <th scope="col">Inscrits/Places</th>
+                <th scope="col">Etat</th>
+                <th scope="col">Inscrit·e</th>
+                <th scope="col">Organisateur·ice</th>
+                <th scope="col">Actions</th>
+            </tr>
+            </thead>
+
+            {% for sortie in sorties %}
+                <tr>
+                    <td>{{ sortie.nom }}</td>
+                    <td>{{ sortie.dateDebut | date('d/m/Y') }}</td>
+                    <td>{{ sortie.dateCloture | date('d/m/Y') }}</td>
+                    <td>{{ sortie.participants.count }} / {{ sortie.nbInscriptionsMax }}</td>
+                    <td>{{ sortie.etat.libelle }}</td>
+                    <td>TODO: CET UTILISATEUR EST INSCRIT</td>
+                    <td>
+                        <a href="{{ path('app_profil_detail', { id: sortie.organisateur.id }) }}">
+                            {{ sortie.organisateur.prenom }} {{ sortie.organisateur.nom|first|upper }}
+                        </a>
+                    </td>
+                    <td>TODO: actions selon si admin/organisateur...</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </section>
 
 
-<section>
-    <a href="{{ path('app_sortie_creer') }}" class="btn btn-primary">Créer une sortie</a>
-</section>
+    <section>
+        <a href="{{ path('app_sortie_creer') }}" class="btn btn-primary">Créer une sortie</a>
+    </section>
 
 
 
