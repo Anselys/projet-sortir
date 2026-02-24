@@ -32,11 +32,11 @@ class TriSortiesType extends AbstractType
                 'label' => 'Le nom de la sortie contient:',
                 'required' => false,
             ])
-            ->add('startDate', DateType::class,[
+            ->add('dateDebut', DateType::class,[
                 'label' => "Entre ",
                 'required' => false,
             ])
-            ->add('endDate', DateType::class,[
+            ->add('dateCloture', DateType::class,[
                 'label' => " et ",
                 'required' => false,
             ])
