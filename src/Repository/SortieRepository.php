@@ -24,7 +24,7 @@ class SortieRepository extends ServiceEntityRepository
     /**
      * @return Sortie[] Returns an array of Sortie objects
      */
-    public function findBySite(Site $site, Etat $etat): array
+    public function findBySiteAndEtat(Site $site, Etat $etat): array
     {
         return $this->createQueryBuilder('s')
             ->andWhere('s.siteOrganisateur = :site')
@@ -46,20 +46,31 @@ class SortieRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findByTriCustomUtilisateur(FormInterface $triForm, UserInterface $participant): array
+    public function findByTriCustomUtilisateur(FormInterface $triForm, UserInterface $participant, $etats): array
     {
+//        dd(
+//            $etatPasse = !empty(array_filter($etats, function ( $etat ) {
+//                return $etat->getLibelle() == 'PASSEE';
+//            }))
+//        );
+
         $tri = $triForm->getData();
 
         $qb = $this->createQueryBuilder('s');
 
         if ($tri == null) {
             // TODO: return pas tout mais que les etat : ouverte
-            return $this->findAll();
+            return $this->findAllByEtat($etats);
         }
 
         if ($tri['Site'] != null) {
             $qb->andWhere('s.siteOrganisateur = :orgaSite')
                 ->setParameter('orgaSite', $tri['Site']);
+        }
+
+        if ($tri['etat'] != null) {
+            $qb->andWhere('s.etat = :etat')
+                ->setParameter('etat', $tri['etat']);
         }
 
         if ($tri['recherche'] != null) {
@@ -84,6 +95,7 @@ class SortieRepository extends ServiceEntityRepository
 
         if ($tri['inscrit'] != 0) {
             // TODO: dépatouiller ça
+            // if connected participant is in sortie.participants > add to filter
 //                $participant->getSortiesOrganisees()->findFirst((int)$tri['id'])->setDateFin(new \DateTime($tri['dateFin']));
 //                $qb->andWhere('s.inscrit = :inscrit')
 //                    ->setParameter('inscrit', );
@@ -91,13 +103,17 @@ class SortieRepository extends ServiceEntityRepository
 
         if ($tri['non_inscrit'] != 0) {
             // TODO: dépatouiller ça
+            // if connected participant is not in sortie.participants > add to filter
 //                $qb->andWhere('s.non_inscrit = :inscrit')
 //                    ->setParameter('inscrit', );
         }
 
         if ($tri['passees'] != 0) {
-            // TODO: dépatouiller ça
-            // $qb->andWhere('s.dateDebut < new /DateTime()');
+            $etatPasse = !empty(array_filter($etats, function ( $etat ) {
+                return $etat->getLibelle() == 'PASSEE';
+            }));
+            $qb->andWhere('s.etat = :etat');
+            $qb->setParameter('etat', $etatPasse);
         }
 
         return $qb->getQuery()->getResult();
