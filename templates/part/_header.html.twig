@@ -1,0 +1,26 @@
+
+<header>
+    <h1><img src="{{ asset('images/logo.png') }}" alt="">Sortir</h1>
+
+    {% for status, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ status }}">{{ message }}</div>
+        {% endfor %}
+    {% endfor %}
+
+    <nav>
+        <ul>
+            <li><a href="{{ path('app_accueil') }}">Accueil</a></li>
+            {% if is_granted('IS_AUTHENTICATED') %}
+                <li><a href="{{ path('app_profil_detail') }}">Profil</a></li>
+
+                {% if is_granted('ROLE_ADMIN') %}
+                    <li><a href="{{ path('app_admin_inscription') }}">Ajouter un membre</a></li>
+                {% endif %}
+                <li><a href="{{ path('app_logout') }}">Déconnexion</a></li>
+            {% else %}
+                <li><a href="{{ path('app_login') }}">Connexion</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+</header>

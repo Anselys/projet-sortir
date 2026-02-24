@@ -1,0 +1,25 @@
+footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    background: linear-gradient(
+        -45deg,
+        #ff71ce,
+        #01cdfe,
+        #b967ff,
+        #05ffa1
+    );
+    background-size: 200% 200%;
+    animation: vaporwave 5s ease infinite;
+
+    p {
+        margin: 0;
+    }
+}
+
+@keyframes vaporwave {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}

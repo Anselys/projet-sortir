@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 use App\Entity\Participant;
 use App\Form\InscriptionType;
@@ -13,10 +13,10 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('ROLE_ADMIN')]
-
+#[Route('/admin', name: 'app_admin')]
 final class InscriptionController extends AbstractController
 {
-    #[Route('/inscription', name: 'app_inscription')]
+    #[Route('/inscription', name: '_inscription')]
     public function inscription(Request $request, UserPasswordHasherInterface $participantPasswordHasher, EntityManagerInterface $entityManager): Response
     {
         $participant = new Participant();
