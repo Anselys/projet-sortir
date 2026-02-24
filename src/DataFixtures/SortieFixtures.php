@@ -58,8 +58,8 @@ class SortieFixtures extends Fixture implements DependentFixtureInterface
             $dateCloture = $faker->dateTimeBetween($minCloture, $maxCloture);
 
             $sortie
-                ->setNom($faker->text($maxNbChars = 30))
-                ->setDescription($faker->text($maxNbChars = 500))
+                ->setNom($faker->sentence(5, true))
+                ->setDescription($faker->realText(300))
                 ->setDuree($duree)
                 ->setDateDebut($dateDebut)
                 ->setDateCloture($dateCloture)
