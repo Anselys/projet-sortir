@@ -37,10 +37,15 @@ security:
             # https://symfony.com/doc/current/security/impersonating_user.html
             # switch_user: true
 
+    role_hierarchy:
+        ROLE_USER: ROLE_USER
+        ROLE_ORGANISATEUR: ROLE_USER
+        ROLE_ADMIN: [ ROLE_USER, ROLE_ORGANISATEUR ]
 
-        access_control:
-#            - { path: ^/admin, roles: ROLE_ADMIN }
-#            - { path: ^/organisateur, roles: ROLE_ORGANISATEUR }
+    # Note: Only the *first* matching rule is applied
+    access_control:
+        - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/profile, roles: ROLE_USER }
 
 
 when@test:

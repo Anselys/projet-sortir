@@ -2,10 +2,14 @@
 
 namespace App\Repository;
 
+use App\Entity\Etat;
+use App\Entity\Participant;
 use App\Entity\Site;
 use App\Entity\Sortie;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @extends ServiceEntityRepository<Sortie>
@@ -17,86 +21,102 @@ class SortieRepository extends ServiceEntityRepository
         parent::__construct($registry, Sortie::class);
     }
 
-        /**
-         * @return Sortie[] Returns an array of Sortie objects
-         */
-        public function findBySite(Site $site): array
-        {
-            // ajouter le tri par état plus tard???
-            // TODO: fixme
-            return $this->createQueryBuilder('s')
-                ->andWhere('s.site_organisateur_id = :siteId')
-                ->setParameter('siteId', $site->getId())
-                ->orderBy('s.dateDebut', 'ASC')
-                ->getQuery()
-                ->getResult()
-            ;
+    /**
+     * @return Sortie[] Returns an array of Sortie objects
+     */
+    public function findBySiteAndEtat(Site $site, Etat $etat): array
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.siteOrganisateur = :site')
+            ->andWhere('s.etat = :etat')
+            ->setParameter('etat', $etat)
+            ->setParameter('site', $site)
+            ->orderBy('s.dateDebut', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findAllByEtat(Etat $etat): array
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.etat = :etat')
+            ->setParameter('etat', $etat)
+            ->orderBy('s.dateDebut', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findByTriCustomUtilisateur(FormInterface $triForm, UserInterface $participant, $etats): array
+    {
+//        dd(
+//            $etatPasse = !empty(array_filter($etats, function ( $etat ) {
+//                return $etat->getLibelle() == 'PASSEE';
+//            }))
+//        );
+
+        $tri = $triForm->getData();
+
+        $qb = $this->createQueryBuilder('s');
+
+        if ($tri == null) {
+            // TODO: return pas tout mais que les etat : ouverte
+            return $this->findAllByEtat($etats);
         }
 
+        if ($tri['Site'] != null) {
+            $qb->andWhere('s.siteOrganisateur = :orgaSite')
+                ->setParameter('orgaSite', $tri['Site']);
+        }
 
+        if ($tri['etat'] != null) {
+            $qb->andWhere('s.etat = :etat')
+                ->setParameter('etat', $tri['etat']);
+        }
 
+        if ($tri['recherche'] != null) {
+            $qb->andWhere('s.nom LIKE :recherche')
+                ->setParameter('recherche', '%' . $tri['recherche'] . '%');
+        }
 
-        public function findByTri($result): array{
-            $task = $result->getData();
-            $qb = $this->createQueryBuilder('s');
+        if ($tri['dateDebut'] != null) {
+            $qb->andWhere('s.dateDebut >= :dateDebut')
+                ->setParameter('dateDebut', $tri['dateDebut']);
+        }
 
-            if($task == null){
-                return $this->findAll();
-            }
+        if ($tri['dateCloture'] != null) {
+            $qb->andWhere('s.dateCloture <= :dateCloture')
+                ->setParameter('dateCloture', $tri['dateCloture']);
+        }
 
-            if($task['Site'] != null){
-                $qb->andWhere('s.site_organisateur_Id = :siteId')
-                    ->setParameter('siteId', $task['Site']->getId());
-            }
+        if ($tri['organisateur'] != 0) {
+            $qb->andWhere('s.organisateur = :organisateur');
+            $qb->setParameter('organisateur', $participant);
+        }
 
-            if($task['recherche'] != null){
-                $qb->andWhere('s.nom LIKE :recherche')
-                    ->setParameter('recherche', '%'.$task['recherche'].'%');
-            }
-
-            if($task['startDate'] != null){
-                $qb->andWhere('s.dateDebut >= :dateDebut')
-                    ->setParameter('dateDebut', $task['dateDebut']);
-            }
-
-            if($task['endDate'] != null){
-                $qb->andWhere('s.dateFin <= :dateFin')
-                    ->setParameter('dateFin', $task['dateFin']);
-            }
-
-            if($task['organisateur'] != 0){
-                // TODO: get connected user here
-//                $qb->andWhere('s.organisateur = :organisateur')
-//                    ->setParameter('organisateur', );
-            }
-
-            if($task['inscrit'] != 0){
-                // TODO: get connected user here
+        if ($tri['inscrit'] != 0) {
+            // TODO: dépatouiller ça
+            // if connected participant is in sortie.participants > add to filter
+//                $participant->getSortiesOrganisees()->findFirst((int)$tri['id'])->setDateFin(new \DateTime($tri['dateFin']));
 //                $qb->andWhere('s.inscrit = :inscrit')
 //                    ->setParameter('inscrit', );
-            }
-
-            if($task['non_inscrit'] != 0){
-                // TODO: get connected user here
-//                $qb->andWhere('s.non_inscrit = :inscrit')
-//                    ->setParameter('inscrit', );
-            }
-
-            if($task['passees'] != 0){
-                $qb->andWhere('s.dateDebut < new /DateTime()');
-            }
-
-            return $qb->getQuery()->getResult();
         }
 
-            /**
-             * si site != null: filter by site (else: all)
-             * & si sortie != '': filter by tout ce qui contient cette recherche (else: all)
-             * & si date début != null : filter by tout ce qui a lieu APRES cette date
-             * & date fin != null : filter by tout ce qui a lieu AVANT cette date
-             * si organisateur coché: filter par seulement organisateur = user (else: all)
-             * si inscrit coché: filter par seulement les inscrits (else: all)
-             * si non_inscrit coché: filter par seulement là ou user n'est PAS inscrit
-             * sorties passées: afficher que les sorties dont la date est passée. (else: all)
-             */
+        if ($tri['non_inscrit'] != 0) {
+            // TODO: dépatouiller ça
+            // if connected participant is not in sortie.participants > add to filter
+//                $qb->andWhere('s.non_inscrit = :inscrit')
+//                    ->setParameter('inscrit', );
+        }
+
+        if ($tri['passees'] != 0) {
+            $etatPasse = !empty(array_filter($etats, function ( $etat ) {
+                return $etat->getLibelle() == 'PASSEE';
+            }));
+            $qb->andWhere('s.etat = :etat');
+            $qb->setParameter('etat', $etatPasse);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
 }

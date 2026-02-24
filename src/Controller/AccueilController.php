@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Participant;
 use App\Form\TriSortiesType;
+use App\Repository\EtatRepository;
 use App\Repository\SiteRepository;
 use App\Repository\SortieRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -14,37 +15,45 @@ use Symfony\Component\Routing\Attribute\Route;
 final class AccueilController extends AbstractController
 {
     #[Route('/', name: 'app_accueil')]
-    public function index(Request $request, SortieRepository $sortieRepository, SiteRepository $siteRepository): Response
+    public function index(Request $request, SortieRepository $sortieRepository, EtatRepository $etatRepository): Response
     {
-        $sorties = [];
+        $participant = $this->getUser();
+        $etats = $etatRepository->findAll();
         $today = new \DateTime();
         $triForm = $this->createForm(TriSortiesType::class);
         $triForm->handleRequest($request);
 
+        // si un filtre de tri est soumis, sorties est rempli via le tri
         if ($triForm->isSubmitted() && $triForm->isValid()) {
-            $this->$sorties = $sortieRepository->findByTri($triForm);
+            $sorties = $sortieRepository->findByTriCustomUtilisateur($triForm, $participant, $etats);
 
             $this->addFlash('success', 'Tri activé');
-            return $this->redirectToRoute('', [
+            return $this->render('accueil/index.html.twig', [
                 'sorties' => $sorties,
                 'today' => $today,
+                'participant' => $participant,
                 'tri_form' => $triForm->createView(),
             ]);
         }
-//
-//        // par défaut les sorties sont filtrées sur le site de l'utilisateur connecté
-//        $sorties = $sortieRepository->findBySite($participant->getSite());
 
+        // par défaut les sorties sont filtrées sur le site de l'utilisateur connecté, si ouvertes à l'inscription
+        // et par triées date de début la plus proche.
+        // si pas d'utilisateur: toutes les sorties ouvertes, triées par date la plus proche
+        if($participant != null){
+            $participantSite = $participant->getSite();
+            if($participantSite != null){
+                $etatOuvert = $etatRepository->findOneByLibelle('OUVERTE');
+                $sorties = $sortieRepository->findBySiteAndEtat($participantSite, $etatOuvert);
+            }
+        }
+        else{
+            return $this->redirectToRoute('app_login');
+        }
 
-        // if result != null:
-        // $this->$sorties  = $sortieRepository->findByTri();
-        // else:
-//        $this->$sorties = $sortieRepository->findAll();
-
-
-        return $this->render('accueil/edit.html.twig', [
+        return $this->render('accueil/index.html.twig', [
             'sorties' => $sorties,
             'today' => $today,
+            'participant' => $participant,
             'tri_form' => $triForm->createView(),
         ]);
     }
