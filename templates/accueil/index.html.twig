@@ -33,7 +33,7 @@
             <th>{{ sortie.dateDebut | date('d/m/Y') }}</th>
             <th>{{ sortie.dateCloture | date('d/m/Y') }}</th>
             <th>{{ sortie.participants.count }} / {{ sortie.nbInscriptionsMax }}</th>
-            <th>{{ sortie.etat }}</th>
+            <th>{{ sortie.etat.libelle }}</th>
             <th>TODO: CET UTILISATEUR EST INSCRIT</th>
             <th>{{ sortie.organisateur.prenom }} {{ sortie.organisateur.nom|first|upper }}</th>
             <th>TODO: actions selon si admin/organisateur...</th>

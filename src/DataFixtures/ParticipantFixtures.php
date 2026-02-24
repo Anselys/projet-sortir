@@ -40,7 +40,8 @@ class ParticipantFixtures extends Fixture
             ->setIsActif(true)
             ->setIsAdmin(true)
             ->setSite($faker->randomElement($sites))
-            ->setRoles(['ROLE_ADMIN', 'ROLE_USER']);
+            ->setRoles(['ROLE_ADMIN', 'ROLE_USER'])
+            ->setUrlPhoto(null);
 
         $userParticipant
             ->setPseudo('user')
@@ -52,7 +53,9 @@ class ParticipantFixtures extends Fixture
             ->setIsActif(true)
             ->setIsAdmin(false)
             ->setSite($faker->randomElement($sites))
-            ->setRoles(['ROLE_USER']);
+            ->setRoles(['ROLE_USER'])
+            ->setUrlPhoto(null);
+
 
         $manager->persist($userParticipant);
         $manager->persist($adminParticipant);
@@ -74,7 +77,8 @@ class ParticipantFixtures extends Fixture
                 ->setIsActif($faker->boolean())
                 ->setIsAdmin($isAdmin)
                 ->setSite($site)
-                ->setRoles($roles);
+                ->setRoles($roles)
+                ->setUrlPhoto(null);
 
             $manager->persist($participant);
         }
