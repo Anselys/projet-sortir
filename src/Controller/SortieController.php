@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/sortie', name: 'app_sortie')]
 final class SortieController extends AbstractController
@@ -55,10 +56,35 @@ final class SortieController extends AbstractController
     }
 
     //Inscription à une sortie
-    #[Route('/{id}/inscription', name: '_inscription')]
+    #[Route('/inscription/{id}', name: '_inscription')]
     public function inscription(Request $request, EntityManagerInterface $em): Response
     {
         return $this->render('accueil/index.html.twig');
     }
+
+    #[Route('/edit/{id}', name: '_edit')]
+    public function edit(Request $request, EntityManagerInterface $em): Response
+    {
+        return $this->render('accueil/index.html.twig');
+    }
+
+
+    #[Route('/delete/{id}', name: '_delete', requirements: ['id' => '\d+'])]
+    public function delete(Sortie $sortie, EntityManagerInterface $em, Request $request): Response
+    {
+        $token = $request->query->get('token');
+
+        if ($this->isCsrfTokenValid('sortie_delete' . $sortie->getId(), $token)) {
+            $em->remove($sortie);
+            $em->flush();
+
+            $this->addFlash('success', 'La sortie a été supprimée.');
+            return $this->redirectToRoute('app_accueil');
+        }
+
+        $this->addFlash('danger', 'Impossible de supprimer cette sortie.');
+        return $this->redirectToRoute('app_sortie_detail', ['id' => $sortie->getId()]);
+    }
+
 
 }

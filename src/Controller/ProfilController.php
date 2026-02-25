@@ -37,7 +37,7 @@ final class ProfilController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: '_edit')]
+    #[Route('/edit/{id}', name: '_edit')]
     public function edit(Request $request, EntityManagerInterface $em, FileManager $fileManager): Response
     {
         /** @var Participant $participant */

@@ -35,6 +35,16 @@
     </div>
 
     <div>
+        {% if not(app.user.pseudo == sortie.organisateur.pseudo) %}
+            <a href="{{ path('app_sortie_inscription', { id: sortie.id }) }}" class="btn btn-danger" onclick="return confirm('Confirmer l\'inscription ?')">S'inscrire</a>
+        {% endif %}
+        {% if app.user.pseudo == sortie.organisateur.pseudo %}
+            <a href="{{ path('app_sortie_edit', { id: sortie.id }) }}" class="btn btn-danger" onclick="return confirm('Etes vous vraiment sûr ????')">Modifier</a>
+            <a href="{{ path('app_sortie_delete', { id: sortie.id, token: csrf_token('sortie_delete' ~ sortie.id) }) }}" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr·e de vouloir supprimer cette sortie ?')">Supprimer</a>
+        {% endif %}
+    </div>
+
+    <div>
         <h3>Liste des participants inscrits :</h3>
 
         {% for participant in participants %}
@@ -43,6 +53,7 @@
                 </a></p>
         {% endfor %}
     </div>
+
 
 
 
