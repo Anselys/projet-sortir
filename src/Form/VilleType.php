@@ -24,6 +24,7 @@ class VilleType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Ville::class,
+            'csrf_protection' => false,
         ]);
     }
 }

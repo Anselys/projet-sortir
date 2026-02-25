@@ -60,21 +60,21 @@ final class VilleController extends AbstractController
     #[Route('/ville/update/{id}', name: '_ville_update', requirements: ['id' => '\d+'])]
     public function update(Ville $ville, EntityManagerInterface $em, Request $request): Response
     {
-            $villeUpdateForm = $this->createForm(VilleType::class);
-            $villeUpdateForm->handleRequest($request);
-            if($villeUpdateForm->isSubmitted() && $villeUpdateForm->isValid()) {
-                // récupèrer les nouvelles données ville
-                $ville = $villeUpdateForm->getData();
-                $villeFound = $em->getRepository(Ville::class)->findOneByNomAndCPO($ville->getNom(), $ville->getCpo());
-                // checker si une ville sous ce combo nom/cpo existe déjà.
-                if (!$villeFound) {
-                    $em->flush();
-                    $this->addFlash('success', 'La ville a été ajoutée avec succès');
-                    return $this->redirectToRoute('app_admin_ville');
-                }
-                $this->addFlash('error', "La Ville n'a pas pu être mise à jour, il y en a déjà une de ce nom dans la base de données.");
+        $villeUpdateForm = $this->createForm(VilleType::class);
+        $villeUpdateForm->handleRequest($request);
+        if ($villeUpdateForm->isSubmitted() && $villeUpdateForm->isValid()) {
+            // récupèrer les nouvelles données ville
+            $ville = $villeUpdateForm->getData();
+            $villeFound = $em->getRepository(Ville::class)->findOneByNomAndCPO($ville->getNom(), $ville->getCpo());
+            // checker si une ville sous ce combo nom/cpo existe déjà.
+            if (!$villeFound) {
+                $em->flush();
+                $this->addFlash('success', 'La ville a été ajoutée avec succès');
                 return $this->redirectToRoute('app_admin_ville');
             }
+            $this->addFlash('error', "La Ville n'a pas pu être mise à jour, il y en a déjà une de ce nom dans la base de données.");
+            return $this->redirectToRoute('app_admin_ville');
+        }
         return $this->render('admin/ville-edit.html.twig', [
             'ville_update_form' => $villeUpdateForm->createView(),
             'ville' => $ville,

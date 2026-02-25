@@ -24,7 +24,8 @@
                 <tr>
                     <td>{{ ville.nom }}</td>
                     <td>{{ ville.cpo }}</td>
-                    <td><a href="{{ path('app_admin_ville_update', {id: ville.id}) }}">Modifier</a> - <a href="{{ path('app_admin_ville_delete', { id: ville.id, token: csrf_token('ville_delete' ~ ville.id) }) }}"
+                    <td><a href="{{ path('app_admin_ville_update', {id: ville.id, token: csrf_token('ville_update' ~ ville.id)}) }}">Modifier</a> - <a
+                            href="{{ path('app_admin_ville_delete', { id: ville.id, token: csrf_token('ville_delete' ~ ville.id) }) }}"
                         onclick="return confirm('Etes vous sur de vouloir supprimer cette ville?')">Supprimer</a></td>
                 </tr>
             {% endfor %}
@@ -40,7 +41,6 @@
                         {{ form_row(villes_form.submit, { 'label': 'Ajouter' }) }}
                     </td>
                 </tr>
-            {{ form_rest(villes_form) }}
             {{ form_end(villes_form) }}
         </table>
     </section>
