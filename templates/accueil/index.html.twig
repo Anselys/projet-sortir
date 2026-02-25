@@ -6,27 +6,27 @@
 
 {% block main %}
     <div>
-            {% if participant != null %}
+        {% if participant != null %}
             <p>Participant·e: {{ participant.pseudo }}</p>
-            {% endif %}
-            <p>Date du jour: {{ today | date('d/m/Y') }}</p>
+        {% endif %}
+        <p>Date du jour: {{ today | date('d/m/Y') }}</p>
     </div>
 
-<section>
-    <h2>Filtrer les sorties</h2>
+    <section>
+        <h2>Filtrer les sorties</h2>
 
-    <div class="row justify-content-center">
-        <div class="col-12 col-md-3">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-3">
 
-            {{ form_errors(tri_form) }}
-            {{ form_start(tri_form) }}
-            {{ form_widget(tri_form) }}
-            {{ form_end(tri_form) }}
-            <button class="btn btn-primary">TODO: EFFACER FILTRES</button>
+                {{ form_errors(tri_form) }}
+                {{ form_start(tri_form) }}
+                {{ form_widget(tri_form) }}
+                {{ form_end(tri_form) }}
+                <button class="btn btn-primary">TODO: EFFACER FILTRES</button>
+            </div>
         </div>
-    </div>
 
-</section>
+    </section>
 
     <section>
         <table class="table table-dark table-striped">
@@ -35,8 +35,8 @@
                 <th scope="col">Nom de la sortie</th>
                 <th scope="col">Date de la sortie</th>
                 <th scope="col">Clôture</th>
-                <th scope="col">Inscrits/Places</th>
-                <th scope="col">Etat</th>
+                <th scope="col">Inscrits</th>
+                <th scope="col">État</th>
                 <th scope="col">Inscrit·e</th>
                 <th scope="col">Organisateur·ice</th>
                 <th scope="col">Actions</th>
@@ -45,18 +45,41 @@
 
             {% for sortie in sorties %}
                 <tr>
-                    <td>{{ sortie.nom }}</td>
+                    <td>
+                        <a href="{{ path('app_sortie_detail', { id: sortie.id }) }}"
+                           class="btn btn-primary">{{ sortie.nom }}</a>
+                    </td>
                     <td>{{ sortie.dateDebut | date('d/m/Y') }}</td>
                     <td>{{ sortie.dateCloture | date('d/m/Y') }}</td>
                     <td>{{ sortie.participants.count }} / {{ sortie.nbInscriptionsMax }}</td>
                     <td>{{ sortie.etat.libelle }}</td>
-                    <td>TODO: CET UTILISATEUR EST INSCRIT</td>
+                    <td>
+                        {% if not(app.user.sorties.contains(sortie)) %}
+                            -
+                        {% else %}
+                            Vous êtes inscrit·e !
+                        {% endif %}
+                    </td>
                     <td>
                         <a href="{{ path('app_profil_detail', { id: sortie.organisateur.id }) }}">
                             {{ sortie.organisateur.prenom }} {{ sortie.organisateur.nom|first|upper }}
                         </a>
                     </td>
-                    <td>TODO: actions selon si admin/organisateur...</td>
+                    <td>
+                        {% if not(app.user.pseudo == sortie.organisateur.pseudo) %}
+                            {% if not(app.user.sorties.contains(sortie)) %}
+                                <a href="{{ path('app_sortie_inscription', { id: sortie.id }) }}"
+                                   onclick="return confirm('Confirmer l\'inscription ?')">S'inscrire</a>
+                            {% else %}
+                                <a href="{{ path('app_sortie_desinscription', { id: sortie.id }) }}"
+                                   onclick="return confirm('Vous êtes sur le point d\'annuler votre inscription à cette sortie. Confirmer ?')">Me désinscrire</a>
+                            {% endif %}
+                        {% else %}
+                            <a href="{{ path('app_sortie_edit', { id: sortie.id }) }}">Modifier</a>
+                            <a href="{{ path('app_sortie_delete', { id: sortie.id, token: csrf_token('sortie_delete' ~ sortie.id) }) }}"
+                               onclick="return confirm('Êtes-vous sûr·e de vouloir supprimer cette sortie ?')">Supprimer</a>
+                        {% endif %}
+                    </td>
                 </tr>
             {% endfor %}
         </table>

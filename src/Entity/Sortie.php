@@ -75,6 +75,17 @@ class Sortie
         $this->participants = new ArrayCollection();
     }
 
+    //Retourne vrai si le nombre max d'inscription est atteint.
+    public function isComplete(): bool
+    {
+        if ($this->nbInscriptionsMax === null) {
+            return false;
+        }
+
+        return $this->participants->count() >= $this->nbInscriptionsMax;
+    }
+
+
     public function getId(): ?int
     {
         return $this->id;
@@ -224,6 +235,7 @@ class Sortie
     {
         if (!$this->participants->contains($participant)) {
             $this->participants->add($participant);
+            $participant->addSortie($this);
         }
 
         return $this;
@@ -231,8 +243,9 @@ class Sortie
 
     public function removeParticipant(Participant $participant): static
     {
-        $this->participants->removeElement($participant);
-
+        if ($this->participants->removeElement($participant)) {
+            $participant->removeSortie($this);
+        }
         return $this;
     }
 }
