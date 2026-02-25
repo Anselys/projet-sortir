@@ -6,9 +6,17 @@ import './stimulus_bootstrap.js';
  * which should already be in your base.html.twig.
  */
 
-import './vendor/bootstrap/dist/css/bootstrap.min.css';
-import './vendor/bootstrap/bootstrap.index.js';
-
+// import './vendor/bootstrap/dist/css/bootstrap.min.css';
+import 'bootswatch/dist/vapor/bootstrap.min.css';
 import './styles/app.css';
 
-console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');
+document.addEventListener("DOMContentLoaded", () => {
+    const burger = document.getElementById("burger");
+    const nav = document.getElementById("nav-menu");
+
+    if (burger && nav) {
+        burger.addEventListener("click", () => {
+            nav.classList.toggle("open");
+        });
+    }
+});
