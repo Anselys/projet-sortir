@@ -32,13 +32,13 @@ class VilleRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-    public function findOne(Ville $ville): ?Ville
+    public function findOneByNomAndCPO(string $nom, string $CPO): ?Ville
     {
         return $this->createQueryBuilder('v')
             ->andWhere('v.nom = :nom')
-            ->setParameter('nom', $ville->getNom())
+            ->setParameter('nom', $nom)
             ->andWhere('v.cpo = :cpo')
-            ->setParameter('cpo', $ville->getCpo())
+            ->setParameter('cpo', $CPO)
             ->getQuery()
             ->getOneOrNullResult();
     }
