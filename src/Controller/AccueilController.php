@@ -46,7 +46,11 @@ final class AccueilController extends AbstractController
         if($participant != null){
             $participantSite = $participant->getSite();
             if($participantSite != null){
-                $etatOuvert = $etatRepository->findOneByLibelle('OUVERTE');
+                foreach ($etats as $etat){
+                    if($etat->getLibelle() == 'OUVERTE'){
+                        $etatOuvert = $etat;
+                    }
+                }
                 $sorties = $sortieRepository->findBySiteAndEtat($participantSite, $etatOuvert);
             }
         }
