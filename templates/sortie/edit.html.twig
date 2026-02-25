@@ -1,7 +1,5 @@
 {% extends 'base.html.twig' %}
 
-{% form_theme sortie_form 'bootstrap_5_layout.html.twig' %}
-
 {% block title %}{{ parent() }} | Créer une sortie{% endblock %}
 
 {% block main %}
@@ -19,45 +17,6 @@
 
         </div>
     </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const villeSelect = document.querySelector('#sortie_ville');
-            const lieuSelect = document.querySelector('#sortie_lieu');
-
-            villeSelect.addEventListener('change', function () {
-                const villeId = this.value;
-
-                if (!villeId) {
-                    lieuSelect.innerHTML = '';
-
-                    const placeholder = document.createElement('option');
-                    placeholder.value = '';
-                    placeholder.text = '-- Sélectionner le lieu --';
-                    lieuSelect.appendChild(placeholder);
-
-                    return;
-                }
-
-                fetch('{{ path("app_sortie_ajax_lieux", {"ville": "__VILLE_ID__"}) }}'.replace('__VILLE_ID__', villeId))
-                    .then(response => response.json())
-                    .then(data => {
-                        lieuSelect.innerHTML = '';
-
-                        const placeholder = document.createElement('option');
-                        placeholder.value = '';
-                        placeholder.text = '-- Sélectionner le lieu --';
-                        lieuSelect.appendChild(placeholder);
-
-                        data.forEach(lieu => {
-                            const option = document.createElement('option');
-                            option.value = lieu.id;
-                            option.text = lieu.nom;
-                            lieuSelect.appendChild(option);
-                        });
-                    });
-            });
-        });
-    </script>
 {% endblock %}
 
 

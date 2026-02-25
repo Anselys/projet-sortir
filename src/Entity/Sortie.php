@@ -36,7 +36,7 @@ class Sortie
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     #[Assert\Type("\DateTimeInterface")]
-    #[Assert\GreaterThan(propertyPath: 'dateDebut', message: 'La date de clôture ne peut pas être antérieure à la date de début')]
+    #[Assert\LessThan(propertyPath: 'dateDebut', message: 'La date de clôture ne peut pas être ultérieure à la date de début')]
     private ?\DateTime $dateCloture = null;
 
     #[ORM\Column]

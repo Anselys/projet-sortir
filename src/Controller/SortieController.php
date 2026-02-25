@@ -2,12 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Etat;
 use App\Entity\Sortie;
-use App\Entity\Ville;
 use App\Form\SortieType;
+use App\Repository\EtatRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -15,15 +15,23 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/sortie', name: 'app_sortie')]
 final class SortieController extends AbstractController
 {
-
     #[Route('/creer', name: '_creer')]
-    public function creer(Request $request, EntityManagerInterface $em): Response
+    public function creer(Request $request, EntityManagerInterface $em, EtatRepository $etatRepository): Response
     {
         $sortie = new Sortie();
+        $etat = $etatRepository->find(1);
+
+        $participant = $this->getUser();
+
+        $site = $participant->getSite();
+        $sortie->setSiteOrganisateur($site);
         $sortieForm = $this->createForm(SortieType::class, $sortie);
         $sortieForm->handleRequest($request);
 
         if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
+            $sortie->setOrganisateur($participant);
+            $sortie->setEtat($etat);
+            $sortie->addParticipant($participant);
             $em->persist($sortie);
             $em->flush();
 
@@ -34,22 +42,5 @@ final class SortieController extends AbstractController
         return $this->render('sortie/edit.html.twig', [
             'sortie_form' => $sortieForm,
         ]);
-    }
-
-    #[Route('/ajax/lieux/{ville}', name: '_ajax_lieux')]
-    public function getLieuxByVille(Ville $ville): JsonResponse
-    {
-        $lieux = $ville->getLieux();
-
-        $data = [];
-
-        foreach ($lieux as $lieu) {
-            $data[] = [
-                'id' => $lieu->getId(),
-                'nom' => $lieu->getNom(),
-            ];
-        }
-
-        return $this->json($data);
     }
 }
