@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Ville;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -31,13 +32,17 @@ class VilleRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Ville
-//    {
-//        return $this->createQueryBuilder('v')
-//            ->andWhere('v.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function findOne(Ville $ville): ?Ville
+    {
+        return $this->createQueryBuilder('v')
+            ->andWhere('v.nom = :nom')
+            ->setParameter('nom', $ville->getNom())
+            ->andWhere('v.cpo = :cpo')
+            ->setParameter('cpo', $ville->getCpo())
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
+
 }
