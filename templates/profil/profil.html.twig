@@ -15,11 +15,15 @@
                      loading="lazy">
             {% endif %}
         </div>
+
         <p>Pseudo : {{ participant.pseudo }}</p>
         <p>Nom : {{ participant.nom }}</p>
         <p>Prénom : {{ participant.prenom }}</p>
-        <p>Adresse mail : {{ participant.email }}</p>
-        <p>Téléphone : {{ participant.telephone }}</p>
+        {% if app.user and app.user.id == participant.id %}
+            <p>Adresse mail : {{ participant.email }}</p>
+            <p>Téléphone : {{ participant.telephone }}</p>
+        {% endif %}
+
     </div>
 
     {% if app.user and app.user.id == participant.id %}
