@@ -16,9 +16,7 @@ class VilleType extends AbstractType
         $builder
             ->add('nom',TextType::class, array('label' => false))
             ->add('cpo',TextType::class, array('label' => false))
-            ->add('submit', SubmitType::class, [
-                'label' => 'Ajouter',
-            ])
+            ->add('submit', SubmitType::class)
         ;
     }
 
