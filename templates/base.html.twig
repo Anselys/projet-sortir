@@ -17,6 +17,11 @@
 {% include('part/_header.html.twig') %}
 
 <main>
+    {% for status, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert-box alert alert-{{ status }}">{{ message }}</div>
+        {% endfor %}
+    {% endfor %}
     {% block main %}
     {% endblock %}
 </main>

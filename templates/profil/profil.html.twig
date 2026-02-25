@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ parent() }}{% endblock %}
+{% block title %}{{ parent() }} | Profil de {{ participant.pseudo }}{% endblock %}
 
 {% block main %}
 
@@ -28,6 +28,7 @@
 
     {% if app.user and app.user.id == participant.id %}
         <a href="{{ path('app_profil_edit', { id: participant.id }) }}" class="btn btn-primary">Modifier mon profil</a>
+        <a href="{{ path('app_profil_update_password', { id: participant.id }) }}" class="btn btn-primary">Modifier mon mot de passe</a>
     {% endif %}
 
 {% endblock %}
