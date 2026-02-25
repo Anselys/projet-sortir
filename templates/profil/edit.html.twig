@@ -2,23 +2,23 @@
 
 {% form_theme profil_form 'bootstrap_5_layout.html.twig' %}
 
-{% block title %}{{ parent()}}{% endblock %}
+{% block title %}{{ parent() }}{% endblock %}
 
 {% block main %}
 
-    <h2>Modifier mon profil [{{ app.user.pseudo }}]</h2>
-
     <div class="row justify-content-center">
-        <div class="col-12 col-md-3">
+        <div class="card text-white bg-secondary mb-3" style="max-width: 30rem;">
+            <div class="card-body">
+                <h4 class="card-title">Modifier mon profil</h4>
 
-            {{ form_errors(profil_form) }}
-            {{ form_start(profil_form) }}
-            {{ form_widget(profil_form) }}
-            <div class="text-center">
-                <button class="btn btn-primary">Enregistrer</button>
+                {{ form_errors(profil_form) }}
+                {{ form_start(profil_form) }}
+                {{ form_widget(profil_form) }}
+                <div class="text-center">
+                    <button class="btn btn-primary">Enregistrer</button>
+                </div>
+                {{ form_end(profil_form) }}
             </div>
-            {{ form_end(profil_form) }}
-
         </div>
     </div>
 

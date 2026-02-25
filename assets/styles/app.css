@@ -1,5 +1,4 @@
-@import url('_header.css');
-@import url('_footer.css');
+@import "footer.css";
 
 :root {
     --header-h: 88px;
@@ -13,7 +12,7 @@
 
 body {
     background-size: cover;
-    background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url('../images/BG_synthwave_landscape_cc0.png') fixed center center;
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.8)), url('../images/BG_synthwave_landscape_cc0.png') fixed center center;
     color: #EEE;
     font-family: 'Roboto', sans-serif;
     padding: 10px;
@@ -21,13 +20,6 @@ body {
     a {
         text-decoration: none;
     }
-}
-
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.5rem;
 }
 
 nav ul {

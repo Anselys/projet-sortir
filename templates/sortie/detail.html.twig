@@ -11,24 +11,24 @@
         <div class="row">
             <!--La classe bg-info ajoute un fond bleu à l'élément-->
             <div class="col">
-                <p>Nom de la sortie : {{ sortie.nom }}</p>
-                <p>Date et heure de la sortie : {{ sortie.dateDebut | date('d/m/Y') }}</p>
-                <p>Date limite d'inscription : {{ sortie.dateCloture | date('d/m/Y') }}    </p>
-                <p>Nombre de places : {{ sortie.participants.count }} / {{ sortie.nbInscriptionsMax }}</p>
-                <p>Durée : {{ sortie.duree }}</p>
-                <p>Description : {{ sortie.description }}</p>
+                <p class="text-light">Nom de la sortie : {{ sortie.nom }}</p>
+                <p class="text-light">Date et heure de la sortie : {{ sortie.dateDebut | date('d/m/Y') }}</p>
+                <p class="text-light">Date limite d'inscription : {{ sortie.dateCloture | date('d/m/Y') }}    </p>
+                <p class="text-light">Nombre de places : {{ sortie.participants.count }} / {{ sortie.nbInscriptionsMax }}</p>
+                <p class="text-light">Durée : {{ sortie.duree }}</p>
+                <p class="text-light">Description : {{ sortie.description }}</p>
 
             </div>
             <!--La classe bg-warning ajoute un fond jaune à l'élément-->
             <div class="col">
 
 
-                <p>Ville organisatrice : {{ sortie.siteOrganisateur.nom }}</p>
-                <p>Lieu : {{ sortie.lieu.nom }}</p>
-                <p>Rue : {{ sortie.lieu.rue }}</p>
-                <p>Code postal : {{ sortie.lieu.ville.cpo }}</p>
-                <p>Latitude : {{ sortie.lieu.latitude }}</p>
-                <p>Longitude : {{ sortie.lieu.longitude }}</p>
+                <p class="text-light">Ville organisatrice : {{ sortie.siteOrganisateur.nom }}</p>
+                <p class="text-light">Lieu : {{ sortie.lieu.nom }}</p>
+                <p class="text-light">Rue : {{ sortie.lieu.rue }}</p>
+                <p class="text-light">Code postal : {{ sortie.lieu.ville.cpo }}</p>
+                <p class="text-light">Latitude : {{ sortie.lieu.latitude }}</p>
+                <p class="text-light">Longitude : {{ sortie.lieu.longitude }}</p>
             </div>
             <!--La classe bg-success ajoute un fond vert à l'élément-->
         </div>
