@@ -14,7 +14,7 @@
             {{ form_start(site_update_form) }}
             <tr>
                 <td>
-                    {{ form_row(site_update_form.nom, { 'value': site.nom }) }}
+                    {{ form_row(site_update_form.nom, { 'value': site.nom | upper }) }}
                 </td>
                 <td >
                     {{ form_row(site_update_form.submit, { 'label': 'Modifier' }) }}

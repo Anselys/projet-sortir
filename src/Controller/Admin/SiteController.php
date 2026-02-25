@@ -64,10 +64,13 @@ final class SiteController extends AbstractController
         $siteUpdateForm = $this->createForm(SiteType::class);
         $siteUpdateForm->handleRequest($request);
         if ($siteUpdateForm->isSubmitted() && $siteUpdateForm->isValid()) {
+
             // récupèrer les nouvelles données ville
-            $site = $siteUpdateForm->getData();
+            $siteName = $siteUpdateForm->getData()->getNom();
+            $site->setNom($siteName);
+
+            // checker si un site de ce nom existe déjà.
             $siteFound = $em->getRepository(Site::class)->findOneByNom($site->getNom());
-            // checker si une ville sous ce combo nom/cpo existe déjà.
             if (!$siteFound) {
                 $em->flush();
                 $this->addFlash('success', 'Le site a été modifié avec succès');
