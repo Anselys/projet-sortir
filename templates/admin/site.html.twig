@@ -5,4 +5,39 @@
 {% block main %}
     <h2>Gérer les Sites</h2>
 
+
+    <section>
+        {{ form_errors(search_form) }}
+        {{ form_start(search_form) }}
+        {{ form_end(search_form) }}
+    </section>
+    <section>
+        <table class="table table-dark table-striped">
+            <thead>
+            <tr>
+                <th scope="col">Site</th>
+                <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            {{ form_errors(site_form) }}
+            {% for site in sites %}
+                <tr>
+                    <td>{{ site.nom }}</td>
+                    <td><a href="{{ path('app_admin_site_update', {id: site.id, token: csrf_token('site_update' ~ site.id)}) }}">Modifier</a> - <a
+                            href="{{ path('app_admin_site_delete', { id: site.id, token: csrf_token('site_delete' ~ site.id) }) }}"
+                            onclick="return confirm('Etes vous sur de vouloir supprimer ce site?')">Supprimer</a></td>
+                </tr>
+            {% endfor %}
+            {{ form_start(site_form) }}
+            <tr>
+                <td>
+                    {{ form_row(site_form.nom) }}
+                </td>
+                <td>
+                    {{ form_row(site_form.submit, { 'label': 'Ajouter' }) }}
+                </td>
+            </tr>
+            {{ form_end(site_form) }}
+        </table>
+    </section>
 {% endblock %}

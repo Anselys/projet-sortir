@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+
+{% block main %}
+    <section>
+        <table class="table table-dark table-striped">
+            <thead>
+            <tr>
+                <th scope="col">Site</th>
+                <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            {{ form_errors(site_update_form) }}
+            {{ form_start(site_update_form) }}
+            <tr>
+                <td>
+                    {{ form_row(site_update_form.nom, { 'value': site.nom }) }}
+                </td>
+                <td >
+                    {{ form_row(site_update_form.submit, { 'label': 'Modifier' }) }}
+                </td>
+            </tr>
+            {{ form_end(site_update_form) }}
+        </table>
+    </section>
+
+
+{% endblock %}
