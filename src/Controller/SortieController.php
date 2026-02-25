@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Etat;
 use App\Entity\Sortie;
 use App\Form\SortieType;
 use App\Repository\EtatRepository;
@@ -42,23 +41,6 @@ final class SortieController extends AbstractController
         return $this->render('sortie/edit.html.twig', [
             'sortie_form' => $sortieForm,
         ]);
-    }
-
-    #[Route('/ajax/lieux/{ville}', name: '_ajax_lieux')]
-    public function getLieuxByVille(Ville $ville): JsonResponse
-    {
-        $lieux = $ville->getLieux();
-
-        $data = [];
-
-        foreach ($lieux as $lieu) {
-            $data[] = [
-                'id' => $lieu->getId(),
-                'nom' => $lieu->getNom(),
-            ];
-        }
-
-        return $this->json($data);
     }
 
     #[Route('/{id}', name: '_detail', methods: ['GET'])]
