@@ -61,7 +61,19 @@ final class SortieController extends AbstractController
     {
         $participant = $this->getUser();
 
+        if (!$participant) {
+            throw $this->createAccessDeniedException();
+        }
+
         if (!($sortie->getParticipants()->contains($participant))) {
+
+            if ($sortie->isComplete()) {
+                $this->addFlash('danger', 'Inscription impossible : le nombre maximum de participants est atteint.');
+                return $this->redirectToRoute('app_sortie_detail', [
+                    'id' => $sortie->getId()
+                ]);
+            }
+
             $sortie->addParticipant($participant);
             $em->flush();
             $this->addFlash('success', 'Inscription réussie.');
@@ -77,7 +89,11 @@ final class SortieController extends AbstractController
     {
         $participant = $this->getUser();
 
-        if (!($sortie->getParticipants()->contains($participant))) {
+        if (!$participant) {
+            throw $this->createAccessDeniedException();
+        }
+
+        if ($sortie->getParticipants()->contains($participant)) {
             $sortie->removeParticipant($participant);
             $em->flush();
             $this->addFlash('success', 'Votre inscription à cette sortie a été annulée.');

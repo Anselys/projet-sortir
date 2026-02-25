@@ -75,6 +75,17 @@ class Sortie
         $this->participants = new ArrayCollection();
     }
 
+    //Retourne vrai si le nombre max d'inscription est atteint.
+    public function isComplete(): bool
+    {
+        if ($this->nbInscriptionsMax === null) {
+            return false;
+        }
+
+        return $this->participants->count() >= $this->nbInscriptionsMax;
+    }
+
+
     public function getId(): ?int
     {
         return $this->id;

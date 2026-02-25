@@ -71,7 +71,8 @@
                                 <a href="{{ path('app_sortie_inscription', { id: sortie.id }) }}"
                                    onclick="return confirm('Confirmer l\'inscription ?')">S'inscrire</a>
                             {% else %}
-                                <a href="">Me désinscrire</a>
+                                <a href="{{ path('app_sortie_desinscription', { id: sortie.id }) }}"
+                                   onclick="return confirm('Vous êtes sur le point d\'annuler votre inscription à cette sortie. Confirmer ?')">Me désinscrire</a>
                             {% endif %}
                         {% else %}
                             <a href="{{ path('app_sortie_edit', { id: sortie.id }) }}">Modifier</a>

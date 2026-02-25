@@ -36,12 +36,20 @@
 
     <div>
         {% if not(app.user.pseudo == sortie.organisateur.pseudo) %}
-            <a href="{{ path('app_sortie_inscription', { id: sortie.id }) }}" class="btn btn-secondary" onclick="return confirm('Confirmer l\'inscription ?')">S'inscrire</a>
+            {% if not(app.user.sorties.contains(sortie)) %}
+                <a class="btn btn-secondary" href="{{ path('app_sortie_inscription', { id: sortie.id }) }}"
+                   onclick="return confirm('Confirmer l\'inscription ?')">S'inscrire</a>
+            {% else %}
+                <a class="btn btn-secondary" href="{{ path('app_sortie_desinscription', { id: sortie.id }) }}"
+                   onclick="return confirm('Vous êtes sur le point d\'annuler votre inscription à cette sortie. Confirmer ?')">Me désinscrire</a>
+            {% endif %}
         {% endif %}
         {% if app.user.pseudo == sortie.organisateur.pseudo %}
             <a href="{{ path('app_sortie_edit', { id: sortie.id }) }}" class="btn btn-secondary">Modifier</a>
             <a href="{{ path('app_sortie_delete', { id: sortie.id, token: csrf_token('sortie_delete' ~ sortie.id) }) }}" class="btn btn-secondary" onclick="return confirm('Êtes-vous sûr·e de vouloir supprimer cette sortie ?')">Supprimer</a>
         {% endif %}
+
+
     </div>
 
     <div>
