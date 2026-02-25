@@ -26,7 +26,7 @@ final class VilleController extends AbstractController
         // si une ville a été ajoutée: passer par ici
         if ($villesForm->isSubmitted() && $villesForm->isValid()) {
             $ville = $villesForm->getData();
-            $villeExists = $villeRepository->findOneByNomAndCPO($ville);
+            $villeExists = $villeRepository->findOneByNomAndCPO($ville->getNom(), $ville->getCpo());
             if (!$villeExists) {
                 $em->persist($ville);
                 $em->flush();
