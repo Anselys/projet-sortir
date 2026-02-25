@@ -57,4 +57,11 @@ main h2, main h1, main h3, main h4{
 
 }
 
+.lien-admin{
+    color : red;
+}
+
+.alert{
+    text-align:center;
+}
 

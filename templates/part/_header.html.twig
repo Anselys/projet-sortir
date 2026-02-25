@@ -2,12 +2,6 @@
 <header>
     <h1><img src="{{ asset('images/logo.png') }}" alt="">Sortir</h1>
 
-    {% for status, messages in app.flashes %}
-        {% for message in messages %}
-            <div class="alert alert-{{ status }}">{{ message }}</div>
-        {% endfor %}
-    {% endfor %}
-
     <nav>
         <ul>
             <li><a href="{{ path('app_accueil') }}">Accueil</a></li>

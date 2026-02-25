@@ -37,16 +37,26 @@
     <div>
         {% if not(app.user.pseudo == sortie.organisateur.pseudo) %}
             {% if not(app.user.sorties.contains(sortie)) %}
-                <a class="btn btn-secondary" href="{{ path('app_sortie_inscription', { id: sortie.id }) }}"
+                <a class="btn btn-success" href="{{ path('app_sortie_inscription', { id: sortie.id }) }}"
                    onclick="return confirm('Confirmer l\'inscription ?')">S'inscrire</a>
             {% else %}
-                <a class="btn btn-secondary" href="{{ path('app_sortie_desinscription', { id: sortie.id }) }}"
-                   onclick="return confirm('Vous êtes sur le point d\'annuler votre inscription à cette sortie. Confirmer ?')">Me désinscrire</a>
+                <a class="btn btn-warning" href="{{ path('app_sortie_desinscription', { id: sortie.id }) }}"
+                   onclick="return confirm('Vous êtes sur le point d\'annuler votre inscription à cette sortie. Confirmer ?')">Me
+                    désinscrire</a>
             {% endif %}
         {% endif %}
         {% if app.user.pseudo == sortie.organisateur.pseudo %}
-            <a href="{{ path('app_sortie_edit', { id: sortie.id }) }}" class="btn btn-secondary">Modifier</a>
-            <a href="{{ path('app_sortie_delete', { id: sortie.id, token: csrf_token('sortie_delete' ~ sortie.id) }) }}" class="btn btn-secondary" onclick="return confirm('Êtes-vous sûr·e de vouloir supprimer cette sortie ?')">Supprimer</a>
+            <a href="{{ path('app_sortie_edit', { id: sortie.id }) }}" class="btn btn-warning">Modifier</a>
+            <a href="{{ path('app_sortie_delete', { id: sortie.id, token: csrf_token('sortie_delete' ~ sortie.id) }) }}"
+               class="btn btn-warning"
+               onclick="return confirm('Êtes-vous sûr·e de vouloir supprimer cette sortie ?')">Supprimer</a>
+        {% endif %}
+        {% if is_granted('ROLE_ADMIN') %}
+            <div><a class="btn btn-danger" href="{{ path('app_sortie_edit', { id: sortie.id }) }}">Modifier</a>
+                <a class="btn btn-danger"
+                   href="{{ path('app_sortie_delete', { id: sortie.id, token: csrf_token('sortie_delete' ~ sortie.id) }) }}"
+                   onclick="return confirm('[ADMINISTRATEUR] Êtes-vous sûr·e de vouloir supprimer cette sortie ?')">Supprimer</a>
+            </div>
         {% endif %}
 
 
@@ -56,7 +66,7 @@
         <h3>Liste des participants inscrits :</h3>
 
         {% for participant in participants %}
-            <p class="liens-participants-inscrits"><a  href="{{ path('app_profil_detail', { id: participant.id }) }}">
+            <p class="liens-participants-inscrits"><a href="{{ path('app_profil_detail', { id: participant.id }) }}">
                     {{ participant.pseudo }}
                 </a></p>
         {% endfor %}
