@@ -40,9 +40,17 @@ class VilleRepository extends ServiceEntityRepository
             ->andWhere('v.cpo = :cpo')
             ->setParameter('cpo', $ville->getCpo())
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getOneOrNullResult();
     }
 
+
+    public function searchByName(string $search): array
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->andWhere('s.nom LIKE :recherche')
+            ->setParameter('recherche', '%' . $search . '%');
+        return $qb->getQuery()->getResult();
+
+    }
 
 }
