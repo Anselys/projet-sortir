@@ -176,7 +176,6 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->sorties->contains($sortie)) {
             $this->sorties->add($sortie);
-            $sortie->addParticipant($this);
         }
 
         return $this;
@@ -184,9 +183,7 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeSortie(Sortie $sortie): static
     {
-        if ($this->sorties->removeElement($sortie)) {
-            $sortie->removeParticipant($this);
-        }
+        $this->sorties->removeElement($sortie);
 
         return $this;
     }

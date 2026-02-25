@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Participant;
 use App\Entity\Sortie;
 use App\Form\SortieType;
 use App\Repository\EtatRepository;
@@ -12,7 +13,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[IsGranted('ROLE_USER')]
 #[Route('/sortie', name: 'app_sortie')]
 final class SortieController extends AbstractController
 {
@@ -56,13 +56,35 @@ final class SortieController extends AbstractController
         ]);
     }
 
-    //Inscription à une sortie
-    #[Route('/inscription/{id}', name: '_inscription')]
-    public function inscription(Request $request, EntityManagerInterface $em): Response
+    #[Route('/inscription/{id}', name: '_inscription', requirements: ['id' => '\d+'])]
+    public function inscription(Sortie $sortie, EntityManagerInterface $em): Response
     {
-        return $this->render('accueil/index.html.twig');
+        $participant = $this->getUser();
+
+        if (!($sortie->getParticipants()->contains($participant))) {
+            $sortie->addParticipant($participant);
+            $em->flush();
+            $this->addFlash('success', 'Inscription réussie.');
+        }
+
+        return $this->redirectToRoute('app_sortie_detail', [
+            'id' => $sortie->getId()
+        ]);
     }
 
+    #[Route('/desinscription/{id}', name: '_desinscription', requirements: ['id' => '\d+'])]
+    public function desinscription(Sortie $sortie, EntityManagerInterface $em): Response
+    {
+        $participant = $this->getUser();
+
+        if (!($sortie->getParticipants()->contains($participant))) {
+            $sortie->removeParticipant($participant);
+            $em->flush();
+            $this->addFlash('success', 'Votre inscription à cette sortie a été annulée.');
+        }
+
+        return $this->redirectToRoute('app_accueil');
+    }
 
     #[Route('/edit/{id}', name: '_edit', requirements: ['id' => '\d+'])]
     public function update(Request $request, EntityManagerInterface $em, Sortie $sortie): Response

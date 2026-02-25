@@ -14,7 +14,6 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/profil', name: 'app_profil')]
-#[IsGranted('ROLE_USER')]
 final class ProfilController extends AbstractController
 {
 

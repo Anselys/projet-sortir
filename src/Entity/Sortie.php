@@ -224,6 +224,7 @@ class Sortie
     {
         if (!$this->participants->contains($participant)) {
             $this->participants->add($participant);
+            $participant->addSortie($this);
         }
 
         return $this;
@@ -231,8 +232,9 @@ class Sortie
 
     public function removeParticipant(Participant $participant): static
     {
-        $this->participants->removeElement($participant);
-
+        if ($this->participants->removeElement($participant)) {
+            $participant->removeSortie($this);
+        }
         return $this;
     }
 }

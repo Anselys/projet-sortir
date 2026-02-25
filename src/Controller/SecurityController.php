@@ -8,7 +8,6 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
-#[IsGranted('ROLE_USER')]
 final class SecurityController extends AbstractController
 {
     #[Route(path: '/login', name: 'app_login')]
