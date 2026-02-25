@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+
+{% block main %}
+    <section>
+        <table class="table table-dark table-striped">
+            <thead>
+            <tr>
+                <th scope="col">Ville</th>
+                <th scope="col">Code Postal</th>
+                <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            {{ form_errors(ville_update_form) }}
+             {{ form_start(ville_update_form) }}
+            <tr>
+                <td>
+                    {{ form_row(ville_update_form.nom, { 'value': ville.nom }) }}
+                </td>
+                <td>
+                    {{ form_row(ville_update_form.cpo, { 'value': ville.cpo }) }}
+                </td>
+                <td >
+                    {{ form_row(ville_update_form.submit, { 'label': 'Modifier' }) }}
+                </td>
+            </tr>
+            {{ form_end(ville_update_form) }}
+        </table>
+    </section>
+
+{% endblock %}

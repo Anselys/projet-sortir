@@ -46,7 +46,7 @@ final class SortieController extends AbstractController
     }
 
     #[Route('/{id}', name: '_detail', methods: ['GET'])]
-    public function profil(Sortie $sortie): Response
+    public function detail(Sortie $sortie): Response
     {
         $participants = $sortie->getParticipants();
 
@@ -103,10 +103,18 @@ final class SortieController extends AbstractController
     }
 
     #[Route('/edit/{id}', name: '_edit', requirements: ['id' => '\d+'])]
-    public function update(Request $request, EntityManagerInterface $em, Sortie $sortie): Response
+    public function edit(Request $request, EntityManagerInterface $em, Sortie $sortie): Response
     {
+        if ($sortie->estEnCours()) {
+            $this->addFlash('danger', 'Impossible de modifier une sortie en cours.');
+            return $this->redirectToRoute('app_sortie_detail', [
+                'id' => $sortie->getId()
+            ]);
+        }
+
         $sortieForm = $this->createForm(SortieType::class, $sortie);
         $sortieForm->handleRequest($request);
+
         if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
 
             $em->flush();

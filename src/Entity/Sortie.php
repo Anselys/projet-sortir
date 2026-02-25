@@ -85,6 +85,14 @@ class Sortie
         return $this->participants->count() >= $this->nbInscriptionsMax;
     }
 
+    //Retourne vrai si l'événement est en cours.
+    public function estEnCours(): bool
+    {
+        $now = new \DateTimeImmutable();
+
+        return $this->dateDebut <= $now
+            && $now <= $this->dateDebut->modify('+' . $this->duree . ' minutes');
+    }
 
     public function getId(): ?int
     {
