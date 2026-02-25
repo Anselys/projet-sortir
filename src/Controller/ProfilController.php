@@ -14,7 +14,6 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/profil', name: 'app_profil')]
-#[IsGranted('ROLE_USER')]
 final class ProfilController extends AbstractController
 {
 
@@ -36,7 +35,8 @@ final class ProfilController extends AbstractController
             'participant' => $participant,
         ]);
     }
-    #[Route('/{id}/edit', name: '_edit')]
+
+    #[Route('/edit/{id}', name: '_edit')]
     public function edit(Request $request, EntityManagerInterface $em, FileManager $fileManager): Response
     {
         /** @var Participant $participant */
@@ -58,7 +58,7 @@ final class ProfilController extends AbstractController
 
             $this->addFlash('success', 'Votre profil a été mis à jour.');
 
-            return $this->redirectToRoute('app_profil_detail');
+            return $this->redirectToRoute('app_profil_detail', ['id' => $participant->getId()]);
         }
 
         return $this->render('profil/edit.html.twig', [

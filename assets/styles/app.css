@@ -48,8 +48,13 @@ main {
     min-height: calc(100dvh - var(--header-h));
 }
 
-main h2, main h1{
+main h2, main h1, main h3, main h4{
     text-align:center;
+}
+
+.liens-participants-inscrits{
+    text-align:center;
+
 }
 
 
