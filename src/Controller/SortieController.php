@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Participant;
 use App\Entity\Sortie;
 use App\Entity\Ville;
 use App\Form\SortieType;
@@ -52,4 +53,23 @@ final class SortieController extends AbstractController
 
         return $this->json($data);
     }
+
+    #[Route('/{id}', name: '_detail', methods: ['GET'])]
+    public function profil(Sortie $sortie): Response
+    {
+        $participants = $sortie->getParticipants();
+
+        return $this->render('sortie/detail.html.twig', [
+            'sortie' => $sortie,
+            'participants' => $participants,
+        ]);
+    }
+
+    //Inscription à une sortie
+    #[Route('/{id}/inscription', name: '_inscription')]
+    public function inscription(Request $request, EntityManagerInterface $em): Response
+    {
+        return $this->render('accueil/index.html.twig');
+    }
+
 }
