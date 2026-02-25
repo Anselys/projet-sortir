@@ -64,7 +64,9 @@ final class VilleController extends AbstractController
         $villeUpdateForm->handleRequest($request);
         if ($villeUpdateForm->isSubmitted() && $villeUpdateForm->isValid()) {
             // récupèrer les nouvelles données ville
-            $ville = $villeUpdateForm->getData();
+            $newVille = $villeUpdateForm->getData();
+            $ville->setNom($newVille->getNom());
+            $ville->setCpo($newVille->getCpo());
             $villeFound = $em->getRepository(Ville::class)->findOneByNomAndCPO($ville->getNom(), $ville->getCpo());
             // checker si une ville sous ce combo nom/cpo existe déjà.
             if (!$villeFound) {

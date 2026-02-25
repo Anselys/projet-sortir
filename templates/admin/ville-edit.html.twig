@@ -15,7 +15,7 @@
              {{ form_start(ville_update_form) }}
             <tr>
                 <td>
-                    {{ form_row(ville_update_form.nom, { 'value': ville.nom }) }}
+                    {{ form_row(ville_update_form.nom, { 'value': ville.nom | capitalize }) }}
                 </td>
                 <td>
                     {{ form_row(ville_update_form.cpo, { 'value': ville.cpo }) }}

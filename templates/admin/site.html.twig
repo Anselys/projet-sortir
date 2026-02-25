@@ -22,7 +22,7 @@
             {{ form_errors(site_form) }}
             {% for site in sites %}
                 <tr>
-                    <td>{{ site.nom }}</td>
+                    <td>CAMPUS {{ site.nom | upper }}</td>
                     <td><a href="{{ path('app_admin_site_update', {id: site.id, token: csrf_token('site_update' ~ site.id)}) }}">Modifier</a> - <a
                             href="{{ path('app_admin_site_delete', { id: site.id, token: csrf_token('site_delete' ~ site.id) }) }}"
                             onclick="return confirm('Etes vous sur de vouloir supprimer ce site?')">Supprimer</a></td>

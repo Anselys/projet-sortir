@@ -22,7 +22,7 @@
             {{ form_errors(villes_form) }}
             {% for ville in villes %}
                 <tr>
-                    <td>{{ ville.nom }}</td>
+                    <td>{{ ville.nom | capitalize }}</td>
                     <td>{{ ville.cpo }}</td>
                     <td><a href="{{ path('app_admin_ville_update', {id: ville.id, token: csrf_token('ville_update' ~ ville.id)}) }}">Modifier</a> - <a
                             href="{{ path('app_admin_ville_delete', { id: ville.id, token: csrf_token('ville_delete' ~ ville.id) }) }}"
