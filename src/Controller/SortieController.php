@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[IsGranted('ROLE_USER')]
 #[Route('/sortie', name: 'app_sortie')]
 final class SortieController extends AbstractController
 {
@@ -62,12 +63,24 @@ final class SortieController extends AbstractController
         return $this->render('accueil/index.html.twig');
     }
 
-    #[Route('/edit/{id}', name: '_edit')]
-    public function edit(Request $request, EntityManagerInterface $em): Response
-    {
-        return $this->render('accueil/index.html.twig');
-    }
 
+    #[Route('/edit/{id}', name: '_edit', requirements: ['id' => '\d+'])]
+    public function update(Request $request, EntityManagerInterface $em, Sortie $sortie): Response
+    {
+        $sortieForm = $this->createForm(SortieType::class, $sortie);
+        $sortieForm->handleRequest($request);
+        if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
+
+            $em->flush();
+            $this->addFlash('success', "La sortie a été modifiée");
+            return $this->redirectToRoute('app_sortie_detail', ['id' => $sortie->getId()]);
+        }
+
+        return $this->render('sortie/edit.html.twig', [
+            'sortie_form' => $sortieForm,
+            'sortie' => $sortie,
+        ]);
+    }
 
     #[Route('/delete/{id}', name: '_delete', requirements: ['id' => '\d+'])]
     public function delete(Sortie $sortie, EntityManagerInterface $em, Request $request): Response
@@ -85,6 +98,5 @@ final class SortieController extends AbstractController
         $this->addFlash('danger', 'Impossible de supprimer cette sortie.');
         return $this->redirectToRoute('app_sortie_detail', ['id' => $sortie->getId()]);
     }
-
 
 }
