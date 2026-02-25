@@ -32,7 +32,7 @@ final class VilleController extends AbstractController
                 $em->flush();
                 $this->addFlash('success', 'La ville a été ajoutée avec succès');
             } else {
-                $this->addFlash('warning', 'Cette ville existe déjà');
+                $this->addFlash('danger', 'Cette ville existe déjà');
             }
         }
         $searchForm = $this->createForm(SearchType::class);
@@ -72,7 +72,7 @@ final class VilleController extends AbstractController
                 $this->addFlash('success', 'La ville a été ajoutée avec succès');
                 return $this->redirectToRoute('app_admin_ville');
             }
-            $this->addFlash('error', "La Ville n'a pas pu être mise à jour, il y en a déjà une de ce nom dans la base de données.");
+            $this->addFlash('danger', "La Ville n'a pas pu être mise à jour, il y en a déjà une de ce nom dans la base de données.");
             return $this->redirectToRoute('app_admin_ville');
         }
         return $this->render('admin/ville-edit.html.twig', [
