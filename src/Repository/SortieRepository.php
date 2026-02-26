@@ -8,7 +8,9 @@ use App\Entity\Site;
 use App\Entity\Sortie;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -47,7 +49,7 @@ class SortieRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function archiverSorties(): array
+    public function archiverSorties(EntityManagerInterface $em): array
     {
         $now = new DateTime();
         $sorties = $this->findAll();
@@ -58,9 +60,12 @@ class SortieRepository extends ServiceEntityRepository
                 if ($result->days > 30 && $result->invert != 1) {
                     $sortie->setIsArchivee(true);
                     $sortiesArchiveesToday[] = $sortie;
+                    echo 'SORTIE ARCHIVEE: ' . $sortie->getNom() . " - ID: " . $sortie->getId() . "\n";
                 }
             }
         }
+        $em->flush();
+
         return $sortiesArchiveesToday;
     }
 
