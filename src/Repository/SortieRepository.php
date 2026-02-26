@@ -6,6 +6,7 @@ use App\Entity\Etat;
 use App\Entity\Participant;
 use App\Entity\Site;
 use App\Entity\Sortie;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Form\FormInterface;
@@ -45,6 +46,24 @@ class SortieRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function archiverSorties(): array
+    {
+        $now = new DateTime();
+        $sorties = $this->findAll();
+        $sortiesArchiveesToday = [];
+        foreach ($sorties as $sortie) {
+            if (!$sortie->isArchivee()) {
+                $result = $sortie->getDateDebut()->diff($now);
+                if ($result->days > 30 && $result->invert != 1) {
+                    $sortie->setIsArchivee(true);
+                    $sortiesArchiveesToday[] = $sortie;
+                }
+            }
+        }
+        return $sortiesArchiveesToday;
+    }
+
 
     public function findByTriCustomUtilisateur(FormInterface $triForm, UserInterface $participant, array $etats): array
     {
@@ -113,7 +132,7 @@ class SortieRepository extends ServiceEntityRepository
 
         if ($tri['passees'] != 0) {
             foreach ($etats as $etat) {
-                if($etat->getLibelle() == 'PASSEE'){
+                if ($etat->getLibelle() == 'PASSEE') {
                     $etatPasse = $etat;
                     break;
                 }

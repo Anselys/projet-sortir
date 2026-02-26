@@ -70,6 +70,9 @@ class Sortie
     #[ORM\ManyToMany(targetEntity: Participant::class, inversedBy: 'sorties')]
     private Collection $participants;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $isArchivee = null;
+
     public function __construct()
     {
         $this->participants = new ArrayCollection();
@@ -254,6 +257,18 @@ class Sortie
         if ($this->participants->removeElement($participant)) {
             $participant->removeSortie($this);
         }
+        return $this;
+    }
+
+    public function isArchivee(): ?bool
+    {
+        return $this->isArchivee;
+    }
+
+    public function setIsArchivee(?bool $isArchivee): static
+    {
+        $this->isArchivee = $isArchivee;
+
         return $this;
     }
 }
