@@ -24,16 +24,16 @@ class SortieRepository extends ServiceEntityRepository
         parent::__construct($registry, Sortie::class);
     }
 
-    /**
-     * @return Sortie[] Returns an array of Sortie objects
-     */
+    ////
+    // FONCTIONS DE TRI
+    ////
     public function findBySiteAndEtat(Site $site, Etat $etat): array
     {
         return $this->createQueryBuilder('s')
             ->andWhere('s.siteOrganisateur = :site')
             ->andWhere('s.etat = :etat')
-            ->andWhere('s.isArchivee = :archive')
-            ->setParameter('archive', false)
+            ->andWhere('s.isArchivee != :archive')
+            ->setParameter('archive', true)
             ->setParameter('etat', $etat)
             ->setParameter('site', $site)
             ->orderBy('s.dateDebut', 'ASC')
@@ -46,32 +46,11 @@ class SortieRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('s')
             ->andWhere('s.etat = :etat')
             ->setParameter('etat', $etat)
-            ->andWhere('s.isArchivee = :archive')
-            ->setParameter('archive', false)
+            ->andWhere('s.isArchivee != :archive')
+            ->setParameter('archive', true)
             ->orderBy('s.dateDebut', 'ASC')
             ->getQuery()
             ->getResult();
-    }
-
-    public function archiverSorties(EntityManagerInterface $em): array
-    {
-        $now = new DateTime();
-        $sorties = $this->findAll();
-        $sortiesArchiveesToday = [];
-        foreach ($sorties as $sortie) {
-            if (!$sortie->isArchivee()) {
-                $result = $sortie->getDateDebut()->diff($now);
-                if ($result->days > 30 && $result->invert != 1) {
-                    $sortie->setIsArchivee(true);
-                    $sortiesArchiveesToday[] = $sortie;
-                    echo 'SORTIE ARCHIVEE: ' . $sortie->getNom() . " - ID: " . $sortie->getId() . "\n";
-                }
-            }
-            $sortie->setIsArchivee(false);
-        }
-        $em->flush();
-
-        return $sortiesArchiveesToday;
     }
 
 
@@ -151,16 +130,16 @@ class SortieRepository extends ServiceEntityRepository
             $qb->setParameter('etat', $etatPasse);
         }
 
-        $qb->andWhere('s.isArchivee = :archive')
-        ->setParameter('archive', false);
+        $qb->andWhere('s.isArchivee != :archive')
+        ->setParameter('archive', true);
         return $qb->getQuery()->getResult();
     }
 
     public function findAll(): array
     {
         $qb = $this->createQueryBuilder('s')
-            ->andWhere('s.isArchivee = :archive')
-            ->setParameter('archive', false);
+            ->andWhere('s.isArchivee != :archive')
+            ->setParameter('archive', true);
         return $qb->getQuery()->getResult();
     }
 
@@ -170,5 +149,29 @@ class SortieRepository extends ServiceEntityRepository
             ->andWhere('s.isArchivee = :archive')
             ->setParameter('archive', true);
         return $qb->getQuery()->getResult();
+    }
+
+    ////
+    // ARCHIVAGE
+    ////
+
+    public function archiverSorties(EntityManagerInterface $em): array
+    {
+        $now = new DateTime();
+        $sorties = $this->findAll();
+        $sortiesArchiveesToday = [];
+        foreach ($sorties as $sortie) {
+            if (!$sortie->isArchivee()) {
+                $result = $sortie->getDateDebut()->diff($now);
+                if ($result->days > 30 && $result->invert != 1) {
+                    $sortie->setIsArchivee(true);
+                    $sortiesArchiveesToday[] = $sortie;
+                    echo 'SORTIE ARCHIVEE: ' . $sortie->getNom() . " - ID: " . $sortie->getId() . "\n";
+                }
+            }
+        }
+        $em->flush();
+
+        return $sortiesArchiveesToday;
     }
 }

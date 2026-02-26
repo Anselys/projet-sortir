@@ -58,4 +58,10 @@ final class AccueilController extends AbstractController
             'tri_form' => $triForm->createView(),
         ]);
     }
+
+    #[Route('/reset', name: 'app_tri_reset')]
+    public function reset_tri(): Response{
+        return $this->redirectToRoute('app_accueil');
+
+    }
 }
