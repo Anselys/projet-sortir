@@ -65,6 +65,7 @@ final class AccueilController extends AbstractController
 
     #[Route('/reset', name: 'app_tri_reset')]
     public function reset_tri(): Response{
+        return $this->redirectToRoute('app_accueil');
 
     }
 }
