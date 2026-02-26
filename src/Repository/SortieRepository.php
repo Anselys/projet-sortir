@@ -32,6 +32,8 @@ class SortieRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('s')
             ->andWhere('s.siteOrganisateur = :site')
             ->andWhere('s.etat = :etat')
+            ->andWhere('s.isArchivee = :archive')
+            ->setParameter('archive', false)
             ->setParameter('etat', $etat)
             ->setParameter('site', $site)
             ->orderBy('s.dateDebut', 'ASC')
@@ -44,6 +46,8 @@ class SortieRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('s')
             ->andWhere('s.etat = :etat')
             ->setParameter('etat', $etat)
+            ->andWhere('s.isArchivee = :archive')
+            ->setParameter('archive', false)
             ->orderBy('s.dateDebut', 'ASC')
             ->getQuery()
             ->getResult();
@@ -63,6 +67,7 @@ class SortieRepository extends ServiceEntityRepository
                     echo 'SORTIE ARCHIVEE: ' . $sortie->getNom() . " - ID: " . $sortie->getId() . "\n";
                 }
             }
+            $sortie->setIsArchivee(false);
         }
         $em->flush();
 
@@ -146,7 +151,24 @@ class SortieRepository extends ServiceEntityRepository
             $qb->setParameter('etat', $etatPasse);
         }
 
+        $qb->andWhere('s.isArchivee = :archive')
+        ->setParameter('archive', false);
         return $qb->getQuery()->getResult();
     }
 
+    public function findAll(): array
+    {
+        $qb = $this->createQueryBuilder('s')
+            ->andWhere('s.isArchivee = :archive')
+            ->setParameter('archive', false);
+        return $qb->getQuery()->getResult();
+    }
+
+
+    public function getSortiesArchivees(): array{
+        $qb = $this->createQueryBuilder('s')
+            ->andWhere('s.isArchivee = :archive')
+            ->setParameter('archive', true);
+        return $qb->getQuery()->getResult();
+    }
 }
