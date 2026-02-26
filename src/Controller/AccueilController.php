@@ -22,7 +22,6 @@ final class AccueilController extends AbstractController
 
         $participant = $this->getUser();
         $etats = $etatRepository->findAll();
-        $today = new \DateTime();
         $sorties = [];
         $triForm = $this->createForm(TriSortiesType::class);
         $triForm->handleRequest($request);
@@ -31,10 +30,8 @@ final class AccueilController extends AbstractController
         if ($triForm->isSubmitted() && $triForm->isValid()) {
             $sorties = $sortieRepository->findByTriCustomUtilisateur($triForm, $participant, $etats);
 
-            $this->addFlash('success', 'Tri activé');
             return $this->render('accueil/index.html.twig', [
                 'sorties' => $sorties,
-                'today' => $today,
                 'participant' => $participant,
                 'tri_form' => $triForm->createView(),
             ]);
@@ -57,7 +54,6 @@ final class AccueilController extends AbstractController
 
         return $this->render('accueil/index.html.twig', [
             'sorties' => $sorties,
-            'today' => $today,
             'participant' => $participant,
             'tri_form' => $triForm->createView(),
         ]);

@@ -5,9 +5,13 @@
 {% block main %}
 
     <div class="row justify-content-center">
-        <div class="card text-white bg-info mb-3" style="max-width: 30rem;">
-            <div class="card-body">
-                <h4 class="card-title">Ajouter un utilisateur</h4>
+        <div class="card text-white bg-secondary mb-3" style="max-width: 32rem;">
+            <div class="card-header d-flex align-items-center justify-content-center" style="min-height: 60px;">
+                <h2 class="card-title mb-0">
+Ajouter un utilisateur
+                </h2>
+            </div>
+            <div class="card-body mt-4">
 
                 {{ form_errors(inscription_form) }}
                 {{ form_start(inscription_form) }}

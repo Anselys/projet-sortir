@@ -32,13 +32,13 @@ class TriSortiesType extends AbstractType
                 }
             ])
             ->add('recherche', TextType::class, [
-                'label' => 'Le nom de la sortie contient:',
+                'label' => 'Le nom de la sortie contient :',
                 'required' => false,
             ])
             ->add('etat', EntityType::class, [
                 'class' => Etat::class,
                 'choice_label' => 'libelle',
-                'label' => 'Etat de la sortie:',
+                'label' => 'État de la sortie :',
                 'required' => false,
                 'placeholder' => 'TOUTES LES SORTIES',
                 'query_builder' => function (EntityRepository $er) {
