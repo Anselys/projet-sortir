@@ -60,7 +60,7 @@ class ParticipantFixtures extends Fixture
         $manager->persist($userParticipant);
         $manager->persist($adminParticipant);
 
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 0; $i < 20; $i++) {
             $site = $faker->randomElement($sites);
             $isAdmin = $faker->boolean();
             $roles = $isAdmin ? ['ROLE_ADMIN', 'ROLE_USER'] : ['ROLE_USER'];

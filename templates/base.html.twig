@@ -18,8 +18,8 @@
 
 {% include('part/_header.html.twig') %}
 
-<main>
-
+{#Messages flash#}
+<div class="flash-container">
     {% for status, messages in app.flashes %}
         {% for message in messages %}
             <div class="alert alert-{{ status }} alert-secondary">
@@ -28,9 +28,15 @@
             </div>
         {% endfor %}
     {% endfor %}
+</div>
+
+
+<main>
+
 
     {% block main %}
     {% endblock %}
+
 
 </main>
 

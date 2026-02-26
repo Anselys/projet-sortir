@@ -16,6 +16,7 @@ class SiteType extends AbstractType
         $builder
             ->add('nom', TextType::class, array('label' => false))
             ->add('submit', SubmitType::class)
+
         ;
     }
 

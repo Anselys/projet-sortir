@@ -34,7 +34,7 @@ class LieuFixtures extends Fixture
             'Salle de concert'
         ];
 
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 0; $i < 30; $i++) {
             $lieu = new Lieu();
             $ville = $faker->randomElement($villes);
 

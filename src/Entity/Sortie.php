@@ -71,7 +71,7 @@ class Sortie
     private Collection $participants;
 
     #[ORM\Column(nullable: true)]
-    private ?bool $isArchivee = null;
+    private ?bool $isArchivee = false;
 
     public function __construct()
     {

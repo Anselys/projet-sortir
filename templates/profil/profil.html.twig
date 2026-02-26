@@ -4,31 +4,54 @@
 
 {% block main %}
 
-    <h2>Profil de {{ participant.pseudo }}</h2>
 
-    <div>
-        <div>
-            {% if participant.urlPhoto %}
-                <img src="{{ asset('uploads/photos/' ~ participant.urlPhoto) }}"
-                     width="250px"
-                     alt="Image de profil de {{ participant.pseudo }}"
-                     loading="lazy">
-            {% endif %}
+
+
+    <div class="row justify-content-center">
+        <div class="card text-white bg-secondary mb-3" style="max-width: 32rem;">
+            <div class="card-header d-flex align-items-center justify-content-center" style="min-height: 60px;">
+                <h2 class="card-title mb-0">
+                    Profil de {{ participant.pseudo }}
+                </h2>
+            </div>
+            <div class="card-body mt-4">
+
+
+                <div class="text-center mb-3">
+                    {% if participant.urlPhoto %}
+                        <img src="{{ asset('uploads/photos/' ~ participant.urlPhoto) }}"
+                             width="200"
+                             class="rounded"
+                             alt="Image de profil de {{ participant.pseudo }}"
+                             loading="lazy">
+                    {% endif %}
+                </div>
+
+                <p><strong>Pseudo :</strong> {{ participant.pseudo }}</p>
+                <p><strong>Nom :</strong> {{ participant.nom }}</p>
+                <p><strong>Prénom :</strong> {{ participant.prenom }}</p>
+                <p><strong>Campus : </strong> {{ participant.site.nom }} </p>
+
+                {% if app.user and app.user.id == participant.id %}
+                    <p><strong>Adresse mail :</strong> {{ participant.email }}</p>
+                    <p><strong>Téléphone :</strong> {{ participant.telephone }}</p>
+                {% endif %}
+
+                {% if app.user and app.user.id == participant.id %}
+                    <div class="text-center mt-3">
+                        <a href="{{ path('app_profil_edit', { id: participant.id }) }}"
+                           class="btn btn-primary">
+                            Modifier mon profil
+                        </a>
+                        <a href="{{ path('app_profil_update_password', { id: participant.id }) }}"
+                           class="btn btn-primary">
+                            Modifier mon mot de passe
+                        </a>
+                    </div>
+                {% endif %}
+
+            </div>
         </div>
-
-        <p>Pseudo : {{ participant.pseudo }}</p>
-        <p>Nom : {{ participant.nom }}</p>
-        <p>Prénom : {{ participant.prenom }}</p>
-        {% if app.user and app.user.id == participant.id %}
-            <p>Adresse mail : {{ participant.email }}</p>
-            <p>Téléphone : {{ participant.telephone }}</p>
-        {% endif %}
-
     </div>
-
-    {% if app.user and app.user.id == participant.id %}
-        <a href="{{ path('app_profil_edit', { id: participant.id }) }}" class="btn btn-primary">Modifier mon profil</a>
-        <a href="{{ path('app_profil_update_password', { id: participant.id }) }}" class="btn btn-primary">Modifier mon mot de passe</a>
-    {% endif %}
 
 {% endblock %}

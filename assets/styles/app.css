@@ -1,7 +1,7 @@
 @import "footer.css";
 
 :root {
-    --header-h: 88px;
+    --header-h: 150px;
 }
 
 * {
@@ -12,31 +12,31 @@
 
 body {
     background-size: cover;
-    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.8)), url('../images/BG_synthwave_landscape_cc0.png') fixed center center;
+    background: #3b3333;
+    /*background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.8)), url('../images/BG_synthwave_landscape_cc0.png') fixed center center;*/
     color: #EEE;
     font-family: 'Roboto', sans-serif;
-    padding: 10px;
-
+    padding-top: 150px;
     a {
         text-decoration: none;
     }
 }
 
-nav ul {
-    display: flex;
-    flex-direction: row;
-    list-style: none;
-    gap: 2em;
+.navbar {
+    --bs-navbar-padding-y: 1.2rem;
 }
 
-nav li a {
-    text-decoration: none;
-    color: inherit;
+.nav-admin {
+    color: #ff0000 !important; /* couleur normale */
+}
+
+.nav-admin:hover {
+    color: #ffffff !important; /* couleur au survol */
 }
 
 main {
     color : white;
-    padding: 1rem;
+    padding: 1rem 1rem 8em;
     min-height: calc(100dvh - var(--header-h));
 }
 
@@ -62,3 +62,23 @@ main h2, main h1, main h3, main h4{
     text-align:center;
 }
 
+.flash-container {
+    margin:0;
+    padding: 0;
+}
+
+.flash-container .alert {
+    border-radius: 0;
+    max-width: 30%;          /* moins large */
+    margin: 0 auto;
+}
+
+.flash-container .alert + .alert {
+    margin-top: 4px;         /* petit espace entre messages */
+}
+
+.form-check-input:checked {
+    background-color: #00e1ff;
+    border-color: #00e1ff;
+    box-shadow: 0 0 6px #00e1ff;
+}
