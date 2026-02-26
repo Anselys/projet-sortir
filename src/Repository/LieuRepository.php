@@ -41,4 +41,12 @@ class LieuRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+    public function getLieuxByVille(\App\Entity\Ville $ville)
+    {
+        return $this->createQueryBuilder('l')
+            ->andWhere('l.ville = :ville')
+            ->setParameter('ville', $ville)
+            ->getQuery()
+            ->getResult();
+    }
 }
