@@ -103,7 +103,6 @@ class SortieRepository extends ServiceEntityRepository
 
         if ($tri['inscrit'] != 0) {
             // if connected participant is in sortie.participants > add to filter
-            // TODO: chercher comment faire les join. ça ne marche pas
             $qb->join('s.participants', 'participants')
                 ->andWhere('participants.id = :participant_ID')
                 ->setParameter('participant_ID', $participant->getId());
