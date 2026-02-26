@@ -6,6 +6,7 @@ use App\Entity\Site;
 use App\Form\SearchType;
 use App\Form\SiteType;
 use App\Repository\SiteRepository;
+use App\Repository\SortieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -84,7 +85,6 @@ final class SiteController extends AbstractController
             'site' => $site,
         ]);
     }
-
 
     #[Route('/site/delete/{id}', name: '_site_delete', requirements: ['id' => '\d+'])]
     public function delete(Site $site, EntityManagerInterface $em, Request $request): Response
