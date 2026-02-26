@@ -19,42 +19,31 @@
                 <th scope="col">Actions</th>
             </tr>
             </thead>
-            {#            {{ form_errors(site_form) }} #}
             {% for utilisateur in utilisateurs %}
                 {% set statut = utilisateur.isActif ? 'actif' : 'inactif' %}
                 {% set nouveauStatut = utilisateur.isActif ? 'inactif' : 'actif' %}
                 {% set statutBtnText = utilisateur.isActif ? 'Rendre inactif' : 'Rendre actif' %}
-                {% set nomPrenom = utilisateur.prenom ~ ' ' ~ utilisateur.nom|upper %}
+                {% set prenomNom = utilisateur.prenom ~ ' ' ~ utilisateur.nom|upper %}
 
                 <tr>
-                    <td>{{ nomPrenom }}</td>
+                    <td>{{ prenomNom }}</td>
                     <td>{{ utilisateur.email }}</td>
                     <td class="{{  utilisateur.isActif ? 'text-success' : 'text-danger' }}">{{ statut|capitalize }}</td>
                     <td>
                         <a
                             href="{{ path('app_admin_changer_statut_utilisateur', { id: utilisateur.id }) }}"
                             class="btn {{ utilisateur.isActif ? 'btn-secondary' : 'btn-info' }}"
-                            onclick="return confirm('Rendre {{ nomPrenom }} {{ nouveauStatut }} ?')"
+                            onclick="return confirm('Rendre {{ prenomNom }} {{ nouveauStatut }} ?')"
                         >
                             {{ statutBtnText }}
                         </a>
-{#                        <a class="btn btn-danger">Supprimer</a>#}
+                        <a
+                            href="{{ path('app_admin_utilisateur_delete', { id: utilisateur.id, token: csrf_token('utilisateur_delete' ~ utilisateur.id) }) }}"
+                            onclick="return confirm('Êtes-vous sûr(e) de vouloir supprimer cet utilisateur ?')"
+                            class="btn btn-danger">Supprimer</a>
                     </td>
-                    {#                    <td><a href="{{ path('app_admin_site_update', {id: site.id, token: csrf_token('site_update' ~ site.id)}) }}">Modifier</a> - <a #}
-                    {#                            href="{{ path('app_admin_site_delete', { id: site.id, token: csrf_token('site_delete' ~ site.id) }) }}" #}
-                    {#                            onclick="return confirm('Etes vous sur de vouloir supprimer ce site?')">Supprimer</a></td> #}
-                </tr>
+                     </tr>
             {% endfor %}
-            {#            {{ form_start(site_form) }} #}
-            {#            <tr> #}
-            {#                <td> #}
-            {#                    {{ form_row(site_form.nom) }} #}
-            {#                </td> #}
-            {#                <td> #}
-            {#                    {{ form_row(site_form.submit, { 'label': 'Ajouter' }) }} #}
-            {#                </td> #}
-            {#            </tr> #}
-            {#            {{ form_end(site_form) }} #}
         </table>
     </section>
 {% endblock %}

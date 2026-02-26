@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Participant;
+use App\Entity\Site;
 use App\Entity\Sortie;
 use App\Form\SearchType;
 use App\Repository\ParticipantRepository;
@@ -16,9 +17,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('ROLE_ADMIN')]
 #[Route('/admin', name: 'app_admin')]
-final class UtilisateursController extends AbstractController
+final class UtilisateurController extends AbstractController
 {
-    #[Route('/utilisateurs', name: '_utilisateurs')]
+    #[Route('/utilisateur', name: '_utilisateur')]
     public function index(Request $request, ParticipantRepository $participantRepository, EntityManagerInterface $em): Response
     {
         $searchForm = $this->createForm(SearchType::class);
@@ -36,31 +37,10 @@ final class UtilisateursController extends AbstractController
             $utilisateurs = $participantRepository->findAll();
         }
 
-        return $this->render('admin/utilisateurs.html.twig', [
+        return $this->render('admin/utilisateur.html.twig', [
             'search_form' => $searchForm->createView(),
             'utilisateurs' => $utilisateurs,
         ]);
-    }
-
-    #[Route('/rendre-actif/{id}', name: '_rendre_actif', requirements: ['id' => '\d+'])]
-    public function rendreActif(Participant $participant, EntityManagerInterface $em): Response
-    {
-        $utilisateurConnecte = $this->getUser();
-
-        if (!$utilisateurConnecte) {
-            throw $this->createAccessDeniedException();
-        }
-
-        $participant->setIsActif(true);
-        $em->persist($participant);
-        $em->flush();
-
-        $message = sprintf("%s %s est désormais actif", $participant->getPrenom(), $participant->getNom());
-
-        $this->addFlash('success', $message);
-
-        return $this->redirectToRoute('app_admin_utilisateurs');
-
     }
 
     #[Route('/changer-statut-utilisateur/{id}', name: '_changer_statut_utilisateur', requirements: ['id' => '\d+'])]
@@ -81,8 +61,24 @@ final class UtilisateursController extends AbstractController
 
         $this->addFlash('success', $message);
 
-        return $this->redirectToRoute('app_admin_utilisateurs');
+        return $this->redirectToRoute('app_admin_utilisateur');
+    }
 
+    #[Route('/utilisateur/delete/{id}', name: '_utilisateur_delete', requirements: ['id' => '\d+'])]
+    public function delete(Participant $utilisateur, EntityManagerInterface $em, Request $request): Response
+    {
+        $token = $request->query->get('token');
+        if ($this->isCsrfTokenValid('utilisateur_delete' . $utilisateur->getId(), $token)) {
+            $em->remove($utilisateur);
+            $em->flush();
+
+            $this->addFlash('success', 'L\'utilisateur a été supprimé');
+
+            return $this->redirectToRoute('app_admin_utilisateur');
+        }
+
+        $this->addFlash('danger', 'Impossible de supprimer cet utilisateur.');
+        return $this->redirectToRoute('app_admin_utilisateur', ['id' => $utilisateur->getId()]);
     }
 
 }
