@@ -20,8 +20,8 @@ class TriSortiesType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            // TODO: récuperer l'info du user connecté pour mettre des valeurs par défaut dans SITE
-            // & mettre l'état par défaut sur OUVERTE
+            // TODO: récuperer l'info du user connecté pour mettre des valeurs par défaut dans SITE & mettre l'état par défaut sur OUVERTE
+
             ->add('Site', EntityType::class, [
                 'class' => Site::class,
                 'choice_label' => 'nom',
@@ -79,7 +79,7 @@ class TriSortiesType extends AbstractType
                 'label' => 'Réinitialiser',
                 'attr' => [
                     'class' => 'btn btn-primary',
-                ]
+                    ]
             ])
         ;
     }
