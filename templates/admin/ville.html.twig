@@ -4,14 +4,33 @@
 
 {% block main %}
 
-    {# Barre de recherche #}
+    <h2 class="mb-5">Administrer les villes</h2>
+
     <div class="row justify-content-center">
         <div class="card text-white bg-secondary mb-3" style="width: 30%;">
-            <div class="card-body">
 
-                {{ form_errors(search_form) }}
-                {{ form_start(search_form) }}
-                {{ form_end(search_form) }}
+            <div class="card-body d-flex align-items-center">
+
+                <div class="w-100">
+
+                    {{ form_start(search_form) }}
+
+                    <div class="input-group">
+                        {{ form_widget(search_form.nom, {
+                            attr: {
+                                class: 'form-control',
+                                placeholder: 'Recherche par nom...'
+                            }
+                        }) }}
+
+                        <button class="btn btn-primary" type="submit">
+                            Rechercher
+                        </button>
+                    </div>
+
+                    {{ form_end(search_form) }}
+
+                </div>
 
             </div>
         </div>

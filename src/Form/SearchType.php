@@ -16,10 +16,8 @@ class SearchType extends AbstractType
             ->add('nom',TextType::class, [
                 'label' => 'Recherche par nom : ',
                 'required' => false,
-            ])
-            ->add('submit', SubmitType::class, [
-                'label' => 'Rechercher',
             ]);
+
     }
 
     public function configureOptions(OptionsResolver $resolver): void

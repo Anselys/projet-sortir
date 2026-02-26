@@ -4,14 +4,33 @@
 
 {% block main %}
 
+    <h2 class="mb-5">Administrer les sites</h2>
+
+    {# BARRE DE RECHERCHE #}
     <div class="row justify-content-center">
         <div class="card text-white bg-secondary mb-3" style="width: 30%;">
-            <div class="card-body">
 
-                {{ form_errors(search_form) }}
-                {{ form_start(search_form) }}
-                {{ form_end(search_form) }}
+            <div class="card-body d-flex align-items-center">
+                <div class="w-100">
 
+                    {{ form_start(search_form) }}
+
+                    <div class="input-group">
+                        {{ form_widget(search_form.nom, {
+                            attr: {
+                                class: 'form-control',
+                                placeholder: 'Recherche par nom...'
+                            }
+                        }) }}
+
+                        <button class="btn btn-primary" type="submit">
+                            Rechercher
+                        </button>
+                    </div>
+
+                    {{ form_end(search_form) }}
+
+                </div>
             </div>
         </div>
     </div>
@@ -29,101 +48,49 @@
                 </tr>
                 </thead>
 
-{#                <tbody>#}
-
-{#                {% for site in sites %}#}
-{#                    <tr class="table-primary">#}
-{#                        <td>CAMPUS {{ site.nom|upper }}</td>#}
-
-{#                        <td  style="width: 20%;">#}
-{#                            <a class="btn btn-sm btn-info"#}
-{#                               href="{{ path('app_admin_site_update', { id: site.id, token: csrf_token('site_update' ~ site.id) }) }}">#}
-{#                                Modifier#}
-{#                            </a>#}
-
-{#                            <a class="btn btn-sm btn-danger"#}
-{#                               href="{{ path('app_admin_site_delete', { id: site.id, token: csrf_token('site_delete' ~ site.id) }) }}"#}
-{#                               onclick="return confirm('Êtes-vous sûr·e de vouloir supprimer ce site ?')">#}
-{#                                Supprimer#}
-{#                            </a>#}
-{#                        </td>#}
-{#                    </tr>#}
-{#                {% endfor %}#}
-
-{#                #}{# ligne d’ajout #}
-{#                {{ form_start(site_form) }}#}
-{#                <tr class="table-primary">#}
-{#                    <td>#}
-{#                        {{ form_row(site_form.nom) }}#}
-{#                    </td>#}
-
-{#                    <td style="width: 20%;">#}
-{#                        {{ form_widget(site_form.submit, {#}
-{#                            label: 'Ajouter',#}
-{#                            attr: { class: 'btn btn-success' }#}
-{#                        }) }}#}
-{#                    </td>#}
-{#                </tr>#}
-{#                {{ form_end(site_form) }}#}
-
-{#                </tbody>#}
-
-
-
                 <tbody>
+
+
                 {% for site in sites %}
                     <tr class="table-primary">
+                        <td>CAMPUS {{ site.nom|upper }}</td>
 
-                        {% if editingId is defined and editingId == site.id %}
-                            {# MODE ÉDITION (ligne cliquée) #}
+                        <td class="text-end" style="width: 20%;">
+                            <a class="btn btn-sm btn-info"
+                               href="{{ path('app_admin_site_update', { id: site.id, token: csrf_token('site_update' ~ site.id) }) }}">
+                                Modifier
+                            </a>
 
-                            {{ form_start(site_edit_form) }}
-
-                            <td>
-                                {{ form_row(site_edit_form.nom) }}
-                            </td>
-
-                            <td class="text-end" style="width: 20%;">
-                                {{ form_widget(site_edit_form.submit, {
-                                    label: 'Enregistrer',
-                                    attr: { class: 'btn btn-success btn-sm' }
-                                }) }}
-
-                                <a class="btn btn-sm btn-secondary"
-                                   href="{{ path('app_admin_site') }}">
-                                    Annuler
-                                </a>
-                            </td>
-
-                            {{ form_end(site_edit_form) }}
-
-                        {% else %}
-                            {# MODE AFFICHAGE #}
-                            <td>CAMPUS {{ site.nom|upper }}</td>
-
-                            <td class="text-end" style="width: 20%;">
-                                <a class="btn btn-sm btn-info"
-                                   href="{{ path('app_admin_site_update', { id: site.id }) }}">
-                                    Modifier
-                                </a>
-
-                                <a class="btn btn-sm btn-danger"
-                                   href="{{ path('app_admin_site_delete', { id: site.id, token: csrf_token('site_delete' ~ site.id) }) }}"
-                                   onclick="return confirm('Êtes-vous sûr·e de vouloir supprimer ce site ?')">
-                                    Supprimer
-                                </a>
-                            </td>
-                        {% endif %}
-
+                            <a class="btn btn-sm btn-danger"
+                               href="{{ path('app_admin_site_delete', { id: site.id, token: csrf_token('site_delete' ~ site.id) }) }}"
+                               onclick="return confirm('Êtes-vous sûr·e de vouloir supprimer ce site ?')">
+                                Supprimer
+                            </a>
+                        </td>
                     </tr>
                 {% endfor %}
+
+                {{ form_start(site_form) }}
+                <tr class="table-primary">
+                    <td>
+                        {{ form_row(site_form.nom) }}
+                    </td>
+
+                    <td class="text-end" style="width: 20%;">
+                        {{ form_widget(site_form.submit, {
+                            label: 'Ajouter',
+                            attr: { class: 'btn btn-success' }
+                        }) }}
+                    </td>
+
+                </tr>
+                {{ form_end(site_form) }}
+
                 </tbody>
-
-
-
 
             </table>
         </div>
 
     </section>
+
 {% endblock %}
