@@ -1,10 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Gérer les Sites{% endblock %}
+{% block title %}{{ parent()}} | Admin - Gérer les Sites{% endblock %}
 
 {% block main %}
     <h2>Gérer les Sites</h2>
-
 
     <section>
         {{ form_errors(search_form) }}

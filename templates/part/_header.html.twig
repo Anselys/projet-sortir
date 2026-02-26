@@ -27,19 +27,19 @@
                         <li class="nav-item"><a class="nav-link" href="{{ path('app_login') }}">Connexion</a></li>
                     {% endif %}
 
-
+                    {% if is_granted('ROLE_ADMIN') %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
                                aria-haspopup="true" aria-expanded="false">Administrer</a>
                             <div class="dropdown-menu">
-                                {% if is_granted('ROLE_ADMIN') %}
-                                <a class="dropdown-item" href="{{ path('app_admin_ville') }}">Villes</a>
-                                <a class="dropdown-item" href="{{ path('app_admin_site') }}">Sites</a>
-                                <a class="dropdown-item" href="{{ path('app_admin_inscription') }}">Inscriptions</a>
-                                {% endif %}
+                                    <a class="dropdown-item" href="{{ path('app_admin_utilisateurs') }}">Utilisateurs</a>
+                                    <a class="dropdown-item" href="{{ path('app_admin_ville') }}">Villes</a>
+                                    <a class="dropdown-item" href="{{ path('app_admin_site') }}">Sites</a>
+                                    <a class="dropdown-item" href="{{ path('app_admin_inscription') }}">Inscriptions</a>
                             </div>
-                        </li>
 
+                        </li>
+                    {% endif %}
                 </ul>
 
             </div>

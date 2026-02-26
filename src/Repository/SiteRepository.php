@@ -48,6 +48,5 @@ class SiteRepository extends ServiceEntityRepository
         $qb->andWhere('s.nom LIKE :recherche')
             ->setParameter('recherche', '%' . $search . '%');
         return $qb->getQuery()->getResult();
-
     }
 }
