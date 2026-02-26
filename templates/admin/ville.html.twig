@@ -3,46 +3,79 @@
 {% block title %}Gérer les Villes{% endblock %}
 
 {% block main %}
-    <h2>Gérer les villes</h2>
 
-    <section>
-        {{ form_errors(search_form) }}
-        {{ form_start(search_form) }}
-        {{ form_end(search_form) }}
-    </section>
-    <section>
-        <table class="table table-dark table-striped">
-            <thead>
-            <tr>
-                <th scope="col">Ville</th>
-                <th scope="col">Code Postal</th>
-                <th scope="col">Actions</th>
-            </tr>
-            </thead>
-            {{ form_errors(villes_form) }}
-            {% for ville in villes %}
+    {# Barre de recherche #}
+    <div class="row justify-content-center">
+        <div class="card text-white bg-secondary mb-3" style="width: 30%;">
+            <div class="card-body">
+
+                {{ form_errors(search_form) }}
+                {{ form_start(search_form) }}
+                {{ form_end(search_form) }}
+
+            </div>
+        </div>
+    </div>
+
+
+    {# Tableau des villes #}
+    <section class="mt-4">
+
+        <div class="table-responsive w-50 mx-auto">
+            <table class="table w-100">
+
+                <thead>
                 <tr>
-                    <td>{{ ville.nom | capitalize }}</td>
-                    <td>{{ ville.cpo }}</td>
-                    <td><a href="{{ path('app_admin_ville_update', {id: ville.id, token: csrf_token('ville_update' ~ ville.id)}) }}">Modifier</a> - <a
-                            href="{{ path('app_admin_ville_delete', { id: ville.id, token: csrf_token('ville_delete' ~ ville.id) }) }}"
-                        onclick="return confirm('Etes vous sur de vouloir supprimer cette ville?')">Supprimer</a></td>
+                    <th scope="col">Ville</th>
+                    <th scope="col">Code Postal</th>
+                    <th scope="col" style="width: 20%;">Actions</th>
                 </tr>
-            {% endfor %}
-            {{ form_start(villes_form) }}
-                <tr>
+                </thead>
+
+                <tbody>
+
+                {% for ville in villes %}
+                    <tr class="table-primary">
+                        <td>{{ ville.nom|capitalize }}</td>
+                        <td>{{ ville.cpo }}</td>
+
+                        <td class="text-end" style="width: 20%;">
+                            <a class="btn btn-sm btn-info"
+                               href="{{ path('app_admin_ville_update', { id: ville.id, token: csrf_token('ville_update' ~ ville.id) }) }}">
+                                Modifier
+                            </a>
+
+                            <a class="btn btn-sm btn-danger"
+                               href="{{ path('app_admin_ville_delete', { id: ville.id, token: csrf_token('ville_delete' ~ ville.id) }) }}"
+                               onclick="return confirm('Êtes-vous sûr·e de vouloir supprimer cette ville ?')">
+                                Supprimer
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+
+                {{ form_start(villes_form) }}
+                <tr class="table-primary">
                     <td>
                         {{ form_row(villes_form.nom) }}
                     </td>
                     <td>
                         {{ form_row(villes_form.cpo) }}
                     </td>
-                    <td>
-                        {{ form_row(villes_form.submit, { 'label': 'Ajouter' }) }}
+                    <td class="text-end" style="width: 20%;">
+                        {{ form_widget(villes_form.submit, {
+                            label: 'Ajouter',
+                            attr: { class: 'btn btn-success' }
+                        }) }}
                     </td>
                 </tr>
-            {{ form_end(villes_form) }}
-        </table>
+                {{ form_end(villes_form) }}
+
+                </tbody>
+
+            </table>
+        </div>
+
     </section>
 
 {% endblock %}
