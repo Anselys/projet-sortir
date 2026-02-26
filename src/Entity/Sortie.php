@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use AllowDynamicProperties;
 use App\Repository\SortieRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -9,6 +10,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
+#[AllowDynamicProperties]
 #[ORM\Entity(repositoryClass: SortieRepository::class)]
 class Sortie
 {
@@ -76,6 +78,9 @@ class Sortie
     public function __construct()
     {
         $this->participants = new ArrayCollection();
+        $this->dateDebut = new \DateTime('now + 1 hour');
+        $this->duree = 60;
+        $this->dateCloture = new \DateTime('now');
     }
 
     //Retourne vrai si le nombre max d'inscription est atteint.

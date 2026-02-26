@@ -4,46 +4,72 @@
 
 {% block main %}
     <h2>Gérer les utilisateurs</h2>
-    <section>
-        {{ form_errors(search_form) }}
-        {{ form_start(search_form) }}
-        {{ form_end(search_form) }}
-    </section>
-    <section>
-        <table class="table table-dark table-striped">
-            <thead>
-            <tr>
-                <th scope="col">Prénom et nom</th>
-                <th scope="col">Email</th>
-                <th scope="col">Statut</th>
-                <th scope="col">Actions</th>
-            </tr>
-            </thead>
-            {% for utilisateur in utilisateurs %}
-                {% set statut = utilisateur.isActif ? 'actif' : 'inactif' %}
-                {% set nouveauStatut = utilisateur.isActif ? 'inactif' : 'actif' %}
-                {% set statutBtnText = utilisateur.isActif ? 'Rendre inactif' : 'Rendre actif' %}
-                {% set prenomNom = utilisateur.prenom ~ ' ' ~ utilisateur.nom|upper %}
 
+    {# BARRE DE RECHERCHE #}
+    <div class="row justify-content-center">
+        <div class="card text-white bg-secondary mb-3" style="width: 30%;">
+
+            <div class="card-body d-flex align-items-center">
+                <div class="w-100">
+
+                    {{ form_start(search_form) }}
+
+                    <div class="input-group">
+                        {{ form_widget(search_form.nom, {
+                            attr: {
+                                class: 'form-control',
+                                placeholder: 'Recherche par nom...'
+                            }
+                        }) }}
+
+                        <button class="btn btn-primary" type="submit">
+                            Rechercher
+                        </button>
+                    </div>
+
+                    {{ form_end(search_form) }}
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="mt-4">
+        <div class="table-responsive w-50 mx-auto">
+            <table class="table w-100">
+                <thead>
                 <tr>
-                    <td>{{ prenomNom }}</td>
-                    <td>{{ utilisateur.email }}</td>
-                    <td class="{{  utilisateur.isActif ? 'text-success' : 'text-danger' }}">{{ statut|capitalize }}</td>
-                    <td>
-                        <a
-                            href="{{ path('app_admin_changer_statut_utilisateur', { id: utilisateur.id }) }}"
-                            class="btn {{ utilisateur.isActif ? 'btn-secondary' : 'btn-info' }}"
-                            onclick="return confirm('Rendre {{ prenomNom }} {{ nouveauStatut }} ?')"
-                        >
-                            {{ statutBtnText }}
-                        </a>
-                        <a
-                            href="{{ path('app_admin_utilisateur_delete', { id: utilisateur.id, token: csrf_token('utilisateur_delete' ~ utilisateur.id) }) }}"
-                            onclick="return confirm('Êtes-vous sûr(e) de vouloir supprimer cet utilisateur ?')"
-                            class="btn btn-danger">Supprimer</a>
-                    </td>
-                     </tr>
-            {% endfor %}
-        </table>
+                    <th scope="col">Prénom et nom</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Statut</th>
+                    <th scope="col">Actions</th>
+                </tr>
+                </thead>
+                {% for utilisateur in utilisateurs %}
+                    {% set statut = utilisateur.isActif ? 'actif' : 'inactif' %}
+                    {% set nouveauStatut = utilisateur.isActif ? 'inactif' : 'actif' %}
+                    {% set statutBtnText = utilisateur.isActif ? 'Rendre inactif' : 'Rendre actif' %}
+                    {% set prenomNom = utilisateur.prenom ~ ' ' ~ utilisateur.nom|upper %}
+
+                    <tr class="table-primary">
+                        <td style="width: 20%;">{{ prenomNom }}</td>
+                        <td style="width: 20%;">{{ utilisateur.email }}</td>
+                        <td class="{{ utilisateur.isActif ? 'text-success' : 'text-danger' }}" style="width: 20%;">{{ statut|capitalize }}</td>
+                        <td style="width: 20%;">
+                            <a
+                                href="{{ path('app_admin_changer_statut_utilisateur', { id: utilisateur.id }) }}"
+                                class="btn {{ utilisateur.isActif ? 'btn-secondary' : 'btn-info' }}"
+                                onclick="return confirm('Rendre {{ prenomNom }} {{ nouveauStatut }} ?')"
+                            >
+                                {{ statutBtnText }}
+                            </a>
+                            <a
+                                href="{{ path('app_admin_utilisateur_delete', { id: utilisateur.id, token: csrf_token('utilisateur_delete' ~ utilisateur.id) }) }}"
+                                onclick="return confirm('Êtes-vous sûr(e) de vouloir supprimer cet utilisateur ?')"
+                                class="btn btn-danger">Supprimer</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
     </section>
 {% endblock %}

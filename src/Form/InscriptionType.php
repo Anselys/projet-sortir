@@ -23,16 +23,27 @@ class InscriptionType extends AbstractType
         $builder
             ->add('pseudo', TextType::class, [
                 'label' => 'Nom d\'utilisateur',
+                'attr' => [
+                    'placeholder' => 'Nom d\'utilisateur',
+                ],
             ])
             ->add('nom', TextType::class, [
                 'label' => 'Nom',
+                'attr' => [
+                    'placeholder' => 'Nom de famille',
+                ],
             ])
             ->add('prenom', TextType::class, [
                 'label' => 'Prénom',
+                'attr' => [
+                    'placeholder' => 'Prénom',
+                ],
             ])
             ->add('email', EmailType::class, [
-                'attr' => ['value' => '@campus-eni.fr'],
-
+                'attr' => [
+                    'value' => '@campus-eni.fr',
+                    'placeholder' => 'Email',
+                ],
             ])
             ->add('site', EntityType::class, [
                 'class' => Site::class,
@@ -44,6 +55,9 @@ class InscriptionType extends AbstractType
             ])
             ->add('telephone', TextType::class, [
                 'label' => 'Numéro de téléphone',
+                'attr' => [
+                    'placeholder' => 'Numéro de téléphone',
+                ],
                 'required' => false,
             ])
             ->add('plainPassword', RepeatedType::class, [
@@ -51,7 +65,11 @@ class InscriptionType extends AbstractType
                 // this is read and encoded in the controller
                 'type' => PasswordType::class,
                 'options' => [
-                    'attr' => ['autocomplete' => 'new-password', 'value' => 'Passw0rd123!'],
+                    'attr' => [
+                        'autocomplete' => 'new-password',
+                        'value' => 'Passw0rd123!',
+                        'placeholder' => 'Mot de passe',
+                    ],
                 ],
                 'mapped' => false,
                 'first_options' => [
@@ -61,7 +79,6 @@ class InscriptionType extends AbstractType
                         ),
                         new PasswordStrength(
                             minScore: PasswordStrength::STRENGTH_WEAK,
-                            //minScore: PasswordStrength::STRENGTH_MEDIUM,
                             message: 'Veuillez choisir un mdp plus balèze'
                         ),
                         /**
@@ -73,7 +90,11 @@ class InscriptionType extends AbstractType
                     'label' => 'Mot de passe'
                 ],
                 'second_options' => [
-                    'label' => 'Confirmation du mot de passe'
+                    'label' => 'Confirmation du mot de passe',
+                    'attr' => [
+                        'value' => 'Passw0rd123!',
+                        'placeholder' => 'Confirmer le mot de passe',
+                    ]
                 ],
 
                 'invalid_message' => 'Les mots de passe doivent être identiques.'

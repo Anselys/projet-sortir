@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Sortie{% endblock %}
+{% block title %}{{ parent() }} | Détails de la sortie{% endblock %}
 
 {% block main %}
 
@@ -12,7 +12,6 @@
             </div>
 
             <div class="card-body">
-
                 <div class="row">
 
                     <div class="col-md-6">
@@ -30,11 +29,7 @@
                         <p class="text-light">Latitude : {{ sortie.lieu.latitude }}</p>
                         <p class="text-light">Longitude : {{ sortie.lieu.longitude }}</p>
                     </div>
-
                 </div>
-
-
-
             </div>
         </div>
     </div>

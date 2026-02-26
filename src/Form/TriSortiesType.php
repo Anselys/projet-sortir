@@ -32,7 +32,10 @@ class TriSortiesType extends AbstractType
                 }
             ])
             ->add('recherche', TextType::class, [
-                'label' => 'Le nom de la sortie contient :',
+                'label' => 'Rechercher par nom',
+                'attr' => [
+                    'placeholder' => 'Rechercher...',
+                ],
                 'required' => false,
             ])
             ->add('etat', EntityType::class, [

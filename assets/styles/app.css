@@ -82,3 +82,11 @@ main h2, main h1, main h3, main h4{
     border-color: #00e1ff;
     box-shadow: 0 0 6px #00e1ff;
 }
+
+td, tr {
+    vertical-align: middle;
+}
+
+.table-primary td div {
+    margin-bottom: 0!important;
+}
