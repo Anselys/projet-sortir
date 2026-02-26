@@ -14,7 +14,8 @@
                 <p class="text-light">Nom de la sortie : {{ sortie.nom }}</p>
                 <p class="text-light">Date et heure de la sortie : {{ sortie.dateDebut | date('d/m/Y') }}</p>
                 <p class="text-light">Date limite d'inscription : {{ sortie.dateCloture | date('d/m/Y') }}    </p>
-                <p class="text-light">Nombre de places : {{ sortie.participants.count }} / {{ sortie.nbInscriptionsMax }}</p>
+                <p class="text-light">Nombre de places : {{ sortie.participants.count }}
+                    / {{ sortie.nbInscriptionsMax }}</p>
                 <p class="text-light">Durée : {{ sortie.duree }}</p>
                 <p class="text-light">Description : {{ sortie.description }}</p>
 
@@ -52,11 +53,10 @@
                onclick="return confirm('Êtes-vous sûr·e de vouloir supprimer cette sortie ?')">Supprimer</a>
         {% endif %}
         {% if is_granted('ROLE_ADMIN') %}
-            <div><a class="btn btn-danger" href="{{ path('app_sortie_edit', { id: sortie.id }) }}">Modifier</a>
-                <a class="btn btn-danger"
-                   href="{{ path('app_sortie_delete', { id: sortie.id, token: csrf_token('sortie_delete' ~ sortie.id) }) }}"
-                   onclick="return confirm('[ADMINISTRATEUR] Êtes-vous sûr·e de vouloir supprimer cette sortie ?')">Supprimer</a>
-            </div>
+            <a class="btn btn-danger"
+               href="{{ path('app_sortie_delete', { id: sortie.id, token: csrf_token('sortie_delete' ~ sortie.id) }) }}"
+               onclick="return confirm('[ADMINISTRATEUR] Êtes-vous sûr·e de vouloir supprimer cette sortie ?')">Supprimer</a>
+
         {% endif %}
 
 
