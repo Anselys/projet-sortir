@@ -17,7 +17,6 @@ body {
     color: #EEE;
     font-family: 'Roboto', sans-serif;
     padding-top: 150px;
-
     a {
         text-decoration: none;
     }
@@ -37,7 +36,7 @@ body {
 
 main {
     color : white;
-    padding: 1rem;
+    padding: 1rem 1rem 8em;
     min-height: calc(100dvh - var(--header-h));
 }
 
@@ -63,3 +62,23 @@ main h2, main h1, main h3, main h4{
     text-align:center;
 }
 
+.flash-container {
+    margin:0;
+    padding: 0;
+}
+
+.flash-container .alert {
+    border-radius: 0;
+    max-width: 30%;          /* moins large */
+    margin: 0 auto;
+}
+
+.flash-container .alert + .alert {
+    margin-top: 4px;         /* petit espace entre messages */
+}
+
+.form-check-input:checked {
+    background-color: #00e1ff;
+    border-color: #00e1ff;
+    box-shadow: 0 0 6px #00e1ff;
+}

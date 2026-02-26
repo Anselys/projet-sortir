@@ -9,9 +9,12 @@
 
     <div class="row justify-content-center">
         <div class="card text-white bg-secondary mb-3" style="max-width: 50rem;">
-            <div class="card-body">
-
-                <h4 class="card-title mb-4">Filtrer les sorties</h4>
+            <div class="card-header d-flex align-items-center justify-content-center" style="min-height: 60px;">
+                <h2 class="card-title mb-0">
+                    Filtrer les sorties
+                </h2>
+            </div>
+            <div class="card-body mt-4">
 
                 {{ form_start(tri_form) }}
 
@@ -63,7 +66,7 @@
 
         <div class="table-responsive w-75 mx-auto">
             <table class="table">
-                <thead>
+                <thead class="py-3">
                 <tr>
                     <th scope="col">Nom de la sortie</th>
                     <th scope="col">Date de la sortie</th>
@@ -126,12 +129,11 @@
                         </td>
                         {% if is_granted('ROLE_ADMIN') %}
                             <td>
-                                <a class="btn btn-danger"
-                                   href="{{ path('app_sortie_edit', { id: sortie.id }) }}">Modifier</a>
+{#                                TODO Annuler changer état#}
                                 <a class="btn btn-danger"
                                    href="{{ path('app_sortie_delete', { id: sortie.id, token: csrf_token('sortie_delete' ~ sortie.id) }) }}"
-                                   onclick="return confirm('[ADMINISTRATEUR] Êtes-vous sûr·e de vouloir supprimer cette sortie ?')">
-                                    Supprimer
+                                   onclick="return confirm('[ADMINISTRATEUR] Êtes-vous sûr·e de vouloir annuler cette sortie ?')">
+                                    Annuler
                                 </a>
                             </td>
                         {% endif %}

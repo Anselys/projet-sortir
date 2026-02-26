@@ -3,18 +3,52 @@
 {% block title %}{{ parent() }} | Créer une sortie{% endblock %}
 
 {% block main %}
-
     <div class="row justify-content-center">
-        <div class="col-12 col-md-3">
-
-            {{ form_errors(sortie_form) }}
-            {{ form_start(sortie_form) }}
-            {{ form_widget(sortie_form) }}
-            <div class="text-center">
-                <button class="btn btn-primary">Valider</button>
+        <div class="card text-white bg-secondary mb-3" style="max-width: 32rem;">
+            <div class="card-header d-flex align-items-center justify-content-center" style="min-height: 60px;">
+                <h2 class="card-title mb-0">
+                    Créer une sortie
+                </h2>
             </div>
-            {{ form_end(sortie_form) }}
+            <div class="card-body mt-4">
 
+
+
+                {{ form_start(sortie_form) }}
+                {{ form_errors(sortie_form) }}
+
+                {# CHAMPS PRINCIPAUX EN HAUT #}
+                {{ form_row(sortie_form.nom) }}
+                {{ form_row(sortie_form.description) }}
+
+                {# COLONNES POUR DATES ET PLACES #}
+                <div class="row">
+
+                    {# COLONNE GAUCHE : date + durée (pleine largeur pour durée) #}
+                    <div class="col-md-6">
+                        {{ form_row(sortie_form.dateDebut) }}
+                        {{ form_row(sortie_form.duree) }}
+                    </div>
+
+                    {# COLONNE DROITE : date limite + places #}
+                    <div class="col-md-6">
+                        {{ form_row(sortie_form.dateCloture) }}
+                        {{ form_row(sortie_form.nbInscriptionsMax) }}
+                    </div>
+
+                </div>
+
+                {# RESTE DES CHAMPS #}
+                {{ form_row(sortie_form.siteOrganisateur) }}
+                {{ form_row(sortie_form.lieu) }}
+
+                <div class="text-center mt-3">
+                    <button class="btn btn-primary">Valider</button>
+                </div>
+
+                {{ form_end(sortie_form) }}
+
+            </div>
         </div>
     </div>
 {% endblock %}

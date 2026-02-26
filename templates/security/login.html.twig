@@ -3,36 +3,72 @@
 {% block title %}Connexion{% endblock %}
 
 {% block main %}
-    <form method="post">
-        {% if error %}
-            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-        {% endif %}
 
-        {% if app.user %}
-            <div class="mb-3">
-                Bienvenue {{ app.user.userIdentifier }}, <a href="{{ logout_path() }}">Déconnexion</a>
+    <div class="row justify-content-center">
+        <div class="card text-white bg-secondary mb-3" style="max-width: 32rem;">
+            <div class="card-header d-flex align-items-center justify-content-center" style="min-height: 60px;">
+                <h2 class="card-title mb-0">
+Connexion                </h2>
             </div>
-        {% endif %}
+            <div class="card-body mt-4">
 
-        <h1 class="h3 mb-3 font-weight-normal">Connexion</h1>
-        <label for="username">Nom d'utilisateur ou Email</label>
-        <input type="text" value="{{ last_username }}" name="_username" id="username" class="form-control"
-               autocomplete="email" required autofocus>
-        <label for="password">Mot de passe</label>
-        <input type="password" name="_password" id="password" class="form-control" autocomplete="current-password"
-               required>
-        <input type="hidden" name="_csrf_token" data-controller="csrf-protection"
-               value="{{ csrf_token('authenticate') }}">
+                <form method="post">
 
-        <div class="checkbox mb-3">
-            <input type="checkbox" name="_remember_me" id="_remember_me">
-            <label for="_remember_me">Se souvenir de moi</label>
+                    {% if error %}
+                        <div class="alert alert-danger">
+                            {{ error.messageKey|trans(error.messageData, 'security') }}
+                        </div>
+                    {% endif %}
 
-            <div>
-                <button class="btn btn-lg btn-primary" type="submit">
-                    Se connecter
-                </button>
+                    {% if app.user %}
+                        <div class="mb-3 text-center">
+                            Bienvenue {{ app.user.userIdentifier }},
+                            <a href="{{ logout_path() }}">Déconnexion</a>
+                        </div>
+                    {% endif %}
+
+                    <label for="username">Nom d'utilisateur ou Email</label>
+                    <input type="text"
+                           value="{{ last_username }}"
+                           name="_username"
+                           id="username"
+                           class="form-control mb-3"
+                           autocomplete="email"
+                           required
+                           autofocus>
+
+                    <label for="password">Mot de passe</label>
+                    <input type="password"
+                           name="_password"
+                           id="password"
+                           class="form-control mb-3"
+                           autocomplete="current-password"
+                           required>
+
+                    <input type="hidden"
+                           name="_csrf_token"
+                           value="{{ csrf_token('authenticate') }}">
+
+                    <div class="form-check mb-3">
+                        <input type="checkbox"
+                               name="_remember_me"
+                               id="_remember_me"
+                               class="form-check-input">
+                        <label class="form-check-label" for="_remember_me">
+                            Se souvenir de moi
+                        </label>
+                    </div>
+
+                    <div class="text-center">
+                        <button class="btn btn-primary" type="submit">
+                            Se connecter
+                        </button>
+                    </div>
+
+                </form>
+
             </div>
         </div>
-    </form>
+    </div>
+
 {% endblock %}
