@@ -6,6 +6,7 @@ use App\Entity\Participant;
 use App\Entity\Sortie;
 use App\Form\SortieType;
 use App\Repository\EtatRepository;
+use App\Repository\SortieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -144,5 +145,6 @@ final class SortieController extends AbstractController
         $this->addFlash('danger', 'Impossible de supprimer cette sortie.');
         return $this->redirectToRoute('app_sortie_detail', ['id' => $sortie->getId()]);
     }
+
 
 }
