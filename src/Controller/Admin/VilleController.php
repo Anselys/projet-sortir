@@ -2,9 +2,12 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Sortie;
 use App\Entity\Ville;
 use App\Form\SearchType;
 use App\Form\VilleType;
+use App\Repository\LieuRepository;
+use App\Repository\SortieRepository;
 use App\Repository\VilleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -89,10 +92,13 @@ final class VilleController extends AbstractController
     {
         $token = $request->query->get('token');
         if ($this->isCsrfTokenValid('ville_delete' . $ville->getId(), $token)) {
-            $em->remove($ville);
-            $em->flush();
-            $this->addFlash('success', 'La ville a été supprimée');
-            return $this->redirectToRoute('app_admin_ville');
+            $lieux = $ville->getLieux();
+            if($lieux->isEmpty()){
+                $em->remove($ville);
+                $em->flush();
+                $this->addFlash('success', 'La ville a été supprimée');
+                return $this->redirectToRoute('app_admin_ville');
+            }
         }
 
         $this->addFlash('danger', 'Impossible de supprimer cette ville.');

@@ -29,14 +29,14 @@ class Sortie
     )]
     private ?string $nom = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Assert\GreaterThanOrEqual('today', message: 'La date de début de la sortie ne peut pas être dans le passé')]
     private ?\DateTime $dateDebut = null;
 
     #[ORM\Column(nullable: true)]
     private ?int $duree = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Assert\Type("\DateTimeInterface")]
     #[Assert\LessThan(propertyPath: 'dateDebut', message: 'La date de clôture ne peut pas être ultérieure à la date de début')]
     private ?\DateTime $dateCloture = null;
@@ -93,13 +93,42 @@ class Sortie
         return $this->participants->count() >= $this->nbInscriptionsMax;
     }
 
-    //Retourne vrai si l'événement est en cours.
-    public function estEnCours(): bool
-    {
-        $now = new \DateTimeImmutable();
+    public function isOuverte() : bool {
+        return $this->etat->getLibelle() == 'OUVERTE';
+    }
 
-        return $this->dateDebut <= $now
-            && $now <= $this->dateDebut->modify('+' . $this->duree . ' minutes');
+
+    public function isAnnulee() : bool {
+        return $this->etat->getLibelle() == 'ANNULEE';
+    }
+
+    public function isCloturee() : bool {
+        return $this->etat->getLibelle() == 'CLOTUREE';
+    }
+
+    public function isPassee() : bool {
+        return $this->etat->getLibelle() == 'PASSEE';
+    }
+
+    public function isCreee() : bool {
+        return $this->etat->getLibelle() == 'CREEE';
+    }
+
+    //Retourne vrai si l'événement est en cours.
+    public function isEnCours(): bool
+    {
+       return $this->etat->getLibelle() == 'EN_COURS';
+
+//        if (!$this->dateDebut || $this->duree === null) {
+//            return false;
+//        }
+//
+//        $now = new \DateTimeImmutable('now', $this->dateDebut->getTimezone());
+//
+//        $dateFin = (clone $this->dateDebut)
+//            ->add(new \DateInterval('PT' . $this->duree . 'M'));
+//
+//        return $now >= $this->dateDebut && $now < $dateFin;
     }
 
     public function getId(): ?int

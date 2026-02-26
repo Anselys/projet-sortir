@@ -55,8 +55,11 @@
                     {{ form_widget(tri_form.Submit) }}
                     {{ form_widget(tri_form.Reset) }}
                 </div>
-
                 {{ form_end(tri_form) }}
+
+                <div class="text-center mt-4">
+                {{ form(afficher_tout_form) }}
+                </div>
 
             </div>
         </div>
@@ -105,38 +108,64 @@
                             </a>
                         </td>
                         <td>
+
                             {% if not(app.user.pseudo == sortie.organisateur.pseudo) %}
+
                                 {% if not(app.user.sorties.contains(sortie)) %}
-                                    <a class="btn btn-success"
-                                       href="{{ path('app_sortie_inscription', { id: sortie.id }) }}"
-                                       onclick="return confirm('Confirmer l\'inscription ?')">S'inscrire</a>
+
+                                    {% if sortie.ouverte %}
+
+                                        <a class="btn btn-success"
+                                           href="{{ path('app_sortie_inscription', { id: sortie.id }) }}"
+                                           onclick="return confirm('Confirmer l\'inscription ?')">S'inscrire</a>
+                                    {% endif %}
+
                                 {% else %}
-                                    <a class="btn btn-secondary"
-                                       href="{{ path('app_sortie_desinscription', { id: sortie.id }) }}"
-                                       onclick="return confirm('Vous êtes sur le point d\'annuler votre inscription à cette sortie. Confirmer ?')">
-                                        Me désinscrire
-                                    </a>
+
+                                    {% if not(sortie.enCours) %}
+
+                                        <a class="btn btn-secondary"
+                                           href="{{ path('app_sortie_desinscription', { id: sortie.id }) }}"
+                                           onclick="return confirm('Vous êtes sur le point d\'annuler votre inscription à cette sortie. Confirmer ?')">
+                                            Me désinscrire
+                                        </a>
+                                    {% endif %}
                                 {% endif %}
                             {% else %}
-                                <a class="btn btn-secondary"
-                                   href="{{ path('app_sortie_edit', { id: sortie.id }) }}">Modifier</a>
-                                <a class="btn btn-secondary"
-                                   href="{{ path('app_sortie_delete', { id: sortie.id, token: csrf_token('sortie_delete' ~ sortie.id) }) }}"
-                                   onclick="return confirm('Êtes-vous sûr·e de vouloir supprimer cette sortie ?')">
-                                    Supprimer
-                                </a>
+
+                                {% if not(sortie.enCours) %}
+
+                                    <a class="btn btn-secondary"
+                                       href="{{ path('app_sortie_edit', { id: sortie.id }) }}">Modifier</a>
+
+                                    <a class="btn btn-secondary"
+                                       href="{{ path('app_sortie_delete', { id: sortie.id, token: csrf_token('sortie_delete' ~ sortie.id) }) }}"
+                                       onclick="return confirm('Êtes-vous sûr·e de vouloir supprimer cette sortie ?')">
+                                        Supprimer
+                                    </a>
+
+                                {% endif %}
+
                             {% endif %}
+
+                            {% if sortie.enCours %}
+                                <p>Sortie en cours !</p>
+                            {% endif %}
+
                         </td>
-                        {% if is_granted('ROLE_ADMIN') %}
-                            <td>
-{#                                TODO Annuler changer état#}
+
+
+                        <td>
+                            {#                                TODO Annuler changer état #}
+                            {% if is_granted('ROLE_ADMIN') and not(sortie.enCours) and not(sortie.annulee)%}
                                 <a class="btn btn-danger"
                                    href="{{ path('app_sortie_delete', { id: sortie.id, token: csrf_token('sortie_delete' ~ sortie.id) }) }}"
                                    onclick="return confirm('[ADMINISTRATEUR] Êtes-vous sûr·e de vouloir annuler cette sortie ?')">
                                     Annuler
                                 </a>
-                            </td>
-                        {% endif %}
+                            {% endif %}
+                        </td>
+
                     </tr>
                 {% endfor %}
             </table>

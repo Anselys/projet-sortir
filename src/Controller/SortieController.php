@@ -60,6 +60,13 @@ final class SortieController extends AbstractController
     #[Route('/inscription/{id}', name: '_inscription', requirements: ['id' => '\d+'])]
     public function inscription(Sortie $sortie, EntityManagerInterface $em): Response
     {
+        if (!$sortie->isOuverte()) {
+            $this->addFlash('danger', 'Impossible de s\'inscrire à cette sortie.');
+            return $this->redirectToRoute('app_sortie_detail', [
+                'id' => $sortie->getId()
+            ]);
+        }
+
         $participant = $this->getUser();
 
         if (!$participant) {
@@ -106,7 +113,7 @@ final class SortieController extends AbstractController
     #[Route('/edit/{id}', name: '_edit', requirements: ['id' => '\d+'])]
     public function edit(Request $request, EntityManagerInterface $em, Sortie $sortie): Response
     {
-        if ($sortie->estEnCours()) {
+        if ($sortie->isEnCours()) {
             $this->addFlash('danger', 'Impossible de modifier une sortie en cours.');
             return $this->redirectToRoute('app_sortie_detail', [
                 'id' => $sortie->getId()
@@ -132,6 +139,15 @@ final class SortieController extends AbstractController
     #[Route('/delete/{id}', name: '_delete', requirements: ['id' => '\d+'])]
     public function delete(Sortie $sortie, EntityManagerInterface $em, Request $request): Response
     {
+        dump($sortie->isEnCours());
+
+        if ($sortie->isEnCours()) {
+            $this->addFlash('danger', 'Impossible d\'annuler une sortie en cours.');
+            return $this->redirectToRoute('app_sortie_detail', [
+                'id' => $sortie->getId()
+            ]);
+        }
+
         $token = $request->query->get('token');
 
         if ($this->isCsrfTokenValid('sortie_delete' . $sortie->getId(), $token)) {
@@ -145,6 +161,5 @@ final class SortieController extends AbstractController
         $this->addFlash('danger', 'Impossible de supprimer cette sortie.');
         return $this->redirectToRoute('app_sortie_detail', ['id' => $sortie->getId()]);
     }
-
 
 }

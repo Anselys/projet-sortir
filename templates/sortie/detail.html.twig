@@ -43,8 +43,12 @@
     </div>
 
     <div>
+
+
         {% if not(app.user.pseudo == sortie.organisateur.pseudo) %}
-            <div class="text-center mt-3"> {% if not(app.user.sorties.contains(sortie)) %}
+            <div class="text-center mt-3">
+
+                {% if not(app.user.sorties.contains(sortie)) %}
                     <a class="btn btn-success" href="{{ path('app_sortie_inscription', { id: sortie.id }) }}"
                        onclick="return confirm('Confirmer l\'inscription ?')">S'inscrire</a>
                 {% else %}
@@ -54,12 +58,18 @@
                 {% endif %}
             </div>
         {% endif %}
+
+
+
         {% if app.user.pseudo == sortie.organisateur.pseudo %}
             <div class="text-center mt-3"><a href="{{ path('app_sortie_edit', { id: sortie.id }) }}" class="btn btn-warning">Modifier</a>
                 <a href="{{ path('app_sortie_delete', { id: sortie.id, token: csrf_token('sortie_delete' ~ sortie.id) }) }}"
                    class="btn btn-warning"
                    onclick="return confirm('Êtes-vous sûr·e de vouloir supprimer cette sortie ?')">Supprimer</a></div>
         {% endif %}
+
+
+
         {% if is_granted('ROLE_ADMIN') %}
             <div class="text-center mt-3 mb-4"><a class="btn btn-danger"
                      href="{{ path('app_sortie_delete', { id: sortie.id, token: csrf_token('sortie_delete' ~ sortie.id) }) }}"
@@ -71,7 +81,7 @@
 
     </div>
 
-    <div class="row justify-content-center">
+    <div class="row justify-content-center mt-5">
         <div class="card text-white bg-primary mb-3" style="max-width: 40rem;">
             <div class="card-header d-flex align-items-center justify-content-center" style="min-height: 60px;">
                 <h2 class="card-title mb-0">

@@ -6,6 +6,7 @@ use App\Entity\Etat;
 use App\Entity\Participant;
 use App\Entity\Site;
 use App\Entity\Sortie;
+use App\Entity\Ville;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -102,21 +103,18 @@ class SortieRepository extends ServiceEntityRepository
 
         if ($tri['inscrit'] != 0) {
             // if connected participant is in sortie.participants > add to filter
-            // TODO: chercher comment faire les join. ça ne marche pas
-//            $qb->addSelect('s.participants')
-//                ->innerJoin('participant', 'participant')
-//                ->andWhere('participant.id = :id')
-//                ->setParameter('id', $participant->getId());
+            $qb->join('s.participants', 'participants')
+                ->andWhere('participants.id = :participant_ID')
+                ->setParameter('participant_ID', $participant->getId());
 
         }
 
         if ($tri['non_inscrit'] != 0) {
             // if connected participant is not in sortie.participants > add to filter
             // TODO: chercher comment faire les join. ça ne marche pas
-//            $qb->addSelect('s.participants')
-//                ->innerJoin('participant', 'participant')
-//                ->andWhere('participant.id != :id')
-//                ->setParameter('id', $participant->getId());
+//            $qb->join('s.participants', 'participants')
+//                ->andWhere('participants.id != :participant_ID')
+//                ->setParameter('participant_ID', $participant->getId());
         }
 
         if ($tri['passees'] != 0) {
@@ -149,6 +147,15 @@ class SortieRepository extends ServiceEntityRepository
             ->andWhere('s.isArchivee = :archive')
             ->setParameter('archive', true);
         return $qb->getQuery()->getResult();
+    }
+
+    public function getSortiesByVille(Ville $ville): array{
+        $qb = $this->createQueryBuilder('s')
+            ->andWhere('s.isArchivee != :archive')
+            ->setParameter('archive', true)
+            ->andWhere('s.ville = :ville')
+            ->setParameter('ville', $ville);
+            return $qb->getQuery()->getResult();
     }
 
     ////
