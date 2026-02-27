@@ -78,12 +78,12 @@ class TriSortiesType extends AbstractType
                     'class' => 'btn btn-primary',
                 ]
             ])
-            ->add('Reset', ResetType::class, [
-                'label' => 'Réinitialiser',
-                'attr' => [
-                    'class' => 'btn btn-primary',
-                    ]
-            ])
+//            ->add('Reset', ResetType::class, [
+//                'label' => 'Réinitialiser',
+//                'attr' => [
+//                    'class' => 'btn btn-primary',
+//                    ]
+//            ])
         ;
     }
 
