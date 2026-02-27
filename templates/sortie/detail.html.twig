@@ -25,10 +25,7 @@
         <div class="card text-white bg-primary mb-3" style="max-width: 40rem;">
 
             <div class="card-header d-flex align-items-center justify-content-center" style="min-height: 60px;">
-                <h2 class="card-title mb-0 mx-4">Détails de la sortie</h2>
-                <span class="badge rounded-pill bg-{{ status_class[sortie.etat.libelle] }}">
-                    {{ status_label[sortie.etat.libelle]|capitalize }}
-                </span>
+                <h2 class="card-title mb-0">Détails de la sortie</h2>
             </div>
 
             <div class="card-body">
@@ -103,12 +100,19 @@
             </div>
 
             <div class="mt-3">
-                {% for participant in participants %}
-                    <p class="liens-participants-inscrits"><a
-                            href="{{ path('app_profil_detail', { id: participant.id }) }}">
-                            {{ participant.pseudo }}
-                        </a></p>
-                {% endfor %}
+                {% if participants.empty() %}
+                    <p class="text-center">Aucun participant.</p>
+
+                {% else %}
+
+
+                    {% for participant in participants %}
+                        <p class="liens-participants-inscrits"><a
+                                href="{{ path('app_profil_detail', { id: participant.id }) }}">
+                                {{ participant.pseudo }}
+                            </a></p>
+                    {% endfor %}
+                {% endif %}
             </div>
         </div>
     </div>

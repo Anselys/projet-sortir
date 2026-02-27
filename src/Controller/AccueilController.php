@@ -58,16 +58,10 @@ final class AccueilController extends AbstractController
         // et par triées date de début la plus proche.
         // si pas d'utilisateur: toutes les sorties ouvertes, triées par date la plus proche
         if ($participant != null) {
-            $participantSite = $participant->getSite();
-            if ($participantSite != null) {
-                foreach ($etats as $etat) {
-                    if ($etat->getLibelle() == 'OUVERTE') {
-                        $etatOuvert = $etat;
-                    }
-                }
-                $sorties = $sortieRepository->findBySiteAndEtat($participantSite, $etatOuvert);
+//                $sorties = $sortieRepository->findBySiteAndEtat($participantSite, $etatOuvert);
+                $sorties = $sortieRepository->customFindAccueil($participant, $etats);
             }
-        }
+
 
 
         return $this->render('accueil/index.html.twig', [
