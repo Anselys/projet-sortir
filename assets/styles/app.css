@@ -90,3 +90,27 @@ td, tr {
 .table-primary td div {
     margin-bottom: 0!important;
 }
+
+.col-nom {
+    width: 20%;
+}
+
+.col-inscrit {
+    width: 100px;
+}
+
+.col-etat {
+    width: 150px;
+}
+
+.col-date{
+    width: 160px;
+}
+
+.col-organisateur{
+    width:250px;
+}
+
+.col-actions{
+    width:180px;
+}

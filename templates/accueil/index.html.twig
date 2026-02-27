@@ -71,103 +71,111 @@
             <table class="table">
                 <thead class="py-3">
                 <tr>
-                    <th scope="col">Nom de la sortie</th>
-                    <th scope="col">Date de la sortie</th>
-                    <th scope="col">Clôture</th>
-                    <th scope="col">Inscrits</th>
-                    <th scope="col">État</th>
-                    <th scope="col">Inscrit·e</th>
-                    <th scope="col">Organisateur·ice</th>
-                    <th scope="col">Actions</th>
+                    <th scope="col" class="col-nom">Nom de la sortie</th>
+                    <th scope="col" class="col-date">Date</th>
+                    <th scope="col" class="col-date">Fin des inscriptions</th>
+                    <th scope="col" class="col-inscrit">Inscrits</th>
+                    <th scope="col" class="col-etat">État</th>
+                    <th scope="col" class="col-inscrit">Inscrit·e</th>
+                    <th scope="col" class="col-organisateur">Organisateur·ice</th>
+                    <th scope="col" class="col-actions">Actions</th>
                     {% if is_granted('ROLE_ADMIN') %}
-                        <th scope="col">Administrer</th>
+                        <th scope="col" class="col-actions">Administrer</th>
                     {% endif %}
                 </tr>
                 </thead>
 
+                <tbody>
                 {% for sortie in sorties %}
                     <tr class="table-primary">
-                        <td>
+                        <td class="col-nom">
                             <a href="{{ path('app_sortie_detail', { id: sortie.id }) }}"
-                               class="btn btn-info">{{ sortie.nom }}</a>
+                               class="btn btn-info">
+                                {{ sortie.nom }}
+                            </a>
                         </td>
+
                         <td>{{ sortie.dateDebut | date('d/m/Y') }}</td>
                         <td>{{ sortie.dateCloture | date('d/m/Y') }}</td>
                         <td>{{ sortie.participants.count }} / {{ sortie.nbInscriptionsMax }}</td>
                         <td>{{ sortie.etat.libelle }}</td>
-                        <td>
+
+                        <td class="col-inscrit">
                             {% if not(app.user.sorties.contains(sortie)) %}
                                 -
                             {% else %}
                                 ✓
                             {% endif %}
                         </td>
+
                         <td>
                             <a href="{{ path('app_profil_detail', { id: sortie.organisateur.id }) }}">
                                 {{ sortie.organisateur.prenom }} {{ sortie.organisateur.nom|first|upper }}
                             </a>
                         </td>
-                        <td>
 
+                        <td>
                             {% if not(app.user.pseudo == sortie.organisateur.pseudo) %}
 
                                 {% if not(app.user.sorties.contains(sortie)) %}
 
                                     {% if sortie.ouverte %}
-
                                         <a class="btn btn-success"
                                            href="{{ path('app_sortie_inscription', { id: sortie.id }) }}"
-                                           onclick="return confirm('Confirmer l\'inscription ?')">S'inscrire</a>
+                                           onclick="return confirm('Confirmer l\'inscription ?')">
+                                            S'inscrire
+                                        </a>
                                     {% endif %}
 
                                 {% else %}
 
                                     {% if not(sortie.enCours) %}
-
                                         <a class="btn btn-secondary"
                                            href="{{ path('app_sortie_desinscription', { id: sortie.id }) }}"
                                            onclick="return confirm('Vous êtes sur le point d\'annuler votre inscription à cette sortie. Confirmer ?')">
                                             Me désinscrire
                                         </a>
                                     {% endif %}
+
                                 {% endif %}
+
                             {% else %}
 
                                 {% if not(sortie.enCours) %}
-
                                     <a class="btn btn-secondary"
-                                       href="{{ path('app_sortie_edit', { id: sortie.id }) }}">Modifier</a>
+                                       href="{{ path('app_sortie_edit', { id: sortie.id }) }}">
+                                        Modifier
+                                    </a>
 
                                     <a class="btn btn-secondary"
                                        href="{{ path('app_sortie_delete', { id: sortie.id, token: csrf_token('sortie_delete' ~ sortie.id) }) }}"
                                        onclick="return confirm('Êtes-vous sûr·e de vouloir supprimer cette sortie ?')">
                                         Supprimer
                                     </a>
-
                                 {% endif %}
 
                             {% endif %}
 
                             {% if sortie.enCours %}
-                                <p>Sortie en cours !</p>
-                            {% endif %}
-
-                        </td>
-
-
-                        <td>
-                            {#                                TODO Annuler changer état #}
-                            {% if is_granted('ROLE_ADMIN') and not(sortie.enCours) and not(sortie.annulee)%}
-                                <a class="btn btn-danger"
-                                   href="{{ path('app_sortie_delete', { id: sortie.id, token: csrf_token('sortie_delete' ~ sortie.id) }) }}"
-                                   onclick="return confirm('[ADMINISTRATEUR] Êtes-vous sûr·e de vouloir annuler cette sortie ?')">
-                                    Annuler
-                                </a>
+                                <p class="mb-0 mt-2">Sortie en cours !</p>
                             {% endif %}
                         </td>
+
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <td>
+                                {% if not(sortie.enCours) and not(sortie.annulee) %}
+                                    <a class="btn btn-danger"
+                                       href="{{ path('app_sortie_delete', { id: sortie.id, token: csrf_token('sortie_delete' ~ sortie.id) }) }}"
+                                       onclick="return confirm('[ADMINISTRATEUR] Êtes-vous sûr·e de vouloir annuler cette sortie ?')">
+                                        Annuler
+                                    </a>
+                                {% endif %}
+                            </td>
+                        {% endif %}
 
                     </tr>
                 {% endfor %}
+                </tbody>
             </table>
         </div>
 

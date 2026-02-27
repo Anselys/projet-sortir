@@ -34,7 +34,7 @@
                 {% endif %}
 
                 {% if app.user and app.user.id == participant.id %}
-                    <div class="text-center mt-3">
+                    <div class="text-center mt-5">
                         <a href="{{ path('app_profil_edit', { id: participant.id }) }}"
                            class="btn btn-primary">
                             Modifier mon profil
@@ -46,8 +46,12 @@
                     </div>
                 {% endif %}
 
+                <div class="text-center mt-3">
+                    <a class="btn btn-dark" href="{{ path('app_accueil') }}">Retour</a>
+                </div>
             </div>
         </div>
+
     </div>
 
 {% endblock %}
