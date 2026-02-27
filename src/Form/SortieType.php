@@ -90,9 +90,11 @@ class SortieType extends AbstractType
                 'mapped' => false,
                 'label' => 'Publier la sortie',
                 'required' => false,
-                'attr' => [
-                    'checked' => true,
-                ]
+//                'data' => function(Sortie $sortie) {
+//                  if($sortie->getEtat()->getLibelle() == 'OUVERTE') {
+//                      return true;
+//                  } else return false;
+//                }
             ])
 
 

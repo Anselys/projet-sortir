@@ -1,13 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ parent() }} | Créer une sortie{% endblock %}
+{% block title %}{{ parent() }} | {{ sortie is defined ? 'Modifier la sortie' : 'Créer une sortie' }} {% endblock %}
 
 {% block main %}
     <div class="row justify-content-center">
         <div class="card text-white bg-secondary mb-3" style="max-width: 32rem;">
             <div class="card-header d-flex align-items-center justify-content-center" style="min-height: 60px;">
                 <h2 class="card-title mb-0">
-                    Créer une sortie
+                    {{ sortie is defined ? 'Modifier la sortie' : 'Créer une sortie' }}
                 </h2>
             </div>
             <div class="card-body mt-4">
