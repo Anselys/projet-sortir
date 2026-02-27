@@ -3,12 +3,33 @@
 {% block title %}{{ parent() }} | Détails de la sortie{% endblock %}
 
 {% block main %}
+    {% set status_class = {
+        'CREEE': 'secondary',
+        'OUVERTE': 'success',
+        'EN_COURS': 'info',
+        'CLOTUREE': 'warning',
+        'PASSEE': 'dark',
+        'ANNULEE': 'danger'
+    } %}
+
+    {% set status_label = {
+        'CREEE': 'créée',
+        'OUVERTE': 'ouverte',
+        'EN_COURS': 'en cours',
+        'CLOTUREE': 'clôturée',
+        'PASSEE': 'passée',
+        'ANNULEE': 'annulée'
+    } %}
 
     <div class="row justify-content-center">
         <div class="card text-white bg-primary mb-3" style="max-width: 40rem;">
 
             <div class="card-header d-flex align-items-center justify-content-center" style="min-height: 60px;">
-                <h2 class="card-title mb-0">Détails de la sortie</h2>
+                <h2 class="card-title mb-0 mx-4">Détails de la sortie</h2>
+                <span class="badge rounded-pill bg-{{ status_class[sortie.etat.libelle] }}">
+                    {{ status_label[sortie.etat.libelle]|capitalize }}
+                </span>
+
             </div>
 
             <div class="card-body">
@@ -18,12 +39,14 @@
                         <p class="text-light">Nom de la sortie : {{ sortie.nom }}</p>
                         <p class="text-light">Date et heure : {{ sortie.dateDebut|date('d/m/Y') }}</p>
                         <p class="text-light">Date limite : {{ sortie.dateCloture|date('d/m/Y') }}</p>
-                        <p class="text-light">Places : {{ sortie.participants.count }} / {{ sortie.nbInscriptionsMax }}</p>
+                        <p class="text-light">Places : {{ sortie.participants.count }}
+                            / {{ sortie.nbInscriptionsMax }}</p>
                         <p class="text-light">Durée : {{ sortie.duree }}</p>
                     </div>
 
                     <div class="col-md-6">
-                        <p class="text-light">Ville : {{ sortie.siteOrganisateur.nom }} - {{ sortie.lieu.ville.cpo }}</p>
+                        <p class="text-light">Ville : {{ sortie.siteOrganisateur.nom }}
+                            - {{ sortie.lieu.ville.cpo }}</p>
                         <p class="text-light">Lieu : {{ sortie.lieu.nom }}</p>
                         <p class="text-light">Rue : {{ sortie.lieu.rue }}</p>
                         <p class="text-light">Latitude : {{ sortie.lieu.latitude }}</p>
@@ -43,8 +66,6 @@
     </div>
 
     <div>
-
-
         {% if not(app.user.pseudo == sortie.organisateur.pseudo) %}
             <div class="text-center mt-3">
 
@@ -59,26 +80,21 @@
             </div>
         {% endif %}
 
-
-
         {% if app.user.pseudo == sortie.organisateur.pseudo %}
-            <div class="text-center mt-3"><a href="{{ path('app_sortie_edit', { id: sortie.id }) }}" class="btn btn-warning">Modifier</a>
+            <div class="text-center mt-3"><a href="{{ path('app_sortie_edit', { id: sortie.id }) }}"
+                                             class="btn btn-warning">Modifier</a>
                 <a href="{{ path('app_sortie_delete', { id: sortie.id, token: csrf_token('sortie_delete' ~ sortie.id) }) }}"
                    class="btn btn-warning"
                    onclick="return confirm('Êtes-vous sûr·e de vouloir supprimer cette sortie ?')">Supprimer</a></div>
         {% endif %}
 
-
-
         {% if is_granted('ROLE_ADMIN') %}
             <div class="text-center mt-3 mb-4"><a class="btn btn-danger"
-                     href="{{ path('app_sortie_delete', { id: sortie.id, token: csrf_token('sortie_delete' ~ sortie.id) }) }}"
-                     onclick="return confirm('[ADMINISTRATEUR] Êtes-vous sûr·e de vouloir supprimer cette sortie ?')">Supprimer</a>
+                                                  href="{{ path('app_sortie_delete', { id: sortie.id, token: csrf_token('sortie_delete' ~ sortie.id) }) }}"
+                                                  onclick="return confirm('[ADMINISTRATEUR] Êtes-vous sûr·e de vouloir supprimer cette sortie ?')">Supprimer</a>
             </div>
 
         {% endif %}
-
-
     </div>
 
     <div class="row justify-content-center mt-5">
@@ -96,10 +112,8 @@
                             {{ participant.pseudo }}
                         </a></p>
                 {% endfor %}
-            </div>        </div>
+            </div>
+        </div>
     </div>
-
-
-
 
 {% endblock %}

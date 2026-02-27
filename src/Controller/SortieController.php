@@ -21,9 +21,14 @@ final class SortieController extends AbstractController
     public function creer(Request $request, EntityManagerInterface $em, EtatRepository $etatRepository): Response
     {
         $sortie = new Sortie();
-        $etat = $etatRepository->find(1);
+        $etatCree = $etatRepository->findOneByLibelle('CREEE');
+        $etatOuverte = $etatRepository->findOneByLibelle('OUVERTE');
 
         $participant = $this->getUser();
+
+        if (!$participant) {
+            throw $this->createAccessDeniedException();
+        }
 
         $site = $participant->getSite();
         $sortie->setSiteOrganisateur($site);
@@ -32,7 +37,9 @@ final class SortieController extends AbstractController
 
         if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
             $sortie->setOrganisateur($participant);
-            $sortie->setEtat($etat);
+            $isPubliee = $sortieForm->get('publier')->getData();
+            $sortie->setEtat($isPubliee ? $etatOuverte : $etatCree);
+
             $sortie->addParticipant($participant);
             $em->persist($sortie);
             $em->flush();

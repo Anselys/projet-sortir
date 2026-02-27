@@ -10,6 +10,7 @@ use App\Repository\LieuRepository;
 use App\Repository\SiteRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -85,6 +86,14 @@ class SortieType extends AbstractType
                 },
                 'placeholder' => '-- Sélectionner le lieu --',
                 ])
+            ->add('publier', CheckboxType::class, [
+                'mapped' => false,
+                'label' => 'Publier la sortie',
+                'required' => false,
+                'attr' => [
+                    'checked' => true,
+                ]
+            ])
 
 
 
