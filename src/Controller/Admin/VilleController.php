@@ -18,7 +18,7 @@ final class VilleController extends AbstractController
 {
     #[IsGranted('ROLE_USER')]
     #[Route('/ville', name: '_ville')]
-    public function index(Request $request, VilleRepository $villeRepository, EntityManagerInterface $em): Response
+    public function ville(Request $request, VilleRepository $villeRepository, EntityManagerInterface $em): Response
     {
         $villesForm = $this->createForm(VilleType::class);
         $villesForm->handleRequest($request);
