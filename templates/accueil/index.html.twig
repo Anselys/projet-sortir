@@ -86,6 +86,8 @@
 
                 <tbody>
                 {% for sortie in sorties %}
+
+
                     <tr class="table-primary">
                         <td class="col-nom">
                             <a href="{{ path('app_sortie_detail', { id: sortie.id }) }}"
@@ -94,10 +96,10 @@
                             </a>
                         </td>
 
-                        <td>{{ sortie.dateDebut|date('d/m/Y') ~ ' à ' ~ sortie.dateDebut | date('H:i') }}</td>
-                        <td>{{ sortie.dateCloture|date('d/m/Y') ~ ' à ' ~ sortie.dateCloture | date('H:i') }}</td>
+                        <td>{{ sortie.dateDebut|date('d/m/Y à H:i', 'Europe/Paris') }} </td>
+                        <td>{{ sortie.dateCloture|date('d/m/Y à H:i') }}</td>
                         <td>{{ sortie.participants.count }} / {{ sortie.nbInscriptionsMax }}</td>
-                        <td>{{ sortie.etat.libelle }}</td>
+                        <td>{{ sortie.etat.libelleAffichage }}</td>
 
                         <td class="col-inscrit">
                             {% if not(app.user.sorties.contains(sortie)) %}
