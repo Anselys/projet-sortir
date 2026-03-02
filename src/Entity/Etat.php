@@ -39,6 +39,19 @@ class Etat
         return $this->libelle;
     }
 
+    public function getLibelleAffichage(): string
+    {
+        return match ($this->libelle) {
+            'OUVERTE' => 'Ouverte',
+            'ANNULEE' => 'Annulée',
+            'CLOTUREE' => 'Clôturée',
+            'EN_COURS' => 'En cours',
+            'PASSEE' => 'Terminée',
+            'CREEE' => 'Créée',
+            default => $this->libelle,
+        };
+    }
+
     public function setLibelle(string $libelle): static
     {
         $this->libelle = $libelle;

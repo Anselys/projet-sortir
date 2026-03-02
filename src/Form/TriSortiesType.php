@@ -23,6 +23,7 @@ class TriSortiesType extends AbstractType
             // TODO: récuperer l'info du user connecté pour mettre des valeurs par défaut dans SITE & mettre l'état par défaut sur OUVERTE
 
             ->add('Site', EntityType::class, [
+                'label' => 'Campus',
                 'class' => Site::class,
                 'choice_label' => 'nom',
                 'required' => false,
@@ -49,7 +50,6 @@ class TriSortiesType extends AbstractType
                         'ANNULEE' => 'Annulée',
                         'CLOTUREE' => 'Inscriptions clôturées',
                         'EN_COURS' => 'En cours',
-                        'OUVERTE' => 'Ouverte',
                         'PASSEE' => 'Terminée',
                         'CREEE' => 'Créée',
                         default => $etat->getLibelle(),

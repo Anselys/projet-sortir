@@ -32,6 +32,17 @@ class Ville
         $this->lieux = new ArrayCollection();
     }
 
+    //Retourne vrai si la ville a des sorties qui lui sont associées.
+    public function hasSorties(): bool
+    {
+        foreach ($this->lieux as $lieu) {
+            if (!$lieu->getSorties()->isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public function getId(): ?int
     {
         return $this->id;

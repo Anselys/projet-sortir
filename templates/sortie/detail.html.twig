@@ -42,10 +42,8 @@
                 <div class="row">
                     <div class="col-md-6">
                         <p class="text-light">Nom de la sortie : {{ sortie.nom }}</p>
-                        <p class="text-light">Date et heure
-                            : {{ sortie.dateDebut|date('d/m/Y') ~ ' à ' ~ sortie.dateDebut | date('H:i') }}</p>
-                        <p class="text-light">Date limite
-                            : {{ sortie.dateCloture|date('d/m/Y') ~ ' à ' ~ sortie.dateCloture | date('H:i') }}</p>
+                        <p class="text-light">Date et heure : {{ sortie.dateDebut|date('d/m/Y à H:i')  }}</p>
+                        <p class="text-light">Date limite : {{ sortie.dateCloture|date('d/m/Y à H:i') }}</p>
                         <p class="text-light">Places : {{ sortie.participants.count }}
                             / {{ sortie.nbInscriptionsMax }}</p>
                         <p class="text-light">Durée : {{ sortie.duree }}</p>
@@ -67,6 +65,9 @@
     <div class="row justify-content-center">
         <div class="card text-white bg-primary" style="max-width: 40rem;">
             <div class="card-body">
+                {% if sortie.isAnnulee %}
+                    <p class="text-light">Motif d'annulation: {{ sortie.motifAnnulation }}</p>
+                {% endif %}
                 <p class="text-light">Description : {{ sortie.description }}</p>
             </div>
         </div>
@@ -90,9 +91,8 @@
         {% if app.user.pseudo == sortie.organisateur.pseudo and sortie.modifiable %}
             <div class="text-center mt-3"><a href="{{ path('app_sortie_edit', { id: sortie.id }) }}"
                                              class="btn btn-warning">Modifier</a>
-                <a href="{{ path('app_sortie_delete', { id: sortie.id, token: csrf_token('sortie_delete' ~ sortie.id) }) }}"
-                   class="btn btn-dark"
-                   onclick="return confirm('Êtes-vous sûr·e de vouloir annuler cette sortie ?')">Annuler</a></div>
+                <a href="{{ path('app_sortie_cancel', { id: sortie.id, token: csrf_token('sortie_delete' ~ sortie.id) }) }}"
+                   class="btn btn-dark">Annuler</a></div>
         {% endif %}
 
         {% if is_granted('ROLE_ADMIN') %}
