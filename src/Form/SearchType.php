@@ -17,7 +17,6 @@ class SearchType extends AbstractType
                 'label' => 'Recherche par nom : ',
                 'required' => false,
             ]);
-
     }
 
     public function configureOptions(OptionsResolver $resolver): void

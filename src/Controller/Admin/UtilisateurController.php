@@ -22,13 +22,20 @@ final class UtilisateurController extends AbstractController
     #[Route('/utilisateur', name: '_utilisateur')]
     public function index(Request $request, ParticipantRepository $participantRepository, EntityManagerInterface $em): Response
     {
+
+        $utilisateurConnecte = $this->getUser();
+
+        if (!$utilisateurConnecte) {
+            throw $this->createAccessDeniedException();
+        }
+
         $searchForm = $this->createForm(SearchType::class);
         $searchForm->handleRequest($request);
 
         if ($searchForm->isSubmitted() && $searchForm->isValid()) {
             $search = $searchForm->getData();
             if ($search['nom']) {
-                $utilisateurs = $participantRepository->searchByName($search['nom']);
+                $utilisateurs = $participantRepository->searchUser($search['nom']);
             } else {
                 $utilisateurs = $participantRepository->findAll();
             }
@@ -57,7 +64,7 @@ final class UtilisateurController extends AbstractController
         $em->flush();
 
         $statutString = $participant->isActif() ? 'actif' : 'inactif';
-        $message = sprintf("%s %s est désormais %s", $participant->getPrenom(), $participant->getNom(), $statutString);
+        $message = sprintf("Le compte de %s %s est désormais %s", $participant->getPrenom(), $participant->getNom(), $statutString);
 
         $this->addFlash('success', $message);
 

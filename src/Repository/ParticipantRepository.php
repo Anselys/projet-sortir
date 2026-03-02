@@ -69,10 +69,13 @@ class ParticipantRepository extends ServiceEntityRepository implements PasswordU
             ->getOneOrNullResult();
     }
 
-    public function searchByName(string $search): array
+    public function searchUser(string $search): array
     {
         $qb = $this->createQueryBuilder('s');
         $qb->andWhere('s.nom LIKE :recherche')
+            ->orWhere('s.prenom LIKE :recherche')
+            ->orWhere('s.email LIKE :recherche')
+            ->orWhere('s.pseudo LIKE :recherche')
             ->setParameter('recherche', '%' . $search . '%');
         return $qb->getQuery()->getResult();
     }

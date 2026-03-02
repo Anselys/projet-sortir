@@ -4,6 +4,10 @@
 
 {% block main %}
 
+    {% set statut = participant.isActif ? 'actif' : 'inactif' %}
+    {% set statutBtnText = participant.isActif ? 'Désactiver' : 'Activer' %}
+    {% set prenomNom = participant.prenom ~ ' ' ~ participant.nom|upper %}
+
     <div class="row justify-content-center">
         <div class="card text-white bg-secondary mb-3" style="max-width: 32rem;">
             <div class="card-header d-flex align-items-center justify-content-center" style="min-height: 60px;">
@@ -46,8 +50,24 @@
                     </div>
                 {% endif %}
 
+                {% if is_granted('ROLE_ADMIN') %}
+                    <div class="text-center mt-3">
+                        <a
+                            href="{{ path('app_admin_changer_statut_utilisateur', { id: participant.id }) }}"
+                            class="btn {{ participant.isActif ? 'btn-warning' : 'btn-info' }}"
+                            onclick="return confirm('{{ statutBtnText }} le compte de {{ prenomNom }} ?')"
+                        >
+                            {{ statutBtnText }}
+                        </a>
+                        <a
+                            href="{{ path('app_admin_utilisateur_delete', { id: participant.id, token: csrf_token('utilisateur_delete' ~ participant.id) }) }}"
+                            onclick="return confirm('Êtes-vous sûr(e) de vouloir supprimer cet utilisateur ?')"
+                            class="btn btn-danger">Supprimer</a>
+                    </div>
+                {% endif %}
+
                 <div class="text-center mt-3">
-                    <a class="btn btn-dark" href="{{ path('app_accueil') }}">Retour</a>
+                    <button class="btn btn-dark" onclick="history.back()">Retour</button>
                 </div>
             </div>
         </div>

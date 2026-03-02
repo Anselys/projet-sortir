@@ -21,10 +21,11 @@
                 <div class="text-center mt-5 mb-3">
                     <button class="btn btn-primary">Enregistrer</button>
                 </div>
-                <div class="text-center mb-3">
-                    <a class="btn btn-dark" href="{{ path('app_profil_detail', { id: app.user.id }) }}">Retour</a>
-                </div>
+
                 {{ form_end(profil_form) }}
+                <div class="text-center mb-3">
+                    <button class="btn btn-dark" onclick="history.back()">Retour</button>
+                </div>
             </div>
         </div>
     </div>

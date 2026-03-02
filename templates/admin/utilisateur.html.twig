@@ -18,7 +18,7 @@
                         {{ form_widget(search_form.nom, {
                             attr: {
                                 class: 'form-control',
-                                placeholder: 'Recherche par nom...'
+                                placeholder: 'Rechercher un utilisateur...'
                             }
                         }) }}
 
@@ -34,11 +34,12 @@
         </div>
     </div>
     <section class="mt-4">
-        <div class="table-responsive w-50 mx-auto">
-            <table class="table w-100">
+        <div class="table-responsive w-75 mx-auto">
+            <table class="table">
                 <thead>
                 <tr>
                     <th scope="col">Prénom et nom</th>
+                    <th scope="col">Pseudo</th>
                     <th scope="col">Email</th>
                     <th scope="col">Statut</th>
                     <th scope="col">Actions</th>
@@ -46,19 +47,21 @@
                 </thead>
                 {% for utilisateur in utilisateurs %}
                     {% set statut = utilisateur.isActif ? 'actif' : 'inactif' %}
-                    {% set nouveauStatut = utilisateur.isActif ? 'inactif' : 'actif' %}
-                    {% set statutBtnText = utilisateur.isActif ? 'Rendre inactif' : 'Rendre actif' %}
+                    {% set statutBtnText = utilisateur.isActif ? 'Désactiver' : 'Activer' %}
                     {% set prenomNom = utilisateur.prenom ~ ' ' ~ utilisateur.nom|upper %}
 
                     <tr class="table-primary">
-                        <td style="width: 20%;">{{ prenomNom }}</td>
+                        <td style="width: 20%;">
+                            <a href="{{ path('app_profil_detail', { id: utilisateur.id }) }}">{{ prenomNom }}</a>
+                        </td>
+                        <td style="width: 20%;">{{ utilisateur.pseudo }}</td>
                         <td style="width: 20%;">{{ utilisateur.email }}</td>
                         <td class="{{ utilisateur.isActif ? 'text-success' : 'text-danger' }}" style="width: 20%;">{{ statut|capitalize }}</td>
-                        <td style="width: 20%;">
+                        <td style="width: 100%;">
                             <a
                                 href="{{ path('app_admin_changer_statut_utilisateur', { id: utilisateur.id }) }}"
                                 class="btn {{ utilisateur.isActif ? 'btn-secondary' : 'btn-info' }}"
-                                onclick="return confirm('Rendre {{ prenomNom }} {{ nouveauStatut }} ?')"
+                                onclick="return confirm('{{ statutBtnText}} le compte de {{ prenomNom }} ?')"
                             >
                                 {{ statutBtnText }}
                             </a>
