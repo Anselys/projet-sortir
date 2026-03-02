@@ -208,7 +208,7 @@ final class SortieController extends AbstractController
             $etatAnnulee = $em->getRepository(Etat::class)->findOneByLibelle('ANNULEE');
             if($sortie->isCreee() or $sortie->isCloturee() or $sortie->isOuverte()) {
                 $sortie->setEtat($etatAnnulee);
-                $sortie->setMotifAnnulation($data->getMotif());
+                $sortie->setMotifAnnulation($data->getMotifAnnulation());
                 $em->flush();
                 $this->addFlash('success', 'La sortie a été annulée.');
                 return $this->redirectToRoute('app_sortie_detail', ['id' => $sortie->getId()]);
