@@ -40,10 +40,21 @@ class TriSortiesType extends AbstractType
             ])
             ->add('etat', EntityType::class, [
                 'class' => Etat::class,
-                'choice_label' => 'libelle',
                 'label' => 'État de la sortie :',
                 'required' => false,
-                'placeholder' => 'TOUTES LES SORTIES',
+                'placeholder' => 'Toutes les sorties',
+                'choice_label' => function (Etat $etat) {
+                    return match ($etat->getLibelle()) {
+                        'OUVERTE' => 'Ouverte',
+                        'ANNULEE' => 'Annulée',
+                        'CLOTUREE' => 'Inscriptions clôturées',
+                        'EN_COURS' => 'En cours',
+                        'OUVERTE' => 'Ouverte',
+                        'PASSEE' => 'Terminée',
+                        'CREEE' => 'Créée',
+                        default => $etat->getLibelle(),
+                    };
+                },
                 'query_builder' => function (EntityRepository $er) {
                 return $er->createQueryBuilder('s')->orderBy('s.libelle', 'ASC');
                 },

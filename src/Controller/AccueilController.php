@@ -20,7 +20,13 @@ final class AccueilController extends AbstractController
     #[Route('/', name: 'app_accueil')]
     public function index(Request $request, SortieRepository $sortieRepository, EtatRepository $etatRepository): Response
     {
-        $triForm = $this->createForm(TriSortiesType::class);
+        $participant = $this->getUser();
+        $etatOuverte = $etatRepository->findOneBy(['libelle' => 'Ouverte']);
+
+        $triForm = $this->createForm(TriSortiesType::class, [
+            'Site' => $participant?->getSite(),
+            'etat' => $etatOuverte,
+        ]);
         $afficherToutForm = $this->createForm(ShowAllType::class);
 
         $participant = $this->getUser();
