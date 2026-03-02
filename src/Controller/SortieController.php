@@ -2,18 +2,14 @@
 
 namespace App\Controller;
 
-use App\Entity\Etat;
-use App\Entity\Participant;
 use App\Entity\Sortie;
 use App\Form\SortieType;
 use App\Repository\EtatRepository;
-use App\Repository\SortieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/sortie', name: 'app_sortie')]
 final class SortieController extends AbstractController
@@ -22,7 +18,7 @@ final class SortieController extends AbstractController
     public function creer(Request $request, EntityManagerInterface $em, EtatRepository $etatRepository): Response
     {
         $sortie = new Sortie();
-        $etatCree = $etatRepository->findOneByLibelle('CREEE');
+        $etatCreee = $etatRepository->findOneByLibelle('CREEE');
         $etatOuverte = $etatRepository->findOneByLibelle('OUVERTE');
 
         $participant = $this->getUser();
@@ -39,7 +35,7 @@ final class SortieController extends AbstractController
         if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
             $sortie->setOrganisateur($participant);
             $isPubliee = $sortieForm->get('publier')->getData();
-            $sortie->setEtat($isPubliee ? $etatOuverte : $etatCree);
+            $sortie->setEtat($isPubliee ? $etatOuverte : $etatCreee);
 
             $sortie->addParticipant($participant);
             $em->persist($sortie);
@@ -119,19 +115,32 @@ final class SortieController extends AbstractController
     }
 
     #[Route('/edit/{id}', name: '_edit', requirements: ['id' => '\d+'])]
-    public function edit(Request $request, EntityManagerInterface $em, Sortie $sortie): Response
+    public function edit(Request $request, EntityManagerInterface $em, Sortie $sortie, EtatRepository $etatRepository): Response
     {
-        if ($sortie->isEnCours()) {
-            $this->addFlash('danger', 'Impossible de modifier une sortie en cours.');
+        // Si la sortie est en cours ou passée/annulée/archivée, la sortie ne doit pas pouvoir être modifiée
+        if (!$sortie->isModifiable()) {
+            $this->addFlash('danger', 'Impossible de modifier une sortie en cours ou passée.');
             return $this->redirectToRoute('app_sortie_detail', [
                 'id' => $sortie->getId()
             ]);
         }
 
+        $etatOuverte = $etatRepository->findOneByLibelle('OUVERTE');
+        $etatCreee = $etatRepository->findOneByLibelle('CREEE');
+
         $sortieForm = $this->createForm(SortieType::class, $sortie);
         $sortieForm->handleRequest($request);
 
         if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
+            $isPubliee = $sortieForm->get('publier')->getData();
+
+            // Si l'état actuel est CREEE, et que la checkbox pour publier la sortie vaut true, modifier l'état en OUVERTE
+            // Si l'état actuel est OUVERTE et que la checkbox pour publier la sortie vaut false, modifier l'état en CREEE
+            if($sortie->isCreee() && $isPubliee) {
+                $sortie->setEtat($etatOuverte);
+            } else if($sortie->isOuverte() && !$isPubliee) {
+                $sortie->setEtat($etatCreee);
+            }
 
             $em->flush();
             $this->addFlash('success', "La sortie a été modifiée");

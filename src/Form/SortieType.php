@@ -15,6 +15,8 @@ use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SortieType extends AbstractType
@@ -89,16 +91,29 @@ class SortieType extends AbstractType
                 },
                 'placeholder' => '-- Sélectionner le lieu --',
                 ])
-            ->add('publier', CheckboxType::class, [
-                'mapped' => false,
-                'label' => 'Publier la sortie',
-                'required' => false,
-//                'data' => function(Sortie $sortie) {
-//                  if($sortie->getEtat()->getLibelle() == 'OUVERTE') {
-//                      return true;
-//                  } else return false;
-//                }
-            ])
+
+//            ->add('publier', CheckboxType::class, [
+//                'mapped' => false,
+//                'label' => 'Publier la sortie',
+//                'required' => false,
+//
+//            ])
+            ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+                $etat = $event->getData()->getEtat();
+                $form = $event->getForm();
+                $defaultValue = true;
+
+                if($etat && $etat->getLibelle() == 'CREEE') {
+                    $defaultValue = false;
+                }
+
+                $form->add('publier', CheckboxType::class, [
+                    'mapped' => false,
+                    'label' => 'Publier la sortie',
+                    'data' => $defaultValue,
+                    'required' => false,
+                ]);
+            })
 
 
 

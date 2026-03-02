@@ -94,7 +94,6 @@ class Sortie
         return $this->etat->getLibelle() == 'OUVERTE';
     }
 
-
     public function isAnnulee() : bool {
         return $this->etat->getLibelle() == 'ANNULEE';
     }
@@ -126,6 +125,11 @@ class Sortie
 //            ->add(new \DateInterval('PT' . $this->duree . 'M'));
 //
 //        return $now >= $this->dateDebut && $now < $dateFin;
+    }
+
+    public function isModifiable() : bool
+    {
+        return !$this->isEnCours() && !$this->isPassee() && !$this->isAnnulee() && !$this->isArchivee();
     }
 
     public function getId(): ?int

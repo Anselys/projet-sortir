@@ -130,7 +130,7 @@
 
                                 {% else %}
 
-                                    {% if not(sortie.enCours) %}
+                                    {% if not(sortie) %}
                                         <a class="btn btn-secondary"
                                            href="{{ path('app_sortie_desinscription', { id: sortie.id }) }}"
                                            onclick="return confirm('Vous êtes sur le point d\'annuler votre inscription à cette sortie. Confirmer ?')">
@@ -142,7 +142,8 @@
 
                             {% else %}
 
-                                {% if not(sortie.enCours) %}
+                                {% if (sortie.modifiable) %}
+
                                     <a class="btn btn-secondary"
                                        href="{{ path('app_sortie_edit', { id: sortie.id }) }}">
                                         Modifier
@@ -160,6 +161,13 @@
                             {% if sortie.enCours %}
                                 <p class="mb-0 mt-2">Sortie en cours !</p>
                             {% endif %}
+                            {% if sortie.passee %}
+                                <p class="mb-0 mt-2">Sortie terminée !</p>
+                            {% endif %}
+                            {% if sortie.annulee %}
+                                <p class="mb-0 mt-2">Sortie annulée !</p>
+                            {% endif %}
+
                         </td>
 
                         {% if is_granted('ROLE_ADMIN') %}
