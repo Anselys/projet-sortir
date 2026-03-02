@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Etat;
 use App\Entity\Participant;
 use App\Entity\Site;
 use App\Entity\Sortie;
@@ -69,6 +70,8 @@ final class UtilisateurController extends AbstractController
     {
         $token = $request->query->get('token');
         if ($this->isCsrfTokenValid('utilisateur_delete' . $utilisateur->getId(), $token)) {
+            $etats = $em->getRepository(Etat::class)->findAll();
+
             $utilisateur->setEmail('SUPPRIME' . $utilisateur->getId() . '@SUPPRIME.SUPPR');
             $utilisateur->setRoles(["ROLE_USER"]);
             $utilisateur->setPassword('UTILISATEURSUPPRIME');
@@ -79,9 +82,27 @@ final class UtilisateurController extends AbstractController
             $utilisateur->setIsAdmin(false);
             $utilisateur->setIsActif(false);
 
-            // TODO:  le désinscrire de toutes les sorties auxquelles il est inscrit et qui ne sont pas encore passées
-            // TODO: désinscire les utilisateurs des sorties qui ne sont pas encore passées qu'il a créé
-            // TODO: (et les annuler avec le motif "UTILISATEUR SUPPRIME")
+            // le désinscrire de toutes les sorties auxquelles il est inscrit et qui ne sont pas encore passées
+            $sortiesInscrites = $utilisateur->getSorties();
+            foreach ($sortiesInscrites as $sortie) {
+                if($sortie->isOuverte() or $sortie->isCloturee()){
+                    $sortie->getParticipants()->removeElement($utilisateur);
+                }
+            }
+
+            // désinscire les utilisateurs des sorties qui ne sont pas encore passées qu'il a créé
+            $sortiesOrganisees = $utilisateur->getSortiesOrganisees();
+            $etatAnnulee = null;
+            foreach ($sortiesOrganisees as $sortie) {
+                foreach($etats as $etat){
+                    if ($etat->getLibelle() == 'ANNULEE'){
+                        $etatAnnulee = $etat;
+                        break;
+                    }
+                }
+                $sortie->setEtat($etatAnnulee);
+                // TODO: ajouter motif de l'annulation: "COMPTE ORGANISATEUR SUPPRIME"
+            }
             $em->flush();
 
             $this->addFlash('success', 'L\'utilisateur a été supprimé');
