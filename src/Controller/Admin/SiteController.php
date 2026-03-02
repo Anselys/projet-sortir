@@ -19,7 +19,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class SiteController extends AbstractController
 {
     #[Route('/site', name: '_site')]
-    public function index(Request $request, SiteRepository $siteRepository, EntityManagerInterface $em): Response
+    public function site(Request $request, SiteRepository $siteRepository, EntityManagerInterface $em): Response
     {
         $siteForm = $this->createForm(SiteType::class);
         $siteForm->handleRequest($request);

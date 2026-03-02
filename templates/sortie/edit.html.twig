@@ -31,37 +31,30 @@
                     <div class="col-md-6">
                         {{ form_row(sortie_form.dateCloture) }}
                         {{ form_row(sortie_form.nbInscriptionsMax) }}
+
                     </div>
 
-                </div>
+                    {{ form_row(sortie_form.ville) }}
 
-                <div class="mb-3 d-flex align-items-end justify-content-between">
-                    <div class="flex-grow-1 me-2">
-                        {{ form_row(sortie_form.ville) }}
+                    <div class="mb-3 d-flex align-items-end justify-content-between">
+                        <div class="flex-grow-1 me-2">
+                            {{ form_row(sortie_form.lieu) }}
+                        </div>
+                        <a href="{{ path('app_lieu_creer') }}" class="btn btn-primary mb-3">
+                            Ajouter un lieu
+                        </a>
                     </div>
-                    <a href="{{ path('app_admin_ville')}}" class="btn btn-primary mb-3">
-                        Ajouter une ville
-                    </a>
-                </div>
 
-                <div class="mb-3 d-flex align-items-end justify-content-between">
-                    <div class="flex-grow-1 me-2">
-                        {{ form_row(sortie_form.lieu) }}
+
+                    {{ form_row(sortie_form.publier) }}
+
+                    <div class=" text-center mt-5 mb-3">
+                        <button class="btn btn-primary">Valider</button>
                     </div>
-                    <a href="{{ path('app_lieu_creer') }}" class="btn btn-primary mb-3">
-                        Ajouter un lieu
-                    </a>
+
+                    {{ form_end(sortie_form) }}
+
                 </div>
-
-
-                {{ form_row(sortie_form.publier) }}
-
-                <div class= " text-center mt-5 mb-3">
-                    <button class="btn btn-primary">Valider</button>
-                </div>
-
-                {{ form_end(sortie_form) }}
-
             </div>
         </div>
     </div>
