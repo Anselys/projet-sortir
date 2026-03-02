@@ -75,6 +75,8 @@
 
     <div>
         {% if not(app.user.pseudo == sortie.organisateur.pseudo) %}
+            {% if sortie.ouverte %}
+
             <div class="text-center mt-3">
 
                 {% if not(app.user.sorties.contains(sortie)) %}
@@ -85,6 +87,7 @@
                        onclick="return confirm('Vous êtes sur le point d\'annuler votre inscription à cette sortie. Confirmer ?')">Me
                         désinscrire</a>
                 {% endif %}
+            {% endif %}
             </div>
         {% endif %}
 
