@@ -205,10 +205,9 @@ class SortieRepository extends ServiceEntityRepository
     // UPDATE ETAT SORTIE
     ////
 
-    public function updateEtatSortie(Sortie $sortie, EtatRepository $etatRepository, EntityManagerInterface $em): Sortie
+    // TODO: refactor
+    public function updateEtatSortie(Sortie $sortie, array $etats, EntityManagerInterface $em): Sortie
     {
-        $etats = $etatRepository->findAll();
-
         $etatEnCours = null;
         $etatCloturee = null;
         $etatPassee = null;
@@ -226,13 +225,12 @@ class SortieRepository extends ServiceEntityRepository
             if ($etat->getLibelle() == 'OUVERTE') {
                 $etatOuverte = $etat;
             }
-
         }
         $dateCloture = $sortie->getDateCloture();
         $dateDebut = $sortie->getDateDebut();
-        $dateFin = clone ($dateDebut)->add(new \DateInterval('PT' . $sortie->getDuree() . 'M'));
+        $dateFin = (clone ($dateDebut))->add(new \DateInterval('PT' . $sortie->getDuree() . 'M'));
         $now = new \DateTime();
-        if ($sortie->isOuverte()) {
+        if (!$sortie->isCreee()) {
             // si elle est publiée seulement:
             if ($dateDebut < $now) {
                 $sortie->setEtat($etatOuverte);
@@ -250,6 +248,7 @@ class SortieRepository extends ServiceEntityRepository
         $em->flush();
         return $sortie;
     }
+
 
     public function updateEtatAllSorties(array $sorties, array $etats, EntityManagerInterface $em): array
     {
@@ -272,11 +271,12 @@ class SortieRepository extends ServiceEntityRepository
             }
         }
         foreach ($sorties as $sortie) {
+            // TODO: appeller "updateEtatSortie" ici
             $dateCloture = $sortie->getDateCloture();
             $dateDebut = $sortie->getDateDebut();
-            $dateFin = clone ($dateDebut)->add(new \DateInterval('PT' . $sortie->getDuree() . 'M'));
+            $dateFin = (clone ($dateDebut))->add(new \DateInterval('PT' . $sortie->getDuree() . 'M'));
             $now = new \DateTime();
-            if ($sortie->isOuverte()) {
+            if (!$sortie->isCreee()) {
                 // si elle est publiée seulement:
                 if ($dateDebut < $now) {
                     $sortie->setEtat($etatOuverte);
