@@ -274,7 +274,7 @@ class SortieRepository extends ServiceEntityRepository
         foreach ($sorties as $sortie) {
             $dateCloture = $sortie->getDateCloture();
             $dateDebut = $sortie->getDateDebut();
-            $dateFin = clone ($dateDebut)->add(new \DateInterval('PT' . $sortie->getDuree() . 'M'));
+            $dateFin = (clone ($dateDebut))->add(new \DateInterval('PT' . $sortie->getDuree() . 'M'));
             $now = new \DateTime();
             if ($sortie->isOuverte()) {
                 // si elle est publiée seulement:
