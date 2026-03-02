@@ -148,9 +148,9 @@
                                     </a>
 
                                     <a class="btn btn-secondary"
-                                       href="{{ path('app_sortie_delete', { id: sortie.id, token: csrf_token('sortie_delete' ~ sortie.id) }) }}"
-                                       onclick="return confirm('Êtes-vous sûr·e de vouloir supprimer cette sortie ?')">
-                                        Supprimer
+                                       href="{{ path('app_sortie_cancel', { id: sortie.id, token: csrf_token('sortie_delete' ~ sortie.id) }) }}"
+                                       >
+                                        Annuler
                                     </a>
                                 {% endif %}
 
@@ -176,8 +176,8 @@
                                 {% if not(sortie.enCours) and not(sortie.annulee) %}
                                     <a class="btn btn-danger"
                                        href="{{ path('app_sortie_delete', { id: sortie.id, token: csrf_token('sortie_delete' ~ sortie.id) }) }}"
-                                       onclick="return confirm('[ADMINISTRATEUR] Êtes-vous sûr·e de vouloir annuler cette sortie ?')">
-                                        Annuler
+                                       onclick="return confirm('[ADMINISTRATEUR] Êtes-vous sûr·e de vouloir supprimer cette sortie ?')">
+                                        Supprimer
                                     </a>
                                 {% endif %}
                             </td>
