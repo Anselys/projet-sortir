@@ -2,12 +2,9 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\Sortie;
 use App\Entity\Ville;
 use App\Form\SearchType;
 use App\Form\VilleType;
-use App\Repository\LieuRepository;
-use App\Repository\SortieRepository;
 use App\Repository\VilleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,10 +13,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[IsGranted('ROLE_ADMIN')]
-#[Route('/admin', name: 'app_admin')]
+#[Route('/', name: 'app_admin')]
 final class VilleController extends AbstractController
 {
+    #[IsGranted('ROLE_USER')]
     #[Route('/ville', name: '_ville')]
     public function index(Request $request, VilleRepository $villeRepository, EntityManagerInterface $em): Response
     {
@@ -60,6 +57,7 @@ final class VilleController extends AbstractController
         ]);
     }
 
+    #[IsGranted('ROLE_ADMIN')]
     #[Route('/ville/update/{id}', name: '_ville_update', requirements: ['id' => '\d+'])]
     public function update(Ville $ville, EntityManagerInterface $em, Request $request): Response
     {
@@ -74,10 +72,10 @@ final class VilleController extends AbstractController
             // checker si une ville sous ce combo nom/cpo existe déjà.
             if (!$villeFound) {
                 $em->flush();
-                $this->addFlash('success', 'La ville a été ajoutée avec succès');
+                $this->addFlash('success', 'La ville a été ajoutée avec succès.');
                 return $this->redirectToRoute('app_admin_ville');
             }
-            $this->addFlash('danger', "La Ville n'a pas pu être mise à jour, il y en a déjà une de ce nom dans la base de données.");
+            $this->addFlash('danger', "La Ville n'a pas pu être mise à jour, ce duo nom/code postal existe déjà.");
             return $this->redirectToRoute('app_admin_ville');
         }
         return $this->render('admin/ville-edit.html.twig', [
@@ -86,14 +84,14 @@ final class VilleController extends AbstractController
         ]);
     }
 
-
+    #[IsGranted('ROLE_ADMIN')]
     #[Route('/ville/delete/{id}', name: '_ville_delete', requirements: ['id' => '\d+'])]
     public function delete(Ville $ville, EntityManagerInterface $em, Request $request): Response
     {
         $token = $request->query->get('token');
         if ($this->isCsrfTokenValid('ville_delete' . $ville->getId(), $token)) {
-            $lieux = $ville->getLieux();
-            if($lieux->isEmpty()){
+
+            if(!($ville->hasSorties())){
                 $em->remove($ville);
                 $em->flush();
                 $this->addFlash('success', 'La ville a été supprimée');
@@ -101,9 +99,12 @@ final class VilleController extends AbstractController
             }
         }
 
-        $this->addFlash('danger', 'Impossible de supprimer cette ville.');
+        $this->addFlash('danger', 'Impossible de supprimer cette ville : des lieux et des sorties y sont associées.');
         return $this->redirectToRoute('app_admin_ville', ['id' => $ville->getId()]);
 
     }
 
 }
+
+
+

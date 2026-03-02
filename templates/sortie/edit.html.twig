@@ -15,20 +15,19 @@
                 {{ form_start(sortie_form) }}
                 {{ form_errors(sortie_form) }}
 
-                {# CHAMPS PRINCIPAUX EN HAUT #}
                 {{ form_row(sortie_form.nom) }}
                 {{ form_row(sortie_form.description) }}
 
-                {# COLONNES POUR DATES ET PLACES #}
+                {# COLONNES #}
                 <div class="row">
 
-                    {# COLONNE GAUCHE : date + durée (pleine largeur pour durée) #}
+                    {# COLONNE GAUCHE #}
                     <div class="col-md-6">
                         {{ form_row(sortie_form.dateDebut) }}
                         {{ form_row(sortie_form.duree) }}
                     </div>
 
-                    {# COLONNE DROITE : date limite + places #}
+                    {# COLONNE DROITE #}
                     <div class="col-md-6">
                         {{ form_row(sortie_form.dateCloture) }}
                         {{ form_row(sortie_form.nbInscriptionsMax) }}
@@ -36,12 +35,28 @@
 
                 </div>
 
-                {# RESTE DES CHAMPS #}
-                {{ form_row(sortie_form.siteOrganisateur) }}
-                {{ form_row(sortie_form.lieu) }}
+                <div class="mb-3 d-flex align-items-end justify-content-between">
+                    <div class="flex-grow-1 me-2">
+                        {{ form_row(sortie_form.ville) }}
+                    </div>
+                    <a href="{{ path('app_admin_ville')}}" class="btn btn-primary mb-3">
+                        Ajouter une ville
+                    </a>
+                </div>
+
+                <div class="mb-3 d-flex align-items-end justify-content-between">
+                    <div class="flex-grow-1 me-2">
+                        {{ form_row(sortie_form.lieu) }}
+                    </div>
+                    <a href="" class="btn btn-primary mb-3">
+                        Ajouter un lieu
+                    </a>
+                </div>
+
 
                 {{ form_row(sortie_form.publier) }}
-                <div class="text-center mt-5 mb-3">
+
+                <div class= " text-center mt-5 mb-3">
                     <button class="btn btn-primary">Valider</button>
                 </div>
 

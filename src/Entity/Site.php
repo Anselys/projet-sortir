@@ -36,6 +36,11 @@ class Site
         $this->sorties = new ArrayCollection();
     }
 
+    public function hasSorties(): bool
+    {
+        return $this->sorties->isEmpty();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
