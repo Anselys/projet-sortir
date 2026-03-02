@@ -206,8 +206,9 @@ class SortieRepository extends ServiceEntityRepository
     ////
 
     // TODO: refactor
-    public function updateEtatSortie(Sortie $sortie, array $etats, EntityManagerInterface $em): Sortie
+    public function updateEtatSortie(Sortie $sortie, EntityManagerInterface $em): Sortie
     {
+        $etats = $em->getRepository(Etat::class);
         $etatEnCours = null;
         $etatCloturee = null;
         $etatPassee = null;
@@ -248,7 +249,6 @@ class SortieRepository extends ServiceEntityRepository
         $em->flush();
         return $sortie;
     }
-
 
     public function updateEtatAllSorties(array $sorties, array $etats, EntityManagerInterface $em): array
     {
