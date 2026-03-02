@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Etat;
 use App\Entity\Sortie;
+use App\Form\AnnulationType;
 use App\Form\SortieType;
 use App\Repository\EtatRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -165,8 +167,6 @@ final class SortieController extends AbstractController
     #[Route('/delete/{id}', name: '_delete', requirements: ['id' => '\d+'])]
     public function delete(Sortie $sortie, EntityManagerInterface $em, Request $request): Response
     {
-        dump($sortie->isEnCours());
-
         if ($sortie->isEnCours()) {
             $this->addFlash('danger', 'Impossible d\'annuler une sortie en cours.');
             return $this->redirectToRoute('app_sortie_detail', [
@@ -186,6 +186,51 @@ final class SortieController extends AbstractController
 
         $this->addFlash('danger', 'Impossible de supprimer cette sortie.');
         return $this->redirectToRoute('app_sortie_detail', ['id' => $sortie->getId()]);
+    }
+
+
+    #[Route('/cancel/{id}', name: '_cancel', requirements: ['id' => '\d+'])]
+    public function cancel(Sortie $sortie, EntityManagerInterface $em, Request $request): Response{
+        $participant = $this->getUser();
+
+        $annulationForm = $this->createForm(AnnulationType::class, $sortie);
+        $annulationForm->handleRequest($request);
+
+        if (!$participant) {
+            throw $this->createAccessDeniedException();
+        }
+        if ($participant !== $sortie->getOrganisateur()) {
+            throw $this->createAccessDeniedException();
+        }
+
+        if ($annulationForm->isSubmitted() && $annulationForm->isValid()) {
+            $data = $annulationForm->getData();
+            $etatAnnulee = $em->getRepository(Etat::class)->findOneByLibelle('ANNULEE');
+            if($sortie->isCreee() or $sortie->isCloturee() or $sortie->isOuverte()) {
+                $sortie->setEtat($etatAnnulee);
+                $sortie->setMotifAnnulation($data->getMotif());
+                $em->flush();
+                $this->addFlash('success', 'La sortie a été annulée.');
+                return $this->redirectToRoute('app_sortie_detail', ['id' => $sortie->getId()]);
+            }
+            else{
+                if($sortie->isEnCours()){
+                    $this->addFlash('danger', 'Impossible de supprimer cette sortie, elle est en cours!');
+                    return $this->redirectToRoute('app_sortie_detail', ['id' => $sortie->getId()]);
+                }
+                if($sortie->isPassee()){
+                    $this->addFlash('danger', 'Impossible de supprimer cette sortie, elle a déjà eu lieu!');
+                    return $this->redirectToRoute('app_sortie_detail', ['id' => $sortie->getId()]);
+                }
+            }
+        }
+
+        return $this->render('sortie/annuler.html.twig', [
+            'annuler_form' => $annulationForm,
+            'sortie' => $sortie,
+        ]);
+
+
     }
 
 }
