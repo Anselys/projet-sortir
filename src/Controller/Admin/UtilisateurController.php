@@ -69,7 +69,19 @@ final class UtilisateurController extends AbstractController
     {
         $token = $request->query->get('token');
         if ($this->isCsrfTokenValid('utilisateur_delete' . $utilisateur->getId(), $token)) {
-            $em->remove($utilisateur);
+            $utilisateur->setEmail('SUPPRIME' . $utilisateur->getId() . '@SUPPRIME.SUPPR');
+            $utilisateur->setRoles(["ROLE_USER"]);
+            $utilisateur->setPassword('UTILISATEURSUPPRIME');
+            $utilisateur->setPseudo('[UTILISATEUR SUPPRIME #' . $utilisateur->getId() . ']');
+            $utilisateur->setNom('SUPPRIME #' . $utilisateur->getId());
+            $utilisateur->setPrenom('UTILISATEUR');
+            $utilisateur->setTelephone(null);
+            $utilisateur->setIsAdmin(false);
+            $utilisateur->setIsActif(false);
+
+            // TODO:  le désinscrire de toutes les sorties auxquelles il est inscrit et qui ne sont pas encore passées
+            // TODO: désinscire les utilisateurs des sorties qui ne sont pas encore passées qu'il a créé
+            // TODO: (et les annuler avec le motif "UTILISATEUR SUPPRIME")
             $em->flush();
 
             $this->addFlash('success', 'L\'utilisateur a été supprimé');

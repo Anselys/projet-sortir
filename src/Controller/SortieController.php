@@ -64,6 +64,9 @@ final class SortieController extends AbstractController
     #[Route('/inscription/{id}', name: '_inscription', requirements: ['id' => '\d+'])]
     public function inscription(Sortie $sortie, EntityManagerInterface $em): Response
     {
+        $sortieRepository = $em->getRepository(Sortie::class);
+        $sortie = $sortieRepository->updateEtatSortie($sortie, $em);
+
         if (!$sortie->isOuverte()) {
             $this->addFlash('danger', 'Impossible de s\'inscrire à cette sortie.');
             return $this->redirectToRoute('app_sortie_detail', [
@@ -85,7 +88,6 @@ final class SortieController extends AbstractController
                     'id' => $sortie->getId()
                 ]);
             }
-
             $sortie->addParticipant($participant);
             $em->flush();
             $this->addFlash('success', 'Inscription réussie.');
@@ -99,6 +101,7 @@ final class SortieController extends AbstractController
     #[Route('/desinscription/{id}', name: '_desinscription', requirements: ['id' => '\d+'])]
     public function desinscription(Sortie $sortie, EntityManagerInterface $em): Response
     {
+
         $participant = $this->getUser();
 
         if (!$participant) {
@@ -106,11 +109,17 @@ final class SortieController extends AbstractController
         }
 
         if ($sortie->getParticipants()->contains($participant)) {
-            $sortie->removeParticipant($participant);
-            $em->flush();
-            $this->addFlash('success', 'Votre inscription à cette sortie a été annulée.');
+            $sortieRepository = $em->getRepository(Sortie::class);
+            $sortie = $sortieRepository->updateEtatSortie($sortie, $em);
+            if ($sortie->isOuverte() or $sortie->isCloturee()) {
+                $sortie->removeParticipant($participant);
+                $em->flush();
+                $this->addFlash('success', 'Votre inscription à cette sortie a été annulée.');
+            }
+            else{
+                $this->addFlash('danger', 'Vous ne pouvez pas vous désinscrire de cette sortie.');
+            }
         }
-
         return $this->redirectToRoute('app_accueil');
     }
 
