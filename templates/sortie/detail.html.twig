@@ -35,8 +35,8 @@
                 <div class="row">
                     <div class="col-md-6">
                         <p class="text-light">Nom de la sortie : {{ sortie.nom }}</p>
-                        <p class="text-light">Date et heure : {{ sortie.dateDebut|date }}</p>
-                        <p class="text-light">Date limite : {{ sortie.dateCloture|date }}</p>
+                        <p class="text-light">Date et heure : {{ sortie.dateDebut|date('d/m/Y') ~ ' à ' ~ sortie.dateDebut | date('H:i')  }}</p>
+                        <p class="text-light">Date limite : {{ sortie.dateCloture|date('d/m/Y') ~ ' à ' ~ sortie.dateCloture | date('H:i') }}</p>
                         <p class="text-light">Places : {{ sortie.participants.count }}
                             / {{ sortie.nbInscriptionsMax }}</p>
                         <p class="text-light">Durée : {{ sortie.duree }}</p>
@@ -47,7 +47,8 @@
                         <p class="text-light">Rue : {{ sortie.lieu.rue }}</p>
                         <p class="text-light">Ville : {{ sortie.siteOrganisateur.nom }}
                             - {{ sortie.lieu.ville.cpo }}</p>
-                        <p class="text-light">Latitude / longitude : {{ sortie.lieu.latitude }} / {{ sortie.lieu.longitude }}</p>
+                        <p class="text-light">Coordonnées : {{ sortie.lieu.latitude }} / {{ sortie.lieu.longitude }}</p>
+                        <p class="text-light">Campus : {{ sortie.siteOrganisateur.nom }}</p>
                     </div>
                 </div>
             </div>

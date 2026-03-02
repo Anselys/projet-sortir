@@ -8,6 +8,7 @@ use App\Form\TriSortiesType;
 use App\Repository\EtatRepository;
 use App\Repository\SiteRepository;
 use App\Repository\SortieRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,9 +19,15 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class AccueilController extends AbstractController
 {
     #[Route('/', name: 'app_accueil')]
-    public function index(Request $request, SortieRepository $sortieRepository, EtatRepository $etatRepository): Response
+    public function index(Request $request, SortieRepository $sortieRepository, EtatRepository $etatRepository, EntityManagerInterface $em): Response
     {
-        $triForm = $this->createForm(TriSortiesType::class);
+        $participant = $this->getUser();
+        $etatOuverte = $etatRepository->findOneBy(['libelle' => 'Ouverte']);
+
+        $triForm = $this->createForm(TriSortiesType::class, [
+            'Site' => $participant?->getSite(),
+            'etat' => $etatOuverte,
+        ]);
         $afficherToutForm = $this->createForm(ShowAllType::class);
 
         $participant = $this->getUser();
@@ -33,6 +40,7 @@ final class AccueilController extends AbstractController
 
             $sorties = $sortieRepository->findByTriCustomUtilisateur($triForm, $participant, $etats);
 
+            $sorties = $sortieRepository->updateEtatAllSorties($sorties, $etats, $em);
 
             return $this->render('accueil/index.html.twig', [
                 'sorties' => $sorties,
@@ -47,6 +55,7 @@ final class AccueilController extends AbstractController
         // si on clique sur 'afficher tout' ça défiltre tout
         if ($afficherToutForm->isSubmitted() && $afficherToutForm->isValid()) {
             $sorties = $sortieRepository->findAll();
+            $sorties = $sortieRepository->updateEtatAllSorties($sorties, $etats, $em);
             return $this->render('accueil/index.html.twig', [
                 'sorties' => $sorties,
                 'participant' => $participant,
@@ -62,6 +71,8 @@ final class AccueilController extends AbstractController
                 $sorties = $sortieRepository->customFindAccueil($participant, $etats);
             }
 
+
+        $sorties = $sortieRepository->updateEtatAllSorties($sorties, $etats, $em);
 
 
         return $this->render('accueil/index.html.twig', [

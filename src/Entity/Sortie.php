@@ -78,9 +78,6 @@ class Sortie
     public function __construct()
     {
         $this->participants = new ArrayCollection();
-        $this->dateDebut = new \DateTime('now + 1 hour');
-        $this->duree = 60;
-        $this->dateCloture = new \DateTime('now');
     }
 
     //Retourne vrai si le nombre max d'inscription est atteint.

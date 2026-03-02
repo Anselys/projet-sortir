@@ -32,15 +32,18 @@ class SortieType extends AbstractType
             ])
             ->add('dateDebut', DateTimeType::class, [
                 'label' => 'Date et heure de la sortie',
+                'data' => new \DateTime(),
             ])
             ->add('duree', IntegerType::class, [
                 'label' => 'Durée (en minutes)',
+                'data' => 60,
                 'attr' => [
                     'placeholder' => 'Durée (en minutes)',
                 ]
             ])
             ->add('dateCloture', DateTimeType::class, [
-                'label' => 'Date limite d\'inscription'
+                'label' => 'Date limite d\'inscription',
+                'data' => new \DateTime()
             ])
             ->add('nbInscriptionsMax', IntegerType::class, [
                 'label' => 'Nombre de places',

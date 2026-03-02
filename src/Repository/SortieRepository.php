@@ -202,6 +202,102 @@ class SortieRepository extends ServiceEntityRepository
     }
 
     ////
+    // UPDATE ETAT SORTIE
+    ////
+
+    // TODO: refactor
+    public function updateEtatSortie(Sortie $sortie, array $etats, EntityManagerInterface $em): Sortie
+    {
+        $etatEnCours = null;
+        $etatCloturee = null;
+        $etatPassee = null;
+        $etatOuverte = null;
+        foreach ($etats as $etat) {
+            if ($etat->getLibelle() == 'EN_COURS') {
+                $etatEnCours = $etat;
+            }
+            if ($etat->getLibelle() == 'CLOTUREE') {
+                $etatCloturee = $etat;
+            }
+            if ($etat->getLibelle() == 'PASSEE') {
+                $etatPassee = $etat;
+            }
+            if ($etat->getLibelle() == 'OUVERTE') {
+                $etatOuverte = $etat;
+            }
+        }
+        $dateCloture = $sortie->getDateCloture();
+        $dateDebut = $sortie->getDateDebut();
+        $dateFin = (clone ($dateDebut))->add(new \DateInterval('PT' . $sortie->getDuree() . 'M'));
+        $now = new \DateTime();
+        if (!$sortie->isCreee()) {
+            // si elle est publiée seulement:
+            if ($dateDebut < $now) {
+                $sortie->setEtat($etatOuverte);
+            }
+            if ($dateCloture < $now) {
+                $sortie->setEtat($etatCloturee);
+            }
+            if ($dateDebut <= $now && $dateFin > $now) {
+                $sortie->setEtat($etatEnCours);
+            }
+            if ($dateFin < $now) {
+                $sortie->setEtat($etatPassee);
+            }
+        }
+        $em->flush();
+        return $sortie;
+    }
+
+
+    public function updateEtatAllSorties(array $sorties, array $etats, EntityManagerInterface $em): array
+    {
+        $etatEnCours = null;
+        $etatCloturee = null;
+        $etatPassee = null;
+        $etatOuverte = null;
+        foreach ($etats as $etat) {
+            if ($etat->getLibelle() == 'EN_COURS') {
+                $etatEnCours = $etat;
+            }
+            if ($etat->getLibelle() == 'CLOTUREE') {
+                $etatCloturee = $etat;
+            }
+            if ($etat->getLibelle() == 'PASSEE') {
+                $etatPassee = $etat;
+            }
+            if ($etat->getLibelle() == 'OUVERTE') {
+                $etatOuverte = $etat;
+            }
+        }
+        foreach ($sorties as $sortie) {
+            // TODO: appeller "updateEtatSortie" ici
+            $dateCloture = $sortie->getDateCloture();
+            $dateDebut = $sortie->getDateDebut();
+            $dateFin = (clone ($dateDebut))->add(new \DateInterval('PT' . $sortie->getDuree() . 'M'));
+            $now = new \DateTime();
+            if (!$sortie->isCreee()) {
+                // si elle est publiée seulement:
+                if ($dateDebut < $now) {
+                    $sortie->setEtat($etatOuverte);
+                }
+                if ($dateCloture < $now) {
+                    $sortie->setEtat($etatCloturee);
+                }
+                if ($dateDebut <= $now && $dateFin > $now) {
+                    $sortie->setEtat($etatEnCours);
+                }
+                if ($dateFin < $now) {
+                    $sortie->setEtat($etatPassee);
+                }
+            }
+        }
+        $em->flush();
+        return $sorties;
+    }
+
+
+    ////
     // ARCHIVAGE
     ////
 
