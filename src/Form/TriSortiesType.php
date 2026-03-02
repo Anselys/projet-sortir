@@ -50,7 +50,6 @@ class TriSortiesType extends AbstractType
                         'ANNULEE' => 'Annulée',
                         'CLOTUREE' => 'Inscriptions clôturées',
                         'EN_COURS' => 'En cours',
-                        'OUVERTE' => 'Ouverte',
                         'PASSEE' => 'Terminée',
                         'CREEE' => 'Créée',
                         default => $etat->getLibelle(),
