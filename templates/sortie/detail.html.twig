@@ -26,17 +26,26 @@
 
             <div class="card-header d-flex align-items-center justify-content-center" style="min-height: 60px;">
                 <h2 class="card-title mb-0 mx-4">Détails de la sortie</h2>
-                <span class="badge rounded-pill bg-{{ status_class[sortie.etat.libelle] }}">
+                {% if(sortie.archivee) %}
+                    <span class="badge rounded-pill bg-danger">
+                    Archivée
+                </span>
+                {% else %}
+                    <span class="badge rounded-pill bg-{{ status_class[sortie.etat.libelle] }}">
                     {{ status_label[sortie.etat.libelle]|capitalize }}
                 </span>
+                {% endif %}
+
             </div>
 
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6">
                         <p class="text-light">Nom de la sortie : {{ sortie.nom }}</p>
-                        <p class="text-light">Date et heure : {{ sortie.dateDebut|date('d/m/Y') ~ ' à ' ~ sortie.dateDebut | date('H:i')  }}</p>
-                        <p class="text-light">Date limite : {{ sortie.dateCloture|date('d/m/Y') ~ ' à ' ~ sortie.dateCloture | date('H:i') }}</p>
+                        <p class="text-light">Date et heure
+                            : {{ sortie.dateDebut|date('d/m/Y') ~ ' à ' ~ sortie.dateDebut | date('H:i') }}</p>
+                        <p class="text-light">Date limite
+                            : {{ sortie.dateCloture|date('d/m/Y') ~ ' à ' ~ sortie.dateCloture | date('H:i') }}</p>
                         <p class="text-light">Places : {{ sortie.participants.count }}
                             / {{ sortie.nbInscriptionsMax }}</p>
                         <p class="text-light">Durée : {{ sortie.duree }}</p>
@@ -78,7 +87,7 @@
             </div>
         {% endif %}
 
-        {% if app.user.pseudo == sortie.organisateur.pseudo %}
+        {% if app.user.pseudo == sortie.organisateur.pseudo and sortie.modifiable %}
             <div class="text-center mt-3"><a href="{{ path('app_sortie_edit', { id: sortie.id }) }}"
                                              class="btn btn-warning">Modifier</a>
                 <a href="{{ path('app_sortie_delete', { id: sortie.id, token: csrf_token('sortie_delete' ~ sortie.id) }) }}"

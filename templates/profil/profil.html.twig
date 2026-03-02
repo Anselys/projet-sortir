@@ -50,7 +50,8 @@
                     </div>
                 {% endif %}
 
-                {% if is_granted('ROLE_ADMIN') %}
+                {% if is_granted('ROLE_ADMIN') and app.user.id != participant.id %}
+
                     <div class="text-center mt-3">
                         <a
                             href="{{ path('app_admin_changer_statut_utilisateur', { id: participant.id }) }}"
