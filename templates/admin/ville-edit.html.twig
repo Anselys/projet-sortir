@@ -10,28 +10,29 @@
     <section>
         <div class="table-responsive w-50 mx-auto">
             <table class="table w-100">
-            <thead>
-            <tr>
-                <th scope="col">Ville</th>
-                <th scope="col">Code Postal</th>
-                <th scope="col">Actions</th>
-            </tr>
-            </thead>
-            {{ form_errors(ville_update_form) }}
-             {{ form_start(ville_update_form) }}
+                <thead>
+                <tr>
+                    <th scope="col">Ville</th>
+                    <th scope="col">Code Postal</th>
+                    <th scope="col">Actions</th>
+                </tr>
+                </thead>
+                {{ form_errors(ville_update_form) }}
+                {{ form_start(ville_update_form) }}
                 <tr class="table-primary">
-                <td>
-                    {{ form_row(ville_update_form.nom, { 'value': ville.nom | capitalize }) }}
-                </td>
-                <td>
-                    {{ form_row(ville_update_form.cpo, { 'value': ville.cpo }) }}
-                </td>
-                <td >
-                    {{ form_row(ville_update_form.submit, { 'label': 'Enregistrer', attr: { class: 'btn btn-info' }}) }}
-                </td>
-            </tr>
-            {{ form_end(ville_update_form) }}
-        </table>
+                    <td>
+                        {{ form_row(ville_update_form.nom, { 'value': ville.nom | capitalize }) }}
+                    </td>
+                    <td>
+                        {{ form_row(ville_update_form.cpo, { 'value': ville.cpo }) }}
+                    </td>
+                    <td>
+                        {{ form_row(ville_update_form.submit, { 'label': 'Enregistrer', attr: { class: 'btn btn-info' }}) }}
+                    </td>
+                </tr>
+                {{ form_end(ville_update_form) }}
+            </table>
+        </div>
     </section>
 
 {% endblock %}
