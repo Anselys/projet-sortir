@@ -24,7 +24,6 @@ class LieuType extends AbstractType
                 ]
             ])
             ->add('ville', EntityType::class, [
-                'mapped' => false,
                 'label' => false, 'class' => Ville::class,
                 'choice_label' => 'nom',
                 'query_builder' => function (VilleRepository $er) {

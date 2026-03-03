@@ -53,8 +53,6 @@
                 </tr>
                 {{ form_end(lieux_form) }}
 
-
-
                 {% for lieu in lieux %}
                     <tr class="table-primary">
                         <td>{{ lieu.nom|capitalize }}</td>
@@ -66,13 +64,13 @@
                         <td style="width: 50px;">
                             {% if is_granted('ROLE_ADMIN') %}
                                 <a class="btn btn-sm btn-info"
-                                   href="{{ path('app_lieu_modifier', { id: lieu.id, token: csrf_token('lieu_modifier' ~ lieu.id) }) }}">
+                                   href="{{ path('app_lieu_modifier', { id:lieu.id }) }}">
                                     Modifier
                                 </a>
 
                                 <a class="btn btn-sm btn-danger"
-                                   href="{{ path('app_lieu_supprimer', { id: lieu.id, token: csrf_token('lieu_supprimer' ~ lieu.id) }) }}"
-                                   onclick="return confirm('Êtes-vous sûr·e de vouloir supprimer cette ville ?')">
+                                   href="{{ path('app_lieu_supprimer', { id: lieu.id, token: csrf_token('lieu_delete' ~ lieu.id) }) }}"
+                                   onclick="return confirm('Êtes-vous sûr·e de vouloir supprimer ce lieu ?')">
                                     Supprimer
                                 </a>
                             {% endif %}
