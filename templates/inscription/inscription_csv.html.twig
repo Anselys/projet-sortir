@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} {{ parent() }} | Inscription par CSV{% endblock %}
+
+{% block main %}
+
+    {{ form(csv_form) }}
+    <div>
+        <p>Attention à respecter l'ordre des colonnes:</p>
+        <p>E-mail | pseudo | Nom | Prénom | Téléphone | Campus</p>
+    </div>
+
+{% endblock %}
+
