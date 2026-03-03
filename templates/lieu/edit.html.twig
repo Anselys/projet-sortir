@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} | Admin - Gérer les Lieux{% endblock %}
+
+
+{% block main %}
+
+    <h2 class="mb-5">Modifier un lieu</h2>
+
+    <section>
+        <div class="table-responsive w-75 mx-auto">
+            <table class="table w-100">
+                <thead>
+                <tr>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Rue</th>
+                    <th scope="col">Ville</th>
+                    <th scope="col">Latitude</th>
+                    <th scope="col">Longitude</th>
+                    <th scope="col">Actions</th>
+                </tr>
+                </thead>
+                {{ form_errors(lieu_update_form) }}
+                {{ form_start(lieu_update_form) }}
+                <tr class="table-primary">
+                    <td>
+                        {{ form_row(lieu_update_form.nom, { 'value': lieu.nom }) }}
+                    </td>
+                    <td>
+                        {{ form_row(lieu_update_form.rue, { 'value': lieu.rue }) }}
+                    </td>
+                    <td>
+                        {{ form_row(lieu_update_form.ville) }}
+                    </td>
+                    <td>
+                        {{ form_row(lieu_update_form.latitude, { 'value': lieu.latitude }) }}
+                    </td>
+                    <td>
+                        {{ form_row(lieu_update_form.longitude, { 'value': lieu.longitude }) }}
+                    </td>
+                    <td>
+                        {{ form_row(lieu_update_form.submit, { 'label': 'Enregistrer', attr: { class: 'btn btn-info' } })}}
+                    </td>
+                </tr>
+                {{ form_end(lieu_update_form) }}
+            </table>
+        </div>
+    </section>
+
+{% endblock %}

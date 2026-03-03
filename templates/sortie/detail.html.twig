@@ -21,38 +21,38 @@
         'ANNULEE': 'annulée'
     } %}
 
-    <div class="row justify-content-center">
-        <div class="card text-white bg-primary mb-3" style="max-width: 40rem;">
+<div class="row justify-content-center">
+    <div class="card text-white bg-primary mb-3" style="max-width: 40rem;">
 
-            <div class="card-header d-flex align-items-center justify-content-center" style="min-height: 60px;">
-                <h2 class="card-title mb-0 mx-4">Détails de la sortie</h2>
-                {% if(sortie.archivee) %}
-                    <span class="badge rounded-pill bg-danger">
+        <div class="card-header d-flex align-items-center justify-content-center" style="min-height: 60px;">
+            <h2 class="card-title mb-0 mx-4">Détails de la sortie</h2>
+            {% if(sortie.archivee) %}
+                <span class="badge rounded-pill bg-danger">
                     Archivée
                 </span>
-                {% else %}
-                    <span class="badge rounded-pill bg-{{ status_class[sortie.etat.libelle] }}">
+            {% else %}
+                <span class="badge rounded-pill bg-{{ status_class[sortie.etat.libelle] }}">
                     {{ status_label[sortie.etat.libelle]|capitalize }}
                 </span>
-                {% endif %}
+            {% endif %}
 
-            </div>
+        </div>
 
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6">
-                        <p class="text-light">Nom de la sortie : {{ sortie.nom }}</p>
+                        <p class="text-light">Nom : {{ sortie.nom }}</p>
                         <p class="text-light">Date et heure : {{ sortie.dateDebut|date('d/m/Y à H:i')  }}</p>
-                        <p class="text-light">Date limite : {{ sortie.dateCloture|date('d/m/Y à H:i') }}</p>
+                        <p class="text-light">Fin inscriptions : {{ sortie.dateCloture|date('d/m/Y à H:i') }}</p>
                         <p class="text-light">Places : {{ sortie.participants.count }}
                             / {{ sortie.nbInscriptionsMax }}</p>
-                        <p class="text-light">Durée : {{ sortie.duree }}</p>
+                        <p class="text-light">Durée : {{ sortie.duree }} minutes.</p>
                     </div>
 
                     <div class="col-md-6">
                         <p class="text-light">Lieu : {{ sortie.lieu.nom }}</p>
                         <p class="text-light">Rue : {{ sortie.lieu.rue }}</p>
-                        <p class="text-light">Ville : {{ sortie.siteOrganisateur.nom }}
+                        <p class="text-light">Ville : {{ sortie.lieu.ville.nom }}
                             - {{ sortie.lieu.ville.cpo }}</p>
                         <p class="text-light">Coordonnées : {{ sortie.lieu.latitude }} / {{ sortie.lieu.longitude }}</p>
                         <p class="text-light">Campus : {{ sortie.siteOrganisateur.nom }}</p>
@@ -62,48 +62,66 @@
         </div>
     </div>
 
-    <div class="row justify-content-center">
-        <div class="card text-white bg-primary" style="max-width: 40rem;">
-            <div class="card-body">
-                {% if sortie.isAnnulee %}
-                    <p class="text-light">Motif d'annulation: {{ sortie.motifAnnulation }}</p>
-                {% endif %}
-                <p class="text-light">Description : {{ sortie.description }}</p>
-            </div>
+<div class="row justify-content-center">
+    <div class="card text-white bg-primary" style="max-width: 40rem;">
+        <div class="card-body">
+            {% if sortie.isAnnulee %}
+                <p class="text-light">Motif d'annulation: {{ sortie.motifAnnulation }}</p>
+            {% endif %}
+            <p class="text-light">Description : {{ sortie.description }}</p>
         </div>
     </div>
+</div>
 
-    <div>
-        {% if not(app.user.pseudo == sortie.organisateur.pseudo) %}
-            {% if sortie.ouverte %}
+<div>
+    {% if not(app.user.pseudo == sortie.organisateur.pseudo) %}
+        {% if sortie.ouverte %}
 
             <div class="text-center mt-3">
 
-                {% if not(app.user.sorties.contains(sortie)) %}
-                    <a class="btn btn-success" href="{{ path('app_sortie_inscription', { id: sortie.id }) }}"
-                       onclick="return confirm('Confirmer l\'inscription ?')">S'inscrire</a>
-                {% else %}
-                    <a class="btn btn-warning" href="{{ path('app_sortie_desinscription', { id: sortie.id }) }}"
-                       onclick="return confirm('Vous êtes sur le point d\'annuler votre inscription à cette sortie. Confirmer ?')">Me
-                        désinscrire</a>
-                {% endif %}
+            {% if not(app.user.sorties.contains(sortie)) %}
+                <a class="btn btn-success" href="{{ path('app_sortie_inscription', { id: sortie.id }) }}"
+                   onclick="return confirm('Confirmer l\'inscription ?')">S'inscrire</a>
+            {% else %}
+                <a class="btn btn-warning" href="{{ path('app_sortie_desinscription', { id: sortie.id }) }}"
+                   onclick="return confirm('Vous êtes sur le point d\'annuler votre inscription à cette sortie. Confirmer ?')">Me
+                    désinscrire</a>
             {% endif %}
-            </div>
         {% endif %}
+        </div>
+    {% endif %}
 
-        {% if app.user.pseudo == sortie.organisateur.pseudo and sortie.modifiable %}
-            <div class="text-center mt-3"><a href="{{ path('app_sortie_edit', { id: sortie.id }) }}"
-                                             class="btn btn-warning">Modifier</a>
-                <a href="{{ path('app_sortie_cancel', { id: sortie.id, token: csrf_token('sortie_delete' ~ sortie.id) }) }}"
-                   class="btn btn-dark">Annuler</a></div>
+    {% if app.user.pseudo == sortie.organisateur.pseudo and sortie.modifiable %}
+        <div class="text-center mt-3"><a href="{{ path('app_sortie_edit', { id: sortie.id }) }}"
+                                         class="btn btn-warning">Modifier</a>
+            <a href="{{ path('app_sortie_cancel', { id: sortie.id, token: csrf_token('sortie_cancel' ~ sortie.id) }) }}"
+               class="btn btn-dark">Annuler</a>
+        </div>
+    {% endif %}
+
+    {% if is_granted('ROLE_ADMIN') and not(sortie.archivee) %}
+    <div class="text-center mt-3 mb-4">
+        {% if not(sortie.enCours) and not(sortie.annulee) and not(sortie.passee) %}
+            <a class="btn btn-danger"
+               href="{{ path('app_sortie_cancel', { id: sortie.id, token: csrf_token('sortie_cancel' ~ sortie.id) }) }}"
+               onclick="return confirm('[ADMINISTRATEUR] Êtes-vous sûr·e de vouloir annuler cette sortie ?')">
+                Annuler
+            </a>
         {% endif %}
-
-        {% if is_granted('ROLE_ADMIN') %}
-            <div class="text-center mt-3 mb-4"><a class="btn btn-danger"
-                                                  href="{{ path('app_sortie_delete', { id: sortie.id, token: csrf_token('sortie_delete' ~ sortie.id) }) }}"
-                                                  onclick="return confirm('[ADMINISTRATEUR] Êtes-vous sûr·e de vouloir supprimer cette sortie ?')">Supprimer</a>
-            </div>
-
+        {% if (sortie.etat.libelle === 'CREEE') %}
+            <a class="btn btn-danger"
+               href="{{ path('app_sortie_delete', { id: sortie.id, token: csrf_token('sortie_delete' ~ sortie.id) }) }}"
+               onclick="return confirm('[ADMINISTRATEUR] Êtes-vous sûr·e de vouloir supprimer cette sortie ?')">
+                Supprimer
+            </a>
+        {% endif %}
+        {% if (sortie.annulee or sortie.passee) %}
+            <a class="btn btn-danger"
+               href="{{ path('app_sortie_archive', { id: sortie.id, token: csrf_token('sortie_archive' ~ sortie.id) }) }}"
+               onclick="return confirm('[ADMINISTRATEUR] Êtes-vous sûr·e de vouloir archiver cette sortie ?')">
+                Archiver
+            </a>
+        {% endif %}
         {% endif %}
     </div>
 
@@ -132,5 +150,5 @@
             </div>
         </div>
     </div>
-
+</div>
 {% endblock %}

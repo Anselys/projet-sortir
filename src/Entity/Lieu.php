@@ -6,6 +6,7 @@ use App\Repository\LieuRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\Boolean;
 
 #[ORM\Entity(repositoryClass: LieuRepository::class)]
 class Lieu
@@ -40,6 +41,10 @@ class Lieu
     public function __construct()
     {
         $this->sorties = new ArrayCollection();
+    }
+
+    public function isModifiable() : bool {
+        return $this->sorties->isEmpty();
     }
 
     public function getId(): ?int
