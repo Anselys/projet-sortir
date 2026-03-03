@@ -1,4 +1,5 @@
 @import "footer.css";
+@import "vapor.css";
 
 :root {
     --header-h: 150px;
@@ -113,4 +114,33 @@ td, tr {
 
 .col-actions{
     width:180px;
+}
+
+.invalid-feedback {
+    color: #ffc107;
+    font-weight: bold;
+}
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: #ffc107;
+}
+.form-control.is-invalid:focus {
+    box-shadow: 0 0 0 0.25rem rgb(255, 193, 7);
+}
+
+.avatar {
+    width: 50%;
+    aspect-ratio: 1;
+    margin: 0 auto;
+    border: 0 solid transparent;
+    border-radius: 50%;
+
+    img {
+        object-fit: cover;
+        height: 100%;
+        width: 100%;
+        border: 0 solid transparent;
+        border-radius: 50%;
+    }
 }

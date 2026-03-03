@@ -17,14 +17,11 @@
             </div>
             <div class="card-body mt-4">
 
-                <div class="text-center mb-3">
-                    {% if participant.urlPhoto %}
-                        <img src="{{ asset('uploads/photos/' ~ participant.urlPhoto) }}"
-                             width="200"
-                             class="rounded"
-                             alt="Image de profil de {{ participant.pseudo }}"
-                             loading="lazy">
-                    {% endif %}
+                <div class="avatar text-center mb-3">
+                    <img
+                        src="{{ participant.urlPhoto ? asset('uploads/photos/' ~ participant.urlPhoto) : asset ('images/default_avatar.jpg') }}"
+                        alt="Image de profil de {{ participant.pseudo }}"
+                        loading="lazy">
                 </div>
 
                 <p><strong>Pseudo :</strong> {{ participant.pseudo }}</p>
