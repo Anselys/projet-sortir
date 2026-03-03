@@ -130,6 +130,10 @@ class Sortie
 //        return $now >= $this->dateDebut && $now < $dateFin;
     }
 
+    public function canDesinscrire() : bool {
+        return $this->isOuverte() || $this->isCloturee();
+    }
+
     public function isModifiable() : bool
     {
         return !$this->isEnCours() && !$this->isPassee() && !$this->isAnnulee() && !$this->isArchivee();

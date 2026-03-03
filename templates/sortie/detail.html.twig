@@ -17,7 +17,7 @@
         'CREEE': 'créée',
         'OUVERTE': 'ouverte',
         'EN_COURS': 'en cours',
-        'CLOTUREE': 'clôturée',
+        'CLOTUREE': 'inscriptions clôturées',
         'PASSEE': 'passée',
         'ANNULEE': 'annulée'
     } %}
@@ -76,7 +76,7 @@
     </div>
 
     <div>
-        {% if not(app.user.pseudo == sortie.organisateur.pseudo) %}
+        {% if app.user and sortie.organisateur and app.user.pseudo != sortie.organisateur.pseudo %}
             {% if sortie.ouverte %}
 
                 <div class="text-center mt-3">
@@ -93,7 +93,7 @@
             </div>
         {% endif %}
 
-        {% if app.user.pseudo == sortie.organisateur.pseudo and sortie.modifiable %}
+        {% if app.user and sortie.organisateur and app.user.pseudo == sortie.organisateur.pseudo and sortie.modifiable %}
             <div class="text-center mt-3"><a href="{{ path('app_sortie_edit', { id: sortie.id }) }}"
                                              class="btn btn-warning">Modifier</a>
                 <a href="{{ path('app_sortie_cancel', { id: sortie.id, token: csrf_token('sortie_cancel' ~ sortie.id) }) }}"

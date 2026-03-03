@@ -4,11 +4,13 @@ namespace App\Controller;
 
 use App\Entity\Etat;
 use App\Entity\Sortie;
+use App\Entity\Ville;
 use App\Form\AnnulationType;
 use App\Form\SortieType;
 use App\Repository\EtatRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -150,13 +152,22 @@ final class SortieController extends AbstractController
         $sortieForm->handleRequest($request);
 
         if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
+
+            $ville = $sortieForm->get('ville')->getData();
+            $lieu = $sortieForm->get('lieu')->getData();
+
+            if ($ville && $lieu && $lieu->getVille()->getId() !== $ville->getId()) {
+                $this->addFlash('danger', 'Le lieu ne correspond pas à la ville sélectionnée.');
+                return $this->redirectToRoute('app_sortie_edit', ['id' => $sortie->getId()]);
+            }
+
             $isPubliee = $sortieForm->get('publier')->getData();
 
             // Si l'état actuel est CREEE, et que la checkbox pour publier la sortie vaut true, modifier l'état en OUVERTE
             // Si l'état actuel est OUVERTE et que la checkbox pour publier la sortie vaut false, modifier l'état en CREEE
             if ($sortie->isCreee() && $isPubliee) {
                 $sortie->setEtat($etatOuverte);
-            } else if ($sortie->isOuverte() && !$isPubliee) {
+            } elseif ($sortie->isOuverte() && !$isPubliee) {
                 $sortie->setEtat($etatCreee);
             }
 
@@ -290,5 +301,20 @@ final class SortieController extends AbstractController
             );
     }
 
+
+    #[Route('/lieux-by-ville/{id}', name: '_lieux_by_ville')]
+    public function lieuxByVille(Ville $ville): JsonResponse
+    {
+        $lieux = [];
+
+        foreach ($ville->getLieux() as $lieu) {
+            $lieux[] = [
+                'id' => $lieu->getId(),
+                'nom' => $lieu->getNom(),
+            ];
+        }
+
+        return new JsonResponse($lieux);
+    }
 
 }

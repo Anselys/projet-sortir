@@ -44,7 +44,7 @@ class Etat
         return match ($this->libelle) {
             'OUVERTE' => 'Ouverte',
             'ANNULEE' => 'Annulée',
-            'CLOTUREE' => 'Clôturée',
+            'CLOTUREE' => 'Inscriptions clôturées',
             'EN_COURS' => 'En cours',
             'PASSEE' => 'Terminée',
             'CREEE' => 'Créée',
