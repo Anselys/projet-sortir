@@ -20,3 +20,7 @@ class ArchiveProvider implements ScheduleProviderInterface
             RecurringMessage::every('24 hours', new Archive('sorties archivées')));
     }
 }
+
+
+
+// MESSAGE POUR LANCER L'ARCHIVAGE TOUTES LES 24h: symfony console messenger:consume -v scheduler_default
