@@ -75,7 +75,7 @@
                     <th scope="col" class="col-date">Fin des inscriptions</th>
                     <th scope="col" class="col-inscrit">Inscrits</th>
                     <th scope="col" class="col-etat">État</th>
-                    <th scope="col" class="col-inscrit">Inscrit·e</th>
+                    <th scope="col" class="col-inscrit text-center">Inscrit·e</th>
                     <th scope="col" class="col-organisateur">Organisateur·ice</th>
                     <th scope="col" class="col-actions">Actions</th>
                     {% if is_granted('ROLE_ADMIN') %}
@@ -101,7 +101,7 @@
                         <td>{{ sortie.participants.count }} / {{ sortie.nbInscriptionsMax }}</td>
                         <td>{{ sortie.etat.libelleAffichage }}</td>
 
-                        <td class="col-inscrit">
+                        <td class="col-inscrit text-center">
                             {% if not(app.user.sorties.contains(sortie)) %}
                                 -
                             {% else %}
@@ -130,7 +130,7 @@
 
                                 {% else %}
 
-                                    {% if not(sortie) %}
+                                    {% if sortie.canDesinscrire %}
                                         <a class="btn btn-secondary"
                                            href="{{ path('app_sortie_desinscription', { id: sortie.id }) }}"
                                            onclick="return confirm('Vous êtes sur le point d\'annuler votre inscription à cette sortie. Confirmer ?')">
@@ -158,18 +158,9 @@
 
                             {% endif %}
 
-                            {% if sortie.enCours %}
-                                <p class="mb-0 mt-2">Sortie en cours !</p>
-                            {% endif %}
-                            {% if sortie.passee %}
-                                <p class="mb-0 mt-2">Sortie terminée !</p>
-                            {% endif %}
-                            {% if sortie.annulee %}
-                                <p class="mb-0 mt-2">Sortie annulée !</p>
-                            {% endif %}
-                            {% if sortie.cloturee %}
-                                <p class="mb-0 mt-2">Sortie clôturée !</p>
-                            {% endif %}
+{#                            {% if sortie.enCours or sortie.passee or sortie.annulee or sortie.cloturee %}#}
+{#                                <p class="mb-0 mt-2 figure-caption">-</p>#}
+{#                            {% endif %}#}
 
                         </td>
 

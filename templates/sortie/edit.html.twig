@@ -19,45 +19,101 @@
                 {{ form_row(sortie_form.description) }}
 
                 {# COLONNES #}
-                <div class="row">
 
-                    {# COLONNE GAUCHE #}
+
+                <div class="row">
                     <div class="col-md-6">
                         {{ form_row(sortie_form.dateDebut) }}
-                        {{ form_row(sortie_form.duree) }}
                     </div>
-
-                    {# COLONNE DROITE #}
                     <div class="col-md-6">
                         {{ form_row(sortie_form.dateCloture) }}
-                        {{ form_row(sortie_form.nbInscriptionsMax) }}
-
                     </div>
+                </div>
 
-                    {{ form_row(sortie_form.ville) }}
+                <div class="row">
+                    <div class="col-md-6">
+                        {{ form_row(sortie_form.duree) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form_row(sortie_form.nbInscriptionsMax) }}
+                    </div>
+                </div>
 
-                    <div class="mb-3 d-flex align-items-end justify-content-between">
-                        <div class="flex-grow-1 me-2">
-                            {{ form_row(sortie_form.lieu) }}
-                        </div>
-                        <a href="{{ path('app_lieu_creer') }}" class="btn btn-primary mb-3">
+                {{ form_row(sortie_form.ville) }}
+
+                <div class="row mb-3 align-items-end">
+                    <div class="col">
+                        {{ form_label(sortie_form.lieu) }}
+                        {{ form_widget(sortie_form.lieu) }}
+                        {{ form_errors(sortie_form.lieu) }}
+                    </div>
+                    <div class="col-auto">
+                        <a href="{{ path('app_lieu_creer') }}" class="btn btn-primary">
                             Ajouter un lieu
                         </a>
                     </div>
-
-
-                    {{ form_row(sortie_form.publier) }}
-
-                    <div class=" text-center mt-5 mb-3">
-                        <button class="btn btn-primary">Valider</button>
-                    </div>
-
-                    {{ form_end(sortie_form) }}
-
                 </div>
+
+
+                {{ form_row(sortie_form.publier) }}
+
+                <div class=" text-center mt-5 mb-3">
+                    <button class="btn btn-primary">Valider</button>
+                </div>
+
+                {{ form_end(sortie_form) }}
+
+
             </div>
         </div>
     </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded',  function () {
+
+            const villeSelect = document.getElementById('sortie_ville');
+            const lieuSelect = document.getElementById('sortie_lieu');
+
+            if (!villeSelect || !lieuSelect) {
+                return;
+            }
+
+            function chargerLieux(villeId, selectedLieuId = null) {
+
+                lieuSelect.innerHTML = '<option value="">-- Choisir un lieu --</option>';
+
+                if (!villeId) {
+                    return;
+                }
+
+                fetch('/sortie/lieux-by-ville/' + villeId)
+                    .then(response => response.json())
+                    .then(data => {
+
+                        data.forEach(function (lieu) {
+                            const option = document.createElement('option');
+                            option.value = lieu.id;
+                            option.textContent = lieu.nom;
+
+                            if (selectedLieuId && selectedLieuId === lieu.id) {
+                                option.selected = true;
+                            }
+
+                            lieuSelect.appendChild(option);
+                        });
+
+                    });
+            }
+
+            chargerLieux(villeSelect.value, lieuSelect.value);
+
+            villeSelect.addEventListener('change', function () {
+                chargerLieux(this.value);
+            });
+        });
+    </script>
+
 {% endblock %}
 
 

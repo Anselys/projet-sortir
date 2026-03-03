@@ -23,10 +23,17 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SortieType extends AbstractType
 {
+    private LieuRepository $lieuRepository;
+
+    public function __construct(LieuRepository $lieuRepository)
+    {
+        $this->lieuRepository = $lieuRepository;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('nom',TextType::class, [
+            ->add('nom', TextType::class, [
                 'label' => 'Nom de la sortie',
                 'attr' => [
                     'placeholder' => 'Nom de la sortie',
@@ -34,24 +41,20 @@ class SortieType extends AbstractType
             ])
             ->add('dateDebut', DateTimeType::class, [
                 'label' => 'Date et heure de la sortie',
-                'data' => new \DateTime(),
             ])
             ->add('duree', IntegerType::class, [
                 'label' => 'Durée (en minutes)',
-                'data' => 60,
                 'attr' => [
                     'placeholder' => 'Durée (en minutes)',
                 ]
             ])
             ->add('dateCloture', DateTimeType::class, [
                 'label' => 'Date limite d\'inscription',
-                'data' => new \DateTime()
             ])
             ->add('nbInscriptionsMax', IntegerType::class, [
                 'label' => 'Nombre de places',
                 'attr' => [
                     'placeholder' => 'Nombre de places',
-                    'value' => 10
                 ]
             ])
             ->add('description', TextType::class, [
@@ -60,52 +63,74 @@ class SortieType extends AbstractType
                     'placeholder' => 'Description de la sortie',
                 ],
             ])
-//            ->add('urlPhoto')
-//            ->add('lieu', ChoiceType::class, [
-//                'class' => Lieu::class,
-//                'choice_label' => 'id',
-//            ])
-//            ->add('siteOrganisateur', EntityType::class, [
-//                'label' => 'Campus',
-//                'class' => Site::class,
-//                'choice_label' => 'nom',
-//                'query_builder' => function (SiteRepository $er) {
-//                    return $er->createQueryBuilder('site')->orderBy('site.nom', 'ASC');
-//                },
-//                'placeholder' => '-- Sélectionner le site --',
-//            ])
             ->add('ville', EntityType::class, [
                 'mapped' => false,
                 'label' => 'Ville',
                 'class' => Ville::class,
-                'choice_label' => 'nom',
-                'query_builder' => function (VilleRepository $er) {
-                    return $er->createQueryBuilder('ville')->orderBy('ville.nom', 'ASC');
+                'choice_label' => function (Ville $ville) {
+                    return $ville->getNom() . ' - ' . $ville->getCpo();
                 },
                 'placeholder' => '-- Sélectionner la ville --',
+                'data' => $options['data']->getLieu()?->getVille(),
             ])
-            ->add('lieu', EntityType::class, [
-                'label' => 'Lieu',
-                'class' => Lieu::class,
-                'choice_label' => 'nom',
-                'query_builder' => function (LieuRepository $er) {
-                    return $er->createQueryBuilder('lieu')->orderBy('lieu.nom', 'ASC');
-                },
-                'placeholder' => '-- Sélectionner le lieu --',
-                ])
 
-//            ->add('publier', CheckboxType::class, [
-//                'mapped' => false,
-//                'label' => 'Publier la sortie',
-//                'required' => false,
-//
-//            ])
+            ->add('lieu', EntityType::class, [
+                'class' => Lieu::class,
+                'choice_label' => function (Lieu $lieu) {
+                    return $lieu->getNom() . ' - ' . $lieu->getVille()->getNom() . ' [' . $lieu->getVille()->getCpo() .'] ';
+                }
+            ])
+
+            ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+
+                $sortie = $event->getData();
+                $form = $event->getForm();
+
+                $ville = $sortie->getLieu()?->getVille();
+
+                $lieux = $ville
+                    ? $this->lieuRepository->findBy(['ville' => $ville])
+                    : [];
+
+                $form->add('lieu', EntityType::class, [
+                    'class' => Lieu::class,
+                    'choices' => $lieux,
+                    'choice_label' => function (Lieu $lieu) {
+                        return $lieu->getNom();
+                    },
+                    'placeholder' => '-- Choisir un lieu --',
+                ]);
+            })
+
+            ->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+
+                $data = $event->getData();
+                $form = $event->getForm();
+
+                if (!isset($data['ville']) || empty($data['ville'])) {
+                    return;
+                }
+
+                $villeId = $data['ville'];
+
+                $lieux = $this->lieuRepository->findBy(['ville' => $villeId]);
+
+                $form->add('lieu', EntityType::class, [
+                    'class' => Lieu::class,
+                    'choices' => $lieux,
+                    'choice_label' => function (Lieu $lieu) {
+                        return $lieu->getNom();
+                    },
+                    'placeholder' => '-- Choisir un lieu --',
+                ]);
+            })
+
             ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
                 $etat = $event->getData()->getEtat();
                 $form = $event->getForm();
                 $defaultValue = true;
 
-                if($etat && $etat->getLibelle() == 'CREEE') {
+                if ($etat && $etat->getLibelle() == 'CREEE') {
                     $defaultValue = false;
                 }
 
@@ -115,17 +140,7 @@ class SortieType extends AbstractType
                     'data' => $defaultValue,
                     'required' => false,
                 ]);
-            })
-
-
-
-//            ->add('participants', ChoiceType::class, [
-//                'class' => Participant::class,
-//                'choice_label' => 'id',
-//                'multiple' => true,
-//            ])
-
-        ;
+            });
     }
 
     public function configureOptions(OptionsResolver $resolver): void
