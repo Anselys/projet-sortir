@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} {{ parent() }} | Sorties Archivées{% endblock %}
+
+{% block main %}
+    <h2 class="card-title mb-0">Sorties Archivées</h2>
+    <section class="mt-5">
+
+        <div class="table-responsive w-75 mx-auto">
+            <table class="table">
+                <thead class="py-3">
+                <tr>
+                    <th scope="col">Nom de la sortie</th>
+                    <th scope="col">Date de la sortie</th>
+                    <th scope="col">Clôture</th>
+                    <th scope="col">Inscrits</th>
+                    <th scope="col">Organisateur·ice</th>
+                </tr>
+                </thead>
+
+                {% for sortie in sorties %}
+                    <tr class="table-primary">
+                        <td>
+                            <a href="{{ path('app_sortie_detail', { id: sortie.id }) }}"
+                               class="btn btn-info">{{ sortie.nom }}</a>
+                        </td>
+                        <td>{{ sortie.dateDebut | date('d/m/Y') }}</td>
+                        <td>{{ sortie.dateCloture | date('d/m/Y') }}</td>
+                        <td>{{ sortie.participants.count }} / {{ sortie.nbInscriptionsMax }}</td>
+                        <td>
+                            <a href="{{ path('app_profil_detail', { id: sortie.organisateur.id }) }}">
+                                {{ sortie.organisateur.prenom }} {{ sortie.organisateur.nom|first|upper }}
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+    </section>
+
+{% endblock %}

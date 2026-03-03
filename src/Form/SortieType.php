@@ -6,14 +6,19 @@ namespace App\Form;
 use App\Entity\Lieu;
 use App\Entity\Site;
 use App\Entity\Sortie;
+use App\Entity\Ville;
 use App\Repository\LieuRepository;
 use App\Repository\SiteRepository;
+use App\Repository\VilleRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SortieType extends AbstractType
@@ -23,46 +28,62 @@ class SortieType extends AbstractType
         $builder
             ->add('nom',TextType::class, [
                 'label' => 'Nom de la sortie',
+                'attr' => [
+                    'placeholder' => 'Nom de la sortie',
+                ],
             ])
             ->add('dateDebut', DateTimeType::class, [
-                'label' => 'Date et heure de la sortie'
+                'label' => 'Date et heure de la sortie',
+                'data' => new \DateTime(),
             ])
             ->add('duree', IntegerType::class, [
-                'label' => 'Durée (en minutes)'
+                'label' => 'Durée (en minutes)',
+                'data' => 60,
+                'attr' => [
+                    'placeholder' => 'Durée (en minutes)',
+                ]
             ])
             ->add('dateCloture', DateTimeType::class, [
-                'label' => 'Date limite d\'inscription'
+                'label' => 'Date limite d\'inscription',
+                'data' => new \DateTime()
             ])
             ->add('nbInscriptionsMax', IntegerType::class, [
                 'label' => 'Nombre de places',
+                'attr' => [
+                    'placeholder' => 'Nombre de places',
+                    'value' => 10
+                ]
             ])
             ->add('description', TextType::class, [
                 'label' => 'Description et infos',
+                'attr' => [
+                    'placeholder' => 'Description de la sortie',
+                ],
             ])
 //            ->add('urlPhoto')
 //            ->add('lieu', ChoiceType::class, [
 //                'class' => Lieu::class,
 //                'choice_label' => 'id',
 //            ])
-            ->add('siteOrganisateur', EntityType::class, [
-                'label' => 'Ville organisatrice',
-                'class' => Site::class,
-                'choice_label' => 'nom',
-                'query_builder' => function (SiteRepository $er) {
-                    return $er->createQueryBuilder('site')->orderBy('site.nom', 'ASC');
-                },
-                'placeholder' => '-- Sélectionner le site --',
-            ])
-//            ->add('ville', EntityType::class, [
-//                'mapped' => false,
-//                'label' => 'Ville',
-//                'class' => Ville::class,
+//            ->add('siteOrganisateur', EntityType::class, [
+//                'label' => 'Campus',
+//                'class' => Site::class,
 //                'choice_label' => 'nom',
-//                'query_builder' => function (VilleRepository $er) {
-//                    return $er->createQueryBuilder('ville')->orderBy('ville.nom', 'ASC');
+//                'query_builder' => function (SiteRepository $er) {
+//                    return $er->createQueryBuilder('site')->orderBy('site.nom', 'ASC');
 //                },
-//                'placeholder' => '-- Sélectionner la ville --',
+//                'placeholder' => '-- Sélectionner le site --',
 //            ])
+            ->add('ville', EntityType::class, [
+                'mapped' => false,
+                'label' => 'Ville',
+                'class' => Ville::class,
+                'choice_label' => 'nom',
+                'query_builder' => function (VilleRepository $er) {
+                    return $er->createQueryBuilder('ville')->orderBy('ville.nom', 'ASC');
+                },
+                'placeholder' => '-- Sélectionner la ville --',
+            ])
             ->add('lieu', EntityType::class, [
                 'label' => 'Lieu',
                 'class' => Lieu::class,
@@ -72,6 +93,29 @@ class SortieType extends AbstractType
                 },
                 'placeholder' => '-- Sélectionner le lieu --',
                 ])
+
+//            ->add('publier', CheckboxType::class, [
+//                'mapped' => false,
+//                'label' => 'Publier la sortie',
+//                'required' => false,
+//
+//            ])
+            ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+                $etat = $event->getData()->getEtat();
+                $form = $event->getForm();
+                $defaultValue = true;
+
+                if($etat && $etat->getLibelle() == 'CREEE') {
+                    $defaultValue = false;
+                }
+
+                $form->add('publier', CheckboxType::class, [
+                    'mapped' => false,
+                    'label' => 'Publier la sortie',
+                    'data' => $defaultValue,
+                    'required' => false,
+                ]);
+            })
 
 
 

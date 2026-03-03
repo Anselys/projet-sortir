@@ -14,11 +14,20 @@ class VilleType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('nom',TextType::class, array('label' => false))
-            ->add('cpo',TextType::class, array('label' => false))
-            ->add('submit', SubmitType::class, [
-                'label' => 'Ajouter',
+            ->add('nom', TextType::class, [
+                'label' => false,
+                'attr' => [
+                    'placeholder' => 'Nom de la nouvelle ville',
+                ]
             ])
+            ->add('cpo', TextType::class, [
+                'label' => false,
+                'attr' => [
+                    'placeholder' => 'Code postal de la nouvelle ville',
+                    'class' => 'mb-0'
+                ]
+            ])
+            ->add('submit', SubmitType::class)
         ;
     }
 
@@ -26,6 +35,7 @@ class VilleType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Ville::class,
+            'csrf_protection' => false,
         ]);
     }
 }

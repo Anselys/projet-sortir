@@ -1,21 +1,26 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Inscription{% endblock %}
+{% block title %}{{ parent() }} | Admin - Inscrire un utilisateur{% endblock %}
 
 {% block main %}
-    <h2>Ajouter un utilisateur</h2>
+
     <div class="row justify-content-center">
-        <div class="col-12 col-md-6">
-
-            {{ form_errors(inscription_form) }}
-            {{ form_start(inscription_form) }}
-            {{ form_widget(inscription_form) }}
-            <div class="text-center">
-                <button class="btn btn-primary">Enregistrer</button>
+        <div class="card text-white bg-secondary mb-3" style="max-width: 32rem;">
+            <div class="card-header d-flex align-items-center justify-content-center" style="min-height: 60px;">
+                <h2 class="card-title mb-0">
+                    Inscrire un utilisateur
+                </h2>
             </div>
-            {{ form_end(inscription_form) }}
-
-
+            <div class="card-body mt-4">
+                {{ form_errors(inscription_form) }}
+                {{ form_start(inscription_form) }}
+                {{ form_widget(inscription_form) }}
+                <div class="text-center">
+                    <button class="btn btn-primary">Enregistrer</button>
+                </div>
+                {{ form_end(inscription_form) }}
+            </div>
         </div>
     </div>
+
 {% endblock %}

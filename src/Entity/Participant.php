@@ -32,7 +32,7 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
      * @var list<string> The user roles
      */
     #[ORM\Column]
-    private array $roles = [];
+    private array $roles = ['ROLE_USER'];
 
     /**
      * @var string The hashed password
@@ -56,7 +56,7 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     private ?bool $isAdmin = false;
 
     #[ORM\Column]
-    private ?bool $isActif = false;
+    private ?bool $isActif = true;
 
     #[ORM\ManyToOne(inversedBy: 'participants')]
     #[ORM\JoinColumn(nullable: false)]

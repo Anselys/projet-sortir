@@ -7,6 +7,7 @@ use App\Entity\Site;
 use App\Repository\SiteRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -22,24 +23,41 @@ class InscriptionType extends AbstractType
         $builder
             ->add('pseudo', TextType::class, [
                 'label' => 'Nom d\'utilisateur',
+                'attr' => [
+                    'placeholder' => 'Nom d\'utilisateur',
+                ],
             ])
             ->add('nom', TextType::class, [
                 'label' => 'Nom',
+                'attr' => [
+                    'placeholder' => 'Nom de famille',
+                ],
             ])
-            ->add('prenom',TextType::class, [
+            ->add('prenom', TextType::class, [
                 'label' => 'Prénom',
+                'attr' => [
+                    'placeholder' => 'Prénom',
+                ],
             ])
-            ->add('email')
+            ->add('email', EmailType::class, [
+                'attr' => [
+                    'value' => '@campus-eni.fr',
+                    'placeholder' => 'Email',
+                ],
+            ])
             ->add('site', EntityType::class, [
                 'class' => Site::class,
                 'choice_label' => 'nom',
                 'query_builder' => function (SiteRepository $er) {
                     return $er->createQueryBuilder('site')->orderBy('site.nom', 'ASC');
                 },
-                'placeholder' => ' -- Choisissez votre campus --',
+                'placeholder' => ' -- Choisissez le campus --',
             ])
-            ->add('telephone',TextType::class, [
+            ->add('telephone', TextType::class, [
                 'label' => 'Numéro de téléphone',
+                'attr' => [
+                    'placeholder' => 'Numéro de téléphone',
+                ],
                 'required' => false,
             ])
             ->add('plainPassword', RepeatedType::class, [
@@ -47,7 +65,11 @@ class InscriptionType extends AbstractType
                 // this is read and encoded in the controller
                 'type' => PasswordType::class,
                 'options' => [
-                    'attr' => ['autocomplete' => 'new-password'],
+                    'attr' => [
+                        'autocomplete' => 'new-password',
+                        'value' => 'Passw0rd123!',
+                        'placeholder' => 'Mot de passe',
+                    ],
                 ],
                 'mapped' => false,
                 'first_options' => [
@@ -57,23 +79,26 @@ class InscriptionType extends AbstractType
                         ),
                         new PasswordStrength(
                             minScore: PasswordStrength::STRENGTH_WEAK,
-                            //minScore: PasswordStrength::STRENGTH_MEDIUM,
                             message: 'Veuillez choisir un mdp plus balèze'
                         ),
                         /**
-                        new NotCompromisedPassword(
-                        message: 'Your password is not compromised',
-                        )
+                         * new NotCompromisedPassword(
+                         * message: 'Your password is not compromised',
+                         * )
                          **/
                     ],
                     'label' => 'Mot de passe'
                 ],
                 'second_options' => [
-                    'label' => 'Confirmation du mot de passe'
+                    'label' => 'Confirmation du mot de passe',
+                    'attr' => [
+                        'value' => 'Passw0rd123!',
+                        'placeholder' => 'Confirmer le mot de passe',
+                    ]
                 ],
+
                 'invalid_message' => 'Les mots de passe doivent être identiques.'
-            ])
-        ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

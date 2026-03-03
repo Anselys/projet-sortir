@@ -1,20 +1,68 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ parent() }} | Créer une sortie{% endblock %}
+{% block title %}{{ parent() }} | {{ sortie is defined ? 'Modifier la sortie' : 'Créer une sortie' }} {% endblock %}
 
 {% block main %}
-
     <div class="row justify-content-center">
-        <div class="col-12 col-md-3">
-
-            {{ form_errors(sortie_form) }}
-            {{ form_start(sortie_form) }}
-            {{ form_widget(sortie_form) }}
-            <div class="text-center">
-                <button class="btn btn-primary">Valider</button>
+        <div class="card text-white bg-secondary mb-3" style="max-width: 32rem;">
+            <div class="card-header d-flex align-items-center justify-content-center" style="min-height: 60px;">
+                <h2 class="card-title mb-0">
+                    {{ sortie is defined ? 'Modifier la sortie' : 'Créer une sortie' }}
+                </h2>
             </div>
-            {{ form_end(sortie_form) }}
+            <div class="card-body mt-4">
 
+                {{ form_start(sortie_form) }}
+                {{ form_errors(sortie_form) }}
+
+                {{ form_row(sortie_form.nom) }}
+                {{ form_row(sortie_form.description) }}
+
+                {# COLONNES #}
+                <div class="row">
+
+                    {# COLONNE GAUCHE #}
+                    <div class="col-md-6">
+                        {{ form_row(sortie_form.dateDebut) }}
+                        {{ form_row(sortie_form.duree) }}
+                    </div>
+
+                    {# COLONNE DROITE #}
+                    <div class="col-md-6">
+                        {{ form_row(sortie_form.dateCloture) }}
+                        {{ form_row(sortie_form.nbInscriptionsMax) }}
+                    </div>
+
+                </div>
+
+                <div class="mb-3 d-flex align-items-end justify-content-between">
+                    <div class="flex-grow-1 me-2">
+                        {{ form_row(sortie_form.ville) }}
+                    </div>
+                    <a href="{{ path('app_admin_ville')}}" class="btn btn-primary mb-3">
+                        Ajouter une ville
+                    </a>
+                </div>
+
+                <div class="mb-3 d-flex align-items-end justify-content-between">
+                    <div class="flex-grow-1 me-2">
+                        {{ form_row(sortie_form.lieu) }}
+                    </div>
+                    <a href="{{ path('app_lieu_creer') }}" class="btn btn-primary mb-3">
+                        Ajouter un lieu
+                    </a>
+                </div>
+
+
+                {{ form_row(sortie_form.publier) }}
+
+                <div class= " text-center mt-5 mb-3">
+                    <button class="btn btn-primary">Valider</button>
+                </div>
+
+                {{ form_end(sortie_form) }}
+
+            </div>
         </div>
     </div>
 {% endblock %}

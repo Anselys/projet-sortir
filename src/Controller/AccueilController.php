@@ -3,10 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\Participant;
+use App\Form\ShowAllType;
 use App\Form\TriSortiesType;
 use App\Repository\EtatRepository;
 use App\Repository\SiteRepository;
 use App\Repository\SortieRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,49 +19,68 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class AccueilController extends AbstractController
 {
     #[Route('/', name: 'app_accueil')]
-    public function index(Request $request, SortieRepository $sortieRepository, EtatRepository $etatRepository): Response
+    public function index(Request $request, SortieRepository $sortieRepository, EtatRepository $etatRepository, EntityManagerInterface $em): Response
     {
+        $participant = $this->getUser();
+        $etatOuverte = $etatRepository->findOneBy(['libelle' => 'Ouverte']);
+
+        $triForm = $this->createForm(TriSortiesType::class, [
+            'Site' => $participant?->getSite(),
+            'etat' => $etatOuverte,
+        ]);
+        $afficherToutForm = $this->createForm(ShowAllType::class);
 
         $participant = $this->getUser();
         $etats = $etatRepository->findAll();
-        $today = new \DateTime();
         $sorties = [];
-        $triForm = $this->createForm(TriSortiesType::class);
-        $triForm->handleRequest($request);
 
+        $triForm->handleRequest($request);
         // si un filtre de tri est soumis, sorties est rempli via le tri
         if ($triForm->isSubmitted() && $triForm->isValid()) {
+
             $sorties = $sortieRepository->findByTriCustomUtilisateur($triForm, $participant, $etats);
 
-            $this->addFlash('success', 'Tri activé');
+            $sorties = $sortieRepository->updateEtatAllSorties($sorties, $etats, $em);
+
             return $this->render('accueil/index.html.twig', [
                 'sorties' => $sorties,
-                'today' => $today,
                 'participant' => $participant,
                 'tri_form' => $triForm->createView(),
+                'afficher_tout_form' => $afficherToutForm->createView(),
             ]);
         }
 
+
+        $afficherToutForm->handleRequest($request);
+        // si on clique sur 'afficher tout' ça défiltre tout
+        if ($afficherToutForm->isSubmitted() && $afficherToutForm->isValid()) {
+            $sorties = $sortieRepository->findAll();
+            $sorties = $sortieRepository->updateEtatAllSorties($sorties, $etats, $em);
+            return $this->render('accueil/index.html.twig', [
+                'sorties' => $sorties,
+                'participant' => $participant,
+                'tri_form' => $triForm->createView(),
+                'afficher_tout_form' => $afficherToutForm->createView(),
+            ]);
+        }
         // par défaut les sorties sont filtrées sur le site de l'utilisateur connecté, si ouvertes à l'inscription
         // et par triées date de début la plus proche.
         // si pas d'utilisateur: toutes les sorties ouvertes, triées par date la plus proche
-        if($participant != null){
-            $participantSite = $participant->getSite();
-            if($participantSite != null){
-                foreach ($etats as $etat){
-                    if($etat->getLibelle() == 'OUVERTE'){
-                        $etatOuvert = $etat;
-                    }
-                }
-                $sorties = $sortieRepository->findBySiteAndEtat($participantSite, $etatOuvert);
+        if ($participant != null) {
+//                $sorties = $sortieRepository->findBySiteAndEtat($participantSite, $etatOuvert);
+                $sorties = $sortieRepository->customFindAccueil($participant, $etats);
             }
-        }
+
+
+        $sorties = $sortieRepository->updateEtatAllSorties($sorties, $etats, $em);
+
 
         return $this->render('accueil/index.html.twig', [
             'sorties' => $sorties,
-            'today' => $today,
             'participant' => $participant,
             'tri_form' => $triForm->createView(),
+            'afficher_tout_form' => $afficherToutForm->createView(),
         ]);
     }
+
 }

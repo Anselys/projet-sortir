@@ -3,18 +3,15 @@
 namespace App\Form;
 
 use App\Entity\Etat;
-use App\Entity\Participant;
 use App\Entity\Site;
 use Doctrine\ORM\EntityRepository;
-use phpDocumentor\Reflection\DocBlock\Tags\Link;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Button;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\ResetType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -23,9 +20,10 @@ class TriSortiesType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            // TODO: récuperer l'info du user connecté pour mettre des valeurs par défaut dans SITE
-            // & mettre l'état par défaut sur OUVERTE
+            // TODO: récuperer l'info du user connecté pour mettre des valeurs par défaut dans SITE & mettre l'état par défaut sur OUVERTE
+
             ->add('Site', EntityType::class, [
+                'label' => 'Campus',
                 'class' => Site::class,
                 'choice_label' => 'nom',
                 'required' => false,
@@ -35,15 +33,28 @@ class TriSortiesType extends AbstractType
                 }
             ])
             ->add('recherche', TextType::class, [
-                'label' => 'Le nom de la sortie contient:',
+                'label' => 'Rechercher par nom',
+                'attr' => [
+                    'placeholder' => 'Rechercher...',
+                ],
                 'required' => false,
             ])
             ->add('etat', EntityType::class, [
                 'class' => Etat::class,
-                'choice_label' => 'libelle',
-                'label' => 'Etat de la sortie:',
+                'label' => 'État de la sortie :',
                 'required' => false,
-                'placeholder' => 'TOUTES LES SORTIES',
+                'placeholder' => 'Toutes les sorties',
+                'choice_label' => function (Etat $etat) {
+                    return match ($etat->getLibelle()) {
+                        'OUVERTE' => 'Ouverte',
+                        'ANNULEE' => 'Annulée',
+                        'CLOTUREE' => 'Inscriptions clôturées',
+                        'EN_COURS' => 'En cours',
+                        'PASSEE' => 'Terminée',
+                        'CREEE' => 'Créée',
+                        default => $etat->getLibelle(),
+                    };
+                },
                 'query_builder' => function (EntityRepository $er) {
                 return $er->createQueryBuilder('s')->orderBy('s.libelle', 'ASC');
                 },
@@ -78,6 +89,12 @@ class TriSortiesType extends AbstractType
                     'class' => 'btn btn-primary',
                 ]
             ])
+//            ->add('Reset', ResetType::class, [
+//                'label' => 'Réinitialiser',
+//                'attr' => [
+//                    'class' => 'btn btn-primary',
+//                    ]
+//            ])
         ;
     }
 

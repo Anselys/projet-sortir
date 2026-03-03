@@ -58,18 +58,19 @@ class SortieFixtures extends Fixture implements DependentFixtureInterface
             $dateCloture = $faker->dateTimeBetween($minCloture, $maxCloture);
 
             $sortie
-                ->setNom($faker->sentence(5, true))
+                ->setNom($faker->words(2, true))
                 ->setDescription($faker->realText(300))
                 ->setDuree($duree)
                 ->setDateDebut($dateDebut)
                 ->setDateCloture($dateCloture)
                 ->setEtat($faker->randomElement($etats))
                 ->setOrganisateur($faker->randomElement($participants))
-                ->setNbInscriptionsMax($faker->numberBetween($min = 1, $max = 99))
+                ->setNbInscriptionsMax($faker->numberBetween($min = 1, $max = 10))
                 ->setUrlPhoto($faker->imageUrl($width = 640, $height = 480))
                 ->setLieu($faker->randomElement($lieux))
                 ->setSiteOrganisateur($faker->randomElement($sites))
-                ->setEtat($faker->randomElement($etats));
+                ->setEtat($faker->randomElement($etats))
+                ->setIsArchivee(false);
 
             $manager->persist($sortie);
         }

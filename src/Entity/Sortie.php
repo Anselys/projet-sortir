@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use AllowDynamicProperties;
 use App\Repository\SortieRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -9,6 +10,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
+#[AllowDynamicProperties]
 #[ORM\Entity(repositoryClass: SortieRepository::class)]
 class Sortie
 {
@@ -27,14 +29,14 @@ class Sortie
     )]
     private ?string $nom = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Assert\GreaterThanOrEqual('today', message: 'La date de début de la sortie ne peut pas être dans le passé')]
     private ?\DateTime $dateDebut = null;
 
     #[ORM\Column(nullable: true)]
     private ?int $duree = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Assert\Type("\DateTimeInterface")]
     #[Assert\LessThan(propertyPath: 'dateDebut', message: 'La date de clôture ne peut pas être ultérieure à la date de début')]
     private ?\DateTime $dateCloture = null;
@@ -70,6 +72,12 @@ class Sortie
     #[ORM\ManyToMany(targetEntity: Participant::class, inversedBy: 'sorties')]
     private Collection $participants;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $isArchivee = false;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $motifAnnulation = null;
+
     public function __construct()
     {
         $this->participants = new ArrayCollection();
@@ -85,6 +93,47 @@ class Sortie
         return $this->participants->count() >= $this->nbInscriptionsMax;
     }
 
+    public function isOuverte() : bool {
+        return $this->etat->getLibelle() == 'OUVERTE';
+    }
+
+    public function isAnnulee() : bool {
+        return $this->etat->getLibelle() == 'ANNULEE';
+    }
+
+    public function isCloturee() : bool {
+        return $this->etat->getLibelle() == 'CLOTUREE';
+    }
+
+    public function isPassee() : bool {
+        return $this->etat->getLibelle() == 'PASSEE';
+    }
+
+    public function isCreee() : bool {
+        return $this->etat->getLibelle() == 'CREEE';
+    }
+
+    //Retourne vrai si l'événement est en cours.
+    public function isEnCours(): bool
+    {
+       return $this->etat->getLibelle() == 'EN_COURS';
+
+//        if (!$this->dateDebut || $this->duree === null) {
+//            return false;
+//        }
+//
+//        $now = new \DateTimeImmutable('now', $this->dateDebut->getTimezone());
+//
+//        $dateFin = (clone $this->dateDebut)
+//            ->add(new \DateInterval('PT' . $this->duree . 'M'));
+//
+//        return $now >= $this->dateDebut && $now < $dateFin;
+    }
+
+    public function isModifiable() : bool
+    {
+        return !$this->isEnCours() && !$this->isPassee() && !$this->isAnnulee() && !$this->isArchivee();
+    }
 
     public function getId(): ?int
     {
@@ -246,6 +295,30 @@ class Sortie
         if ($this->participants->removeElement($participant)) {
             $participant->removeSortie($this);
         }
+        return $this;
+    }
+
+    public function isArchivee(): ?bool
+    {
+        return $this->isArchivee;
+    }
+
+    public function setIsArchivee(?bool $isArchivee): static
+    {
+        $this->isArchivee = $isArchivee;
+
+        return $this;
+    }
+
+    public function getMotifAnnulation(): ?string
+    {
+        return $this->motifAnnulation;
+    }
+
+    public function setMotifAnnulation(?string $motifAnnulation): static
+    {
+        $this->motifAnnulation = $motifAnnulation;
+
         return $this;
     }
 }
