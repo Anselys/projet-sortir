@@ -4,26 +4,31 @@
 
 
 {% block main %}
+
+    <h2 class="mb-5">Modifier un campus</h2>
+
     <section>
-        <table class="table table-dark table-striped">
-            <thead>
-            <tr>
-                <th scope="col">Site</th>
-                <th scope="col">Actions</th>
-            </tr>
-            </thead>
-            {{ form_errors(site_update_form) }}
-            {{ form_start(site_update_form) }}
-            <tr>
-                <td>
-                    {{ form_row(site_update_form.nom, { 'value': site.nom | upper }) }}
-                </td>
-                <td >
-                    {{ form_row(site_update_form.submit, { 'label': 'Modifier' }) }}
-                </td>
-            </tr>
-            {{ form_end(site_update_form) }}
-        </table>
+        <div class="table-responsive w-25 mx-auto">
+            <table class="table w-100">
+                <thead>
+                <tr>
+                    <th scope="col">Nom du campus</th>
+                    <th scope="col">Actions</th>
+                </tr>
+                </thead>
+                {{ form_errors(site_update_form) }}
+                {{ form_start(site_update_form) }}
+                <tr class="table-primary">
+                    <td>
+                        {{ form_row(site_update_form.nom, { 'value': site.nom | upper }) }}
+                    </td>
+                    <td>
+                        {{ form_row(site_update_form.submit, { 'label': 'Enregistrer', attr: { class: 'btn btn-info' } }) }}
+                    </td>
+                </tr>
+                {{ form_end(site_update_form) }}
+            </table>
+        </div>
     </section>
 
 

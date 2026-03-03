@@ -13,10 +13,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/', name: 'app_admin')]
+#[IsGranted('ROLE_ADMIN')]
+#[Route('/admin', name: 'app_admin')]
 final class VilleController extends AbstractController
 {
-    #[IsGranted('ROLE_USER')]
+
     #[Route('/ville', name: '_ville')]
     public function ville(Request $request, VilleRepository $villeRepository, EntityManagerInterface $em): Response
     {
