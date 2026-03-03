@@ -74,13 +74,6 @@ class SortieType extends AbstractType
                 'data' => $options['data']->getLieu()?->getVille(),
             ])
 
-            ->add('lieu', EntityType::class, [
-                'class' => Lieu::class,
-                'choice_label' => function (Lieu $lieu) {
-                    return $lieu->getNom() . ' - ' . $lieu->getVille()->getNom() . ' [' . $lieu->getVille()->getCpo() .'] ';
-                }
-            ])
-
             ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
 
                 $sortie = $event->getData();
@@ -99,6 +92,7 @@ class SortieType extends AbstractType
                         return $lieu->getNom();
                     },
                     'placeholder' => '-- Choisir un lieu --',
+                    'data' => $sortie->getLieu(),
                 ]);
             })
 
@@ -122,6 +116,7 @@ class SortieType extends AbstractType
                         return $lieu->getNom();
                     },
                     'placeholder' => '-- Choisir un lieu --',
+
                 ]);
             })
 

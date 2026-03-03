@@ -96,7 +96,7 @@
                             option.value = lieu.id;
                             option.textContent = lieu.nom;
 
-                            if (selectedLieuId && selectedLieuId === lieu.id) {
+                            if (selectedLieuId && selectedLieuId == lieu.id) {
                                 option.selected = true;
                             }
 
@@ -105,6 +105,7 @@
 
                     });
             }
+
 
             chargerLieux(villeSelect.value, lieuSelect.value);
 
