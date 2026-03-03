@@ -72,7 +72,7 @@
 
     {% if is_granted('ROLE_ADMIN') or app.user.id == participant.id %}
         <section class="mt-5">
-            <h2 class="card-title mb-0">Mes Sorties Organisées</h2>
+            <h2 class="card-title mb-4">Mes Sorties Organisées</h2>
             <div class="table-responsive w-75 mx-auto">
                 <table class="table">
                     <thead class="py-3">
@@ -116,18 +116,6 @@
                                         </a>
                                     {% endif %}
 
-                                    {% if sortie.enCours %}
-                                        <p class="mb-0 mt-2">Sortie en cours !</p>
-                                    {% endif %}
-                                    {% if sortie.passee %}
-                                        <p class="mb-0 mt-2">Sortie terminée !</p>
-                                    {% endif %}
-                                    {% if sortie.annulee %}
-                                        <p class="mb-0 mt-2">Sortie annulée !</p>
-                                    {% endif %}
-                                    {% if sortie.cloturee %}
-                                        <p class="mb-0 mt-2">Sortie clôturée !</p>
-                                    {% endif %}
                                 </td>
                                 {% if is_granted('ROLE_ADMIN') %}
                                     <td>
@@ -163,7 +151,7 @@
 
         </section>
         <section class="mt-5">
-            <h2 class="card-title mb-0">Mes Sorties</h2>
+            <h2 class="card-title mb-4">Mes inscriptions</h2>
             <div class="table-responsive w-75 mx-auto">
                 <table class="table">
                     <thead class="py-3">
@@ -195,30 +183,48 @@
                                 <td>{{ sortie.participants.count }} / {{ sortie.nbInscriptionsMax }}</td>
                                 <td>{{ sortie.etat.libelleAffichage }}</td>
                                 <td>
-                                    {% if (sortie.modifiable) %}
-                                        <a class="btn btn-secondary"
-                                           href="{{ path('app_sortie_edit', { id: sortie.id }) }}">
-                                            Modifier
-                                        </a>
-                                        <a class="btn btn-secondary"
-                                           href="{{ path('app_sortie_cancel', { id: sortie.id, token: csrf_token('sortie_cancel' ~ sortie.id) }) }}"
-                                        >
-                                            Annuler
-                                        </a>
+                                    {% if not(app.user.pseudo == sortie.organisateur.pseudo) %}
+
+                                        {% if not(app.user.sorties.contains(sortie)) %}
+
+                                            {% if sortie.ouverte %}
+                                                <a class="btn btn-success"
+                                                   href="{{ path('app_sortie_inscription', { id: sortie.id }) }}"
+                                                   onclick="return confirm('Confirmer l\'inscription ?')">
+                                                    S'inscrire
+                                                </a>
+                                            {% endif %}
+
+                                        {% else %}
+
+                                            {% if sortie.canDesinscrire %}
+                                                <a class="btn btn-secondary"
+                                                   href="{{ path('app_sortie_desinscription', { id: sortie.id }) }}"
+                                                   onclick="return confirm('Vous êtes sur le point d\'annuler votre inscription à cette sortie. Confirmer ?')">
+                                                    Me désinscrire
+                                                </a>
+                                            {% endif %}
+
+                                        {% endif %}
+
+                                    {% else %}
+
+                                        {% if (sortie.modifiable) %}
+
+                                            <a class="btn btn-secondary"
+                                               href="{{ path('app_sortie_edit', { id: sortie.id }) }}">
+                                                Modifier
+                                            </a>
+
+                                            <a class="btn btn-secondary"
+                                               href="{{ path('app_sortie_cancel', { id: sortie.id, token: csrf_token('sortie_cancel' ~ sortie.id) }) }}"
+                                            >
+                                                Annuler
+                                            </a>
+                                        {% endif %}
+
                                     {% endif %}
 
-                                    {% if sortie.enCours %}
-                                        <p class="mb-0 mt-2">Sortie en cours !</p>
-                                    {% endif %}
-                                    {% if sortie.passee %}
-                                        <p class="mb-0 mt-2">Sortie terminée !</p>
-                                    {% endif %}
-                                    {% if sortie.annulee %}
-                                        <p class="mb-0 mt-2">Sortie annulée !</p>
-                                    {% endif %}
-                                    {% if sortie.cloturee %}
-                                        <p class="mb-0 mt-2">Sortie clôturée !</p>
-                                    {% endif %}
                                 </td>
                                 {% if is_granted('ROLE_ADMIN') %}
                                     <td>

@@ -28,11 +28,14 @@ body {
 }
 
 .nav-admin {
-    color: #ff0000 !important; /* couleur normale */
+    text-shadow: 0 0 1px rgb(255, 18, 18) !important;
+    color: #e02525 !important;
 }
 
 .nav-admin:hover {
-    color: #ffffff !important; /* couleur au survol */
+    color: #850b0b !important;
+    text-shadow: 0 0 1px rgb(161, 0, 0) !important;
+
 }
 
 main {
@@ -113,7 +116,7 @@ td, tr {
 }
 
 .col-actions{
-    width:180px;
+    width:200px;
 }
 
 .invalid-feedback {
@@ -143,4 +146,19 @@ td, tr {
         border: 0 solid transparent;
         border-radius: 50%;
     }
+}
+
+/* Fond du dropdown */
+.dropdown-menu {
+    background-color: #cc3636 !important; /* ta couleur */
+}
+
+/* Couleur des liens */
+.dropdown-item {
+    color: #ffffff !important;
+}
+
+/* Hover sur les items */
+.dropdown-item:hover {
+    background-color: #3c3f58 !important;
 }
