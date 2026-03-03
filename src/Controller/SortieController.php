@@ -12,6 +12,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\UX\Map\Bridge\Leaflet\LeafletOptions;
+use Symfony\UX\Map\Bridge\Leaflet\Option\TileLayer;
+use Symfony\UX\Map\InfoWindow;
+use Symfony\UX\Map\Map;
+use Symfony\UX\Map\Marker;
+use Symfony\UX\Map\Point;
 
 #[Route('/sortie', name: 'app_sortie')]
 final class SortieController extends AbstractController
@@ -56,10 +62,12 @@ final class SortieController extends AbstractController
     public function detail(Sortie $sortie): Response
     {
         $participants = $sortie->getParticipants();
+        $map = $this->createMap($sortie);
 
         return $this->render('sortie/detail.html.twig', [
             'sortie' => $sortie,
             'participants' => $participants,
+            'map' => $map,
         ]);
     }
 
@@ -258,5 +266,29 @@ final class SortieController extends AbstractController
         $em->flush();
         return $this->redirectToRoute('app_accueil');
     }
+
+
+    function createMap(Sortie $sortie): Map
+    {
+
+        return (new Map('default'))
+            ->center(new Point($sortie->getLieu()->getLatitude(), $sortie->getLieu()->getLongitude()))
+            ->zoom(6)
+            ->addMarker(new Marker(
+                position: new Point($sortie->getLieu()->getLatitude(), $sortie->getLieu()->getLongitude()),
+                title: $sortie->getLieu()->getNom(),
+                infoWindow: new InfoWindow(
+                    content: '<p>Ici aura lieu cette merveilleuse sortie.</p>',
+                )
+            ))
+            ->options((new LeafletOptions())
+                ->tileLayer(new TileLayer(
+                    url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                    options: ['maxZoom' => 19]
+                ))
+            );
+    }
+
 
 }
