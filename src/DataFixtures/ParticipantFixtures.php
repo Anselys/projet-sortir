@@ -56,6 +56,7 @@ class ParticipantFixtures extends Fixture
             ->setRoles(['ROLE_USER'])
             ->setUrlPhoto(null);
 
+        $isActif = $faker->boolean(95);
 
         $manager->persist($userParticipant);
         $manager->persist($adminParticipant);
@@ -64,17 +65,21 @@ class ParticipantFixtures extends Fixture
             $site = $faker->randomElement($sites);
             $isAdmin = $faker->boolean();
             $roles = $isAdmin ? ['ROLE_ADMIN', 'ROLE_USER'] : ['ROLE_USER'];
+            $firstName = $faker->firstName();
+            $lastName = $faker->lastName();
+            $pseudo = $firstName . $lastName;
+            $email = $firstName . $lastName . '@gmail.com';
             $participant = new Participant();
             $password = $this->passwordHasher->hashPassword($participant, 'password');
 
             $participant
-                ->setPseudo($faker->userName())
+                ->setPseudo($pseudo)
                 ->setPassword($password)
-                ->setNom($faker->firstName())
-                ->setPrenom($faker->lastName())
-                ->setEmail($faker->email())
+                ->setNom($lastName)
+                ->setPrenom($firstName)
+                ->setEmail($email)
                 ->setTelephone($faker->phoneNumber())
-                ->setIsActif($faker->boolean())
+                ->setIsActif($isActif)
                 ->setIsAdmin($isAdmin)
                 ->setSite($site)
                 ->setRoles($roles)

@@ -14,67 +14,162 @@ use Faker\Factory;
 
 class SortieFixtures extends Fixture implements DependentFixtureInterface
 {
-    private EtatRepository $etatRepository;
-    private ParticipantRepository $participantRepository;
-    private LieuRepository $lieuRepository;
-    private SiteRepository $siteRepository;
+    private const ETAT_CREEE = 'CREEE';
+    private const ETAT_OUVERTE = 'OUVERTE';
+    private const ETAT_CLOTUREE = 'CLOTUREE';
+    private const ETAT_PASSEE = 'PASSEE';
+    private const ETAT_ANNULEE = 'ANNULEE';
 
     public function __construct(
-        EtatRepository        $etatRepository,
-        ParticipantRepository $participantRepository,
-        LieuRepository        $lieuRepository,
-        SiteRepository        $siteRepository
-    )
-    {
-        $this->etatRepository = $etatRepository;
-        $this->participantRepository = $participantRepository;
-        $this->lieuRepository = $lieuRepository;
-        $this->siteRepository = $siteRepository;
-    }
+        private readonly EtatRepository $etatRepository,
+        private readonly ParticipantRepository $participantRepository,
+        private readonly LieuRepository $lieuRepository,
+        private readonly SiteRepository $siteRepository
+    ) {}
 
     public function load(ObjectManager $manager): void
     {
         $faker = Factory::create('fr_FR');
-        $etats = $this->etatRepository->findAll();
+
         $participants = $this->participantRepository->findAll();
         $lieux = $this->lieuRepository->findAll();
         $sites = $this->siteRepository->findAll();
+        $sortieNames = [
+            'Randonnée en forêt',
+            'Balade au bord de la mer',
+            'Soirée jeux de société',
+            'Apéro entre amis',
+            'Sortie cinéma',
+            'Bowling night',
+            'Escape game',
+            'Pique-nique au parc',
+            'Course à pied matinale',
+            'Tournoi de pétanque',
+            'Sortie vélo',
+            'Randonnée en montagne',
+            'Soirée karaoké',
+            'Dégustation de vins',
+            'Brunch du dimanche',
+            'Match de foot entre amis',
+            'Sortie musée',
+            'Atelier cuisine',
+            'Découverte d’un restaurant',
+            'Sortie plage',
+            'Barbecue entre amis',
+            'Marche nordique',
+            'Visite du centre-ville',
+            'Balade photo',
+            'Session yoga au parc',
+            'Sortie patinoire',
+            'Laser game',
+            'Soirée billard',
+            'Randonnée nocturne',
+            'Observation des étoiles',
+            'Sortie paddle',
+            'Kayak sur la rivière',
+            'Visite d’un marché local',
+            'Festival de musique',
+            'Concert live',
+            'Soirée pizza',
+            'Tournoi de jeux vidéo',
+            'Balade en bord de lac',
+            'Sortie accrobranche',
+            'Initiation escalade',
+            'Atelier peinture',
+            'Sortie shopping',
+            'Course d’orientation',
+            'Balade à cheval',
+            'Visite d’un château',
+            'Découverte d’un vignoble',
+            'Sortie roller',
+            'Soirée quiz',
+            'Sortie théâtre',
+            'Balade urbaine',
+        ];
+
+        $now = new \DateTime();
 
         for ($i = 0; $i < 100; $i++) {
+
             $sortie = new Sortie();
 
-            // gestion des dates et durée
-            $dateDebut = $faker->dateTimeBetween('now', '+3 months', 'Europe/Paris'); // min, now, max: now + 3 mois
-            $duree = $faker->numberBetween(60, 1440); // min 1h, max 24h
-            $dateFin = (clone $dateDebut)->modify("+$duree minutes"); // fin de la sortie = dateDebut + duree
-            $minCloture = (clone $dateDebut)->modify('+1 hour'); // min cloture = now +1h
-            $maxCloture = (clone $dateFin)->modify('-2 days'); // max cloture = dateFin - 2 jours
+            // Date début : passé ou futur
+            $dateDebut = $faker->dateTimeBetween('-2 months', '+3 months');
 
-            //  si max < min, max +1h (ex: durée trop courte)
-            if ($maxCloture <= $minCloture) {
-                $maxCloture = (clone $minCloture)->modify('+1 hour');
-            }
+            $duree = $faker->numberBetween(60, 300);
 
-            $dateCloture = $faker->dateTimeBetween($minCloture, $maxCloture);
+            // Date de clôture TOUJOURS avant dateDebut
+            $dateCloture = $faker->dateTimeBetween(
+                (clone $dateDebut)->modify('-1 month'),
+                (clone $dateDebut)->modify('-1 day')
+            );
+
+            // nb max d'inscriptions autorisé
+            $nbMax = $faker->numberBetween(3, 12);
+            // nb d'inscrits
+            $nbInscrits = $faker->numberBetween(0, $nbMax);
+
+            $isAnnulee = $faker->boolean(5); // 5% annulées
+
+            $etatCode = $this->determineEtat(
+                $now,
+                $dateDebut,
+                $dateCloture,
+                $nbInscrits,
+                $nbMax,
+                $isAnnulee
+            );
+
+            $etat = $this->etatRepository->findOneBy(['libelle' => $etatCode]);
 
             $sortie
-                ->setNom($faker->words(2, true))
-                ->setDescription($faker->realText(300))
+                ->setNom($faker->randomElement($sortieNames))
+                ->setDescription($faker->realText(200))
                 ->setDuree($duree)
                 ->setDateDebut($dateDebut)
                 ->setDateCloture($dateCloture)
-                ->setEtat($faker->randomElement($etats))
+                ->setEtat($etat)
                 ->setOrganisateur($faker->randomElement($participants))
-                ->setNbInscriptionsMax($faker->numberBetween($min = 1, $max = 10))
-                ->setUrlPhoto($faker->imageUrl($width = 640, $height = 480))
+                ->setNbInscriptionsMax($nbMax)
+                ->setUrlPhoto(null)
                 ->setLieu($faker->randomElement($lieux))
                 ->setSiteOrganisateur($faker->randomElement($sites))
-                ->setEtat($faker->randomElement($etats))
                 ->setIsArchivee(false);
 
             $manager->persist($sortie);
         }
+
         $manager->flush();
+    }
+
+    private function determineEtat(
+        \DateTime $now,
+        \DateTime $dateDebut,
+        \DateTime $dateCloture,
+        int $nbInscrits,
+        int $nbMax,
+        bool $isAnnulee
+    ): string {
+
+        // Annulée
+        if ($isAnnulee) {
+            return self::ETAT_ANNULEE;
+        }
+
+        // Passée
+        if ($dateDebut < $now) {
+            return self::ETAT_PASSEE;
+        }
+
+        // Clôturée
+        if ($nbInscrits >= $nbMax || $now >= $dateCloture) {
+            return self::ETAT_CLOTUREE;
+        }
+
+        // Sinon => forcément future et encore ouverte
+        return rand(0, 1)
+            ? self::ETAT_OUVERTE
+            : self::ETAT_CREEE;
     }
 
     public function getDependencies(): array
