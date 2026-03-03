@@ -117,8 +117,7 @@ final class SortieController extends AbstractController
                 $sortie->removeParticipant($participant);
                 $em->flush();
                 $this->addFlash('success', 'Votre inscription à cette sortie a été annulée.');
-            }
-            else{
+            } else {
                 $this->addFlash('danger', 'Vous ne pouvez pas vous désinscrire de cette sortie.');
             }
         }
@@ -147,9 +146,9 @@ final class SortieController extends AbstractController
 
             // Si l'état actuel est CREEE, et que la checkbox pour publier la sortie vaut true, modifier l'état en OUVERTE
             // Si l'état actuel est OUVERTE et que la checkbox pour publier la sortie vaut false, modifier l'état en CREEE
-            if($sortie->isCreee() && $isPubliee) {
+            if ($sortie->isCreee() && $isPubliee) {
                 $sortie->setEtat($etatOuverte);
-            } else if($sortie->isOuverte() && !$isPubliee) {
+            } else if ($sortie->isOuverte() && !$isPubliee) {
                 $sortie->setEtat($etatCreee);
             }
 
@@ -167,6 +166,10 @@ final class SortieController extends AbstractController
     #[Route('/delete/{id}', name: '_delete', requirements: ['id' => '\d+'])]
     public function delete(Sortie $sortie, EntityManagerInterface $em, Request $request): Response
     {
+        if (!$this->getUser()->isAdmin()) {
+            throw $this->createAccessDeniedException();
+        }
+
         if ($sortie->isEnCours()) {
             $this->addFlash('danger', 'Impossible d\'annuler une sortie en cours.');
             return $this->redirectToRoute('app_sortie_detail', [
@@ -190,47 +193,70 @@ final class SortieController extends AbstractController
 
 
     #[Route('/cancel/{id}', name: '_cancel', requirements: ['id' => '\d+'])]
-    public function cancel(Sortie $sortie, EntityManagerInterface $em, Request $request): Response{
+    public function cancel(Sortie $sortie, EntityManagerInterface $em, Request $request): Response
+    {
         $participant = $this->getUser();
+        $token = $request->query->get('token');
 
         $annulationForm = $this->createForm(AnnulationType::class, $sortie);
         $annulationForm->handleRequest($request);
-
-        if (!$participant) {
+        if (!$this->isCsrfTokenValid('sortie_cancel' . $sortie->getId(), $token)) {
             throw $this->createAccessDeniedException();
         }
-        if ($participant !== $sortie->getOrganisateur()) {
-            throw $this->createAccessDeniedException();
+
+        if (!$participant->isAdmin() and $participant !== $sortie->getOrganisateur()) {
+            throw $this->createAccessDeniedException('NOPE');
         }
 
         if ($annulationForm->isSubmitted() && $annulationForm->isValid()) {
             $data = $annulationForm->getData();
             $etatAnnulee = $em->getRepository(Etat::class)->findOneByLibelle('ANNULEE');
-            if($sortie->isCreee() or $sortie->isCloturee() or $sortie->isOuverte()) {
+            if ($sortie->isCreee() or $sortie->isCloturee() or $sortie->isOuverte()) {
                 $sortie->setEtat($etatAnnulee);
                 $sortie->setMotifAnnulation($data->getMotifAnnulation());
+                // TODO: voir pourquoi ça vide la colonne ETAT
                 $em->flush();
                 $this->addFlash('success', 'La sortie a été annulée.');
                 return $this->redirectToRoute('app_sortie_detail', ['id' => $sortie->getId()]);
-            }
-            else{
-                if($sortie->isEnCours()){
-                    $this->addFlash('danger', 'Impossible de supprimer cette sortie, elle est en cours!');
+            } else {
+                if ($sortie->isEnCours()) {
+                    $this->addFlash('danger', 'Impossible d\'annuler cette sortie, elle est en cours!');
                     return $this->redirectToRoute('app_sortie_detail', ['id' => $sortie->getId()]);
                 }
-                if($sortie->isPassee()){
-                    $this->addFlash('danger', 'Impossible de supprimer cette sortie, elle a déjà eu lieu!');
+                if ($sortie->isPassee()) {
+                    $this->addFlash('danger', 'Impossible d\'annuler cette sortie, elle a déjà eu lieu!');
                     return $this->redirectToRoute('app_sortie_detail', ['id' => $sortie->getId()]);
                 }
             }
         }
 
-        return $this->render('sortie/annuler.html.twig', [
-            'annuler_form' => $annulationForm,
-            'sortie' => $sortie,
-        ]);
+        return $this->render('sortie/annuler.html.twig', ['annuler_form' => $annulationForm,
+            'sortie' => $sortie,]);
+    }
 
+    #[
+        Route("_archive/{id}", name: '_archive', requirements: ['id' => '\d+']), ]
+    public function archive(Sortie $sortie, EntityManagerInterface $em, Request $request): Response
+    {
+        $participant = $this->getUser();
+        if (!$participant or !$participant->isAdmin()) {
+            throw $this->createAccessDeniedException();
+        }
+        if ($sortie->getEtat()->getLibelle() != 'PASSEE') {
+            $this->addFlash('danger', 'Impossible d\'archiver cette sortie.');
+            return $this->redirectToRoute('app_accueil');
+        }
+        $token = $request->query->get('token');
 
+        if (!$this->isCsrfTokenValid('sortie_archive' . $sortie->getId(), $token)) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $etatArchivee = $em->getRepository(Etat::class)->findOneByLibelle('ARCHIVEE');
+        $sortie->setIsArchivee(true);
+        $this->addFlash('success', 'Sortie Archivée!');
+        $em->flush();
+        return $this->redirectToRoute('app_accueil');
     }
 
 }

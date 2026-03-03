@@ -150,7 +150,7 @@
                                     </a>
 
                                     <a class="btn btn-secondary"
-                                       href="{{ path('app_sortie_cancel', { id: sortie.id, token: csrf_token('sortie_delete' ~ sortie.id) }) }}"
+                                       href="{{ path('app_sortie_cancel', { id: sortie.id, token: csrf_token('sortie_cancel' ~ sortie.id) }) }}"
                                        >
                                         Annuler
                                     </a>
@@ -175,11 +175,25 @@
 
                         {% if is_granted('ROLE_ADMIN') %}
                             <td>
-                                {% if not(sortie.enCours) and not(sortie.annulee) %}
+                                {% if not(sortie.enCours) and not(sortie.annulee) and not(sortie.passee) %}
+                                    <a class="btn btn-danger"
+                                       href="{{ path('app_sortie_cancel', { id: sortie.id, token: csrf_token('sortie_cancel' ~ sortie.id) }) }}"
+                                       onclick="return confirm('[ADMINISTRATEUR] Êtes-vous sûr·e de vouloir annuler cette sortie ?')">
+                                        Annuler
+                                    </a>
+                                {% endif %}
+                                {% if (sortie.etat.libelle === 'CREEE') %}
                                     <a class="btn btn-danger"
                                        href="{{ path('app_sortie_delete', { id: sortie.id, token: csrf_token('sortie_delete' ~ sortie.id) }) }}"
                                        onclick="return confirm('[ADMINISTRATEUR] Êtes-vous sûr·e de vouloir supprimer cette sortie ?')">
                                         Supprimer
+                                    </a>
+                                {% endif %}
+                                {% if (sortie.annulee or sortie.passee) %}
+                                    <a class="btn btn-danger"
+                                       href="{{ path('app_sortie_archive', { id: sortie.id, token: csrf_token('sortie_archive' ~ sortie.id) }) }}"
+                                       onclick="return confirm('[ADMINISTRATEUR] Êtes-vous sûr·e de vouloir archiver cette sortie ?')">
+                                        Archiver
                                     </a>
                                 {% endif %}
                             </td>
