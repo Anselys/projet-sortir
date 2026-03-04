@@ -93,8 +93,9 @@ class Sortie
         return $this->participants->count() >= $this->nbInscriptionsMax;
     }
 
+    // TODO: remplacer le check par libellé par un check par id pour voir si ça répare le bug libellé effacé
     public function isOuverte() : bool {
-        return $this->etat?->getLibelle() == 'OUVERTE';
+        return $this->etat?->getId() == 2;
     }
 
     public function isAnnulee() : bool {

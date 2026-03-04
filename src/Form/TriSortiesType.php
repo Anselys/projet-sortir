@@ -59,11 +59,11 @@ class TriSortiesType extends AbstractType
                 return $er->createQueryBuilder('s')->orderBy('s.libelle', 'ASC');
                 },
             ])
-            ->add('dateDebut', DateType::class,[
+            ->add('dateDebutDe', DateType::class,[
                 'label' => "Entre ",
                 'required' => false,
             ])
-            ->add('dateCloture', DateType::class,[
+            ->add('dateDebutA', DateType::class,[
                 'label' => " et ",
                 'required' => false,
             ])
