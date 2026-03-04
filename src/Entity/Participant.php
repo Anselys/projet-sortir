@@ -102,7 +102,6 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
             ->addPropertyConstraint('prenom', new Assert\Length(max: 30))
             ->addPropertyConstraint('prenom', new Assert\Regex("/^[a-z ,.'-]+$/i"))
 
-            ->addPropertyConstraint('telephone', new Assert\NotBlank())
             ->addPropertyConstraint('telephone', new Assert\Regex("/^(?:(?:\+|00)33[\s.-]{0,3}(?:\(0\)[\s.-]{0,3})?|0)[1-9](?:(?:[\s.-]?\d{2}){4}|\d{2}(?:[\s.-]?\d{3}){2})$/"))
             ->addPropertyConstraint('telephone', new Assert\Length(max: 15));
 
