@@ -85,6 +85,18 @@ class SortieRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('s');
 
 
+        // si l'utilisateur connecté est inscrit, afficher ses sorties, sinon afficher tout
+        if ($tri['inscrit'] != 0) {
+            $qb->where(':participantInscrit MEMBER OF s.participants')
+                ->setParameter('participantInscrit', $participant);
+        }
+
+        // si l'utilisateur connecté n'est PAS inscrit, afficher ses sorties, sinon afficher tout
+        if ($tri['non_inscrit'] != 0) {
+            $qb->where(':participantNotInscrit NOT MEMBER OF s.participants')
+                ->setParameter('participantNotInscrit', $participant);
+        }
+
         // si un site est renseigné, trier sur le site. sinon afficher tout
         if ($tri['Site'] != null) {
             $qb->andWhere('s.siteOrganisateur = :orgaSite')
@@ -124,15 +136,15 @@ class SortieRepository extends ServiceEntityRepository
         }
 
         // s'il y a une date de début de renseignée, trier dessus
-        if ($tri['dateDebut'] != null) {
-            $qb->andWhere('s.dateDebut >= :dateDebut')
-                ->setParameter('dateDebut', $tri['dateDebut']);
+        if ($tri['dateDebutDe'] != null) {
+            $qb->andWhere('s.dateDebut >= :dateDebutDe')
+                ->setParameter('dateDebutDe', $tri['dateDebutDe']);
         }
 
         // s'il y a une date de cloture de renseignée, trier dessus
-        if ($tri['dateCloture'] != null) {
-            $qb->andWhere('s.dateCloture <= :dateCloture')
-                ->setParameter('dateCloture', $tri['dateCloture']);
+        if ($tri['dateDebutA'] != null) {
+            $qb->andWhere('s.dateDebut <= :dateDebutA')
+                ->setParameter('dateDebutA', $tri['dateDebutA']);
         }
 
         // si l'utilisateur connecté est l'organisateur, afficher ses sorties, sinon afficher tout
@@ -141,17 +153,6 @@ class SortieRepository extends ServiceEntityRepository
             $qb->setParameter('organisateur', $participant);
         }
 
-        // si l'utilisateur connecté est inscrit, afficher ses sorties, sinon afficher tout
-        if ($tri['inscrit'] != 0) {
-            $qb->where(':participantInscrit MEMBER OF s.participants')
-                ->setParameter('participantInscrit', $participant);
-        }
-
-        // si l'utilisateur connecté n'est PAS inscrit, afficher ses sorties, sinon afficher tout
-        if ($tri['non_inscrit'] != 0) {
-            $qb->where(':participantNotInscrit NOT MEMBER OF s.participants')
-                ->setParameter('participantNotInscrit', $participant);
-        }
 
         // afficher les sorties déjà passées
         if ($tri['passees'] != 0) {

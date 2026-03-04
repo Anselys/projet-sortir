@@ -24,15 +24,31 @@ final class AccueilController extends AbstractController
         $participant = $this->getUser();
         $etatOuverte = $etatRepository->findOneBy(['libelle' => 'Ouverte']);
 
-        $triForm = $this->createForm(TriSortiesType::class, [
-            'Site' => $participant?->getSite(),
-            'etat' => $etatOuverte,
-        ]);
+        $triForm = $this->createForm(TriSortiesType::class);
         $afficherToutForm = $this->createForm(ShowAllType::class);
 
         $participant = $this->getUser();
         $etats = $etatRepository->findAll();
         $sorties = [];
+
+        $afficherToutForm->handleRequest($request);
+        // si on clique sur 'afficher tout' ça défiltre tout
+        if ($afficherToutForm->isSubmitted() && $afficherToutForm->isValid()) {
+            $sorties = $sortieRepository->findAll();
+            $sorties = $sortieRepository->updateEtatAllSorties($sorties, $etats, $em);
+            return $this->render('accueil/index.html.twig', [
+                'sorties' => $sorties,
+                'participant' => $participant,
+                'tri_form' => $triForm->createView(),
+                'afficher_tout_form' => $afficherToutForm->createView(),
+            ]);
+        }
+
+        // renseigner état et site par défaut si pas de form afficher tout
+        $triForm->setData([
+            'Site' => $participant?->getSite(),
+            'etat' => $etatOuverte,
+        ]);
 
         $triForm->handleRequest($request);
         // si un filtre de tri est soumis, sorties est rempli via le tri
@@ -51,29 +67,14 @@ final class AccueilController extends AbstractController
         }
 
 
-        $afficherToutForm->handleRequest($request);
-        // si on clique sur 'afficher tout' ça défiltre tout
-        if ($afficherToutForm->isSubmitted() && $afficherToutForm->isValid()) {
-            $sorties = $sortieRepository->findAll();
-            $sorties = $sortieRepository->updateEtatAllSorties($sorties, $etats, $em);
-            return $this->render('accueil/index.html.twig', [
-                'sorties' => $sorties,
-                'participant' => $participant,
-                'tri_form' => $triForm->createView(),
-                'afficher_tout_form' => $afficherToutForm->createView(),
-            ]);
-        }
+
         // par défaut les sorties sont filtrées sur le site de l'utilisateur connecté, si ouvertes à l'inscription
         // et par triées date de début la plus proche.
-        // si pas d'utilisateur: toutes les sorties ouvertes, triées par date la plus proche
+
         if ($participant != null) {
-//                $sorties = $sortieRepository->findBySiteAndEtat($participantSite, $etatOuvert);
-                $sorties = $sortieRepository->customFindAccueil($participant, $etats);
-            }
-
-
+            $sorties = $sortieRepository->customFindAccueil($participant, $etats);
+        }
         $sorties = $sortieRepository->updateEtatAllSorties($sorties, $etats, $em);
-
 
         return $this->render('accueil/index.html.twig', [
             'sorties' => $sorties,
