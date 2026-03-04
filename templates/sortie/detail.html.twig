@@ -13,15 +13,6 @@
         'ANNULEE': 'danger'
     } %}
 
-    {% set status_label = {
-        'CREEE': 'créée',
-        'OUVERTE': 'ouverte',
-        'EN_COURS': 'en cours',
-        'CLOTUREE': 'inscriptions clôturées',
-        'PASSEE': 'passée',
-        'ANNULEE': 'annulée'
-    } %}
-
     <div class="row justify-content-center">
         <div class="card text-white bg-primary mb-3" style="max-width: 40rem;">
 
@@ -33,10 +24,9 @@
                 </span>
                 {% else %}
                     <span class="badge rounded-pill bg-{{ status_class[sortie.etat.libelle] }}">
-                    {{ status_label[sortie.etat.libelle]|capitalize }}
+                    {{ sortie.etat.getLibelleAffichage() }}
                 </span>
                 {% endif %}
-
             </div>
 
             <div class="card-body">
@@ -58,7 +48,7 @@
                         <p class="text-light">Coordonnées : {{ sortie.lieu.latitude }} / {{ sortie.lieu.longitude }}</p>
                         <p class="text-light">Campus : {{ sortie.siteOrganisateur.nom }}</p>
                     </div>
-{#                    {{ ux_map(map, { style: 'height: 300px' }) }}#}
+                    {#                    {{ ux_map(map, { style: 'height: 300px' }) }} #}
                 </div>
             </div>
         </div>
@@ -80,7 +70,6 @@
             {% if sortie.ouverte %}
 
                 <div class="text-center mt-3">
-
                 {% if not(app.user.sorties.contains(sortie)) %}
                     <a class="btn btn-success" href="{{ path('app_sortie_inscription', { id: sortie.id }) }}"
                        onclick="return confirm('Confirmer l\'inscription ?')">S'inscrire</a>
@@ -101,6 +90,22 @@
             </div>
         {% endif %}
 
+        {% if sortie.etat.libelle == 'CREEE' %}
+            {% if is_granted('ROLE_ADMIN')
+                or (app.user
+                and sortie.organisateur
+                and app.user.pseudo == sortie.organisateur.pseudo)
+            %}
+                <div class="text-center mt-3 mb-4">
+                    <a class="btn btn-danger"
+                       href="{{ path('app_sortie_delete', { id: sortie.id, token: csrf_token('sortie_delete' ~ sortie.id) }) }}"
+                       onclick="return confirm('Êtes-vous sûr·e de vouloir supprimer cette sortie ?')">
+                        Supprimer
+                    </a>
+                </div>
+            {% endif %}
+        {% endif %}
+
         {% if is_granted('ROLE_ADMIN') and not(sortie.archivee) %}
         <div class="text-center mt-3 mb-4">
             {% if not(sortie.enCours) and not(sortie.annulee) and not(sortie.passee) %}
@@ -110,13 +115,7 @@
                     Annuler
                 </a>
             {% endif %}
-            {% if (sortie.etat.libelle === 'CREEE') %}
-                <a class="btn btn-danger"
-                   href="{{ path('app_sortie_delete', { id: sortie.id, token: csrf_token('sortie_delete' ~ sortie.id) }) }}"
-                   onclick="return confirm('[ADMINISTRATEUR] Êtes-vous sûr·e de vouloir supprimer cette sortie ?')">
-                    Supprimer
-                </a>
-            {% endif %}
+
             {% if (sortie.annulee or sortie.passee) %}
                 <a class="btn btn-danger"
                    href="{{ path('app_sortie_archive', { id: sortie.id, token: csrf_token('sortie_archive' ~ sortie.id) }) }}"

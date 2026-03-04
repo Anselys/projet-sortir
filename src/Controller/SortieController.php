@@ -185,10 +185,6 @@ final class SortieController extends AbstractController
     #[Route('/delete/{id}', name: '_delete', requirements: ['id' => '\d+'])]
     public function delete(Sortie $sortie, EntityManagerInterface $em, Request $request): Response
     {
-        if (!$this->getUser()->isAdmin()) {
-            throw $this->createAccessDeniedException();
-        }
-
         if ($sortie->isEnCours()) {
             $this->addFlash('danger', 'Impossible d\'annuler une sortie en cours.');
             return $this->redirectToRoute('app_sortie_detail', [
@@ -212,13 +208,18 @@ final class SortieController extends AbstractController
 
 
     #[Route('/cancel/{id}', name: '_cancel', requirements: ['id' => '\d+'])]
-    public function cancel(Sortie $sortie, EntityManagerInterface $em, Request $request): Response
+    public function cancel(Sortie $sortie, EntityManagerInterface $em, Request $request, EtatRepository $etatRepository): Response
     {
         $participant = $this->getUser();
         $token = $request->query->get('token');
 
+        $etatAnnulee = $etatRepository->findOneByLibelle('ANNULEE');
+        $etatCourant = $sortie->getEtat();
+        $etatEnBase = $etatRepository->findOneByLibelle($etatCourant->getLibelle());
+
         $annulationForm = $this->createForm(AnnulationType::class, $sortie);
         $annulationForm->handleRequest($request);
+
         if (!$this->isCsrfTokenValid('sortie_cancel' . $sortie->getId(), $token)) {
             throw $this->createAccessDeniedException();
         }
@@ -228,14 +229,18 @@ final class SortieController extends AbstractController
         }
 
         if ($annulationForm->isSubmitted() && $annulationForm->isValid()) {
+
             $data = $annulationForm->getData();
-            $etatAnnulee = $em->getRepository(Etat::class)->findOneByLibelle('ANNULEE');
             if ($sortie->isCreee() or $sortie->isCloturee() or $sortie->isOuverte()) {
                 $sortie->setEtat($etatAnnulee);
                 $sortie->setMotifAnnulation($data->getMotifAnnulation());
-                // TODO: voir pourquoi ça vide la colonne ETAT
+
+                // TODO: FIX TEMPORAIRE !! Voir pourquoi ça vide la colonne ETAT en base
+                $etatEnBase->setLibelle($etatCourant->getLibelle());
+
                 $em->flush();
                 $this->addFlash('success', 'La sortie a été annulée.');
+
                 return $this->redirectToRoute('app_sortie_detail', ['id' => $sortie->getId()]);
             } else {
                 if ($sortie->isEnCours()) {
