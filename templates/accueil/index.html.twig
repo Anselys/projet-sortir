@@ -57,7 +57,7 @@
                 {{ form_end(tri_form) }}
 
                 <div class="text-center mt-4">
-                {{ form(afficher_tout_form) }}
+                    {{ form(afficher_tout_form) }}
                 </div>
 
             </div>
@@ -85,116 +85,116 @@
 
                 </thead>
 
-                    <tbody >
+                <tbody>
 
-                    {% for sortie in sorties %}
+                {% for sortie in sorties %}
 
 
-                        <tr class="table-primary">
-                            <td class="col-nom">
-                                <a href="{{ path('app_sortie_detail', { id: sortie.id }) }}"
-                                   class="btn btn-info">
-                                    {{ sortie.nom }}
-                                </a>
-                            </td>
+                    <tr class="table-primary">
+                        <td class="col-nom">
+                            <a href="{{ path('app_sortie_detail', { id: sortie.id }) }}"
+                               class="btn btn-info">
+                                {{ sortie.nom }}
+                            </a>
+                        </td>
 
-                            <td>{{ sortie.dateDebut|date('d/m/Y à H:i', 'Europe/Paris') }} </td>
-                            <td>{{ sortie.dateCloture|date('d/m/Y à H:i') }}</td>
-                            <td>{{ sortie.participants.count }} / {{ sortie.nbInscriptionsMax }}</td>
-                            <td>{{ sortie.etat.libelleAffichage }}</td>
+                        <td>{{ sortie.dateDebut|date('d/m/Y à H:i', 'Europe/Paris') }} </td>
+                        <td>{{ sortie.dateCloture|date('d/m/Y à H:i') }}</td>
+                        <td>{{ sortie.participants.count }} / {{ sortie.nbInscriptionsMax }}</td>
+                        <td>{{ sortie.etat.libelleAffichage }}</td>
 
-                            <td class="col-inscrit text-center">
+                        <td class="col-inscrit text-center">
+                            {% if not(app.user.sorties.contains(sortie)) %}
+                                -
+                            {% else %}
+                                ✓
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <a href="{{ path('app_profil_detail', { id: sortie.organisateur.id }) }}">
+                                {{ sortie.organisateur.prenom }} {{ sortie.organisateur.nom|first|upper }}
+                            </a>
+                        </td>
+
+                        <td>
+                            {% if not(app.user.pseudo == sortie.organisateur.pseudo) %}
+
                                 {% if not(app.user.sorties.contains(sortie)) %}
-                                    -
-                                {% else %}
-                                    ✓
-                                {% endif %}
-                            </td>
 
-                            <td>
-                                <a href="{{ path('app_profil_detail', { id: sortie.organisateur.id }) }}">
-                                    {{ sortie.organisateur.prenom }} {{ sortie.organisateur.nom|first|upper }}
-                                </a>
-                            </td>
-
-                            <td>
-                                {% if not(app.user.pseudo == sortie.organisateur.pseudo) %}
-
-                                    {% if not(app.user.sorties.contains(sortie)) %}
-
-                                        {% if sortie.ouverte %}
-                                            <a class="btn btn-success"
-                                               href="{{ path('app_sortie_inscription', { id: sortie.id }) }}"
-                                               onclick="return confirm('Confirmer l\'inscription ?')">
-                                                S'inscrire
-                                            </a>
-                                        {% endif %}
-
-                                    {% else %}
-
-                                        {% if sortie.canDesinscrire %}
-                                            <a class="btn btn-secondary"
-                                               href="{{ path('app_sortie_desinscription', { id: sortie.id }) }}"
-                                               onclick="return confirm('Vous êtes sur le point d\'annuler votre inscription à cette sortie. Confirmer ?')">
-                                                Me désinscrire
-                                            </a>
-                                        {% endif %}
-
+                                    {% if sortie.ouverte %}
+                                        <a class="btn btn-success"
+                                           href="{{ path('app_sortie_inscription', { id: sortie.id }) }}"
+                                           onclick="return confirm('Confirmer l\'inscription ?')">
+                                            S'inscrire
+                                        </a>
                                     {% endif %}
 
                                 {% else %}
 
-                                    {% if (sortie.modifiable) %}
-
+                                    {% if sortie.canDesinscrire %}
                                         <a class="btn btn-secondary"
-                                           href="{{ path('app_sortie_edit', { id: sortie.id }) }}">
-                                            Modifier
-                                        </a>
-
-                                        <a class="btn btn-secondary"
-                                           href="{{ path('app_sortie_cancel', { id: sortie.id, token: csrf_token('sortie_cancel' ~ sortie.id) }) }}"
-                                        >
-                                            Annuler
+                                           href="{{ path('app_sortie_desinscription', { id: sortie.id }) }}"
+                                           onclick="return confirm('Vous êtes sur le point d\'annuler votre inscription à cette sortie. Confirmer ?')">
+                                            Me désinscrire
                                         </a>
                                     {% endif %}
 
                                 {% endif %}
 
-                                {#                            {% if sortie.enCours or sortie.passee or sortie.annulee or sortie.cloturee %} #}
-                                {#                                <p class="mb-0 mt-2 figure-caption">-</p> #}
-                                {#                            {% endif %} #}
+                            {% else %}
 
-                            </td>
+                                {% if (sortie.modifiable) %}
 
-                            {% if is_granted('ROLE_ADMIN') %}
-                                <td>
-                                    {% if not(sortie.enCours) and not(sortie.annulee) and not(sortie.passee) %}
-                                        <a class="btn btn-danger"
-                                           href="{{ path('app_sortie_cancel', { id: sortie.id, token: csrf_token('sortie_cancel' ~ sortie.id) }) }}"
-                                           onclick="return confirm('[ADMINISTRATEUR] Êtes-vous sûr·e de vouloir annuler cette sortie ?')">
-                                            Annuler
-                                        </a>
-                                    {% endif %}
-                                    {% if (sortie.etat.libelle === 'CREEE') %}
-                                        <a class="btn btn-danger"
-                                           href="{{ path('app_sortie_delete', { id: sortie.id, token: csrf_token('sortie_delete' ~ sortie.id) }) }}"
-                                           onclick="return confirm('[ADMINISTRATEUR] Êtes-vous sûr·e de vouloir supprimer cette sortie ?')">
-                                            Supprimer
-                                        </a>
-                                    {% endif %}
-                                    {% if (sortie.annulee or sortie.passee) %}
-                                        <a class="btn btn-danger"
-                                           href="{{ path('app_sortie_archive', { id: sortie.id, token: csrf_token('sortie_archive' ~ sortie.id) }) }}"
-                                           onclick="return confirm('[ADMINISTRATEUR] Êtes-vous sûr·e de vouloir archiver cette sortie ?')">
-                                            Archiver
-                                        </a>
-                                    {% endif %}
-                                </td>
+                                    <a class="btn btn-secondary"
+                                       href="{{ path('app_sortie_edit', { id: sortie.id }) }}">
+                                        Modifier
+                                    </a>
+
+                                    <a class="btn btn-secondary"
+                                       href="{{ path('app_sortie_cancel', { id: sortie.id, token: csrf_token('sortie_cancel' ~ sortie.id) }) }}"
+                                    >
+                                        Annuler
+                                    </a>
+                                {% endif %}
+
                             {% endif %}
 
-                        </tr>
-                    {% endfor %}
-                    </tbody>
+                            {#                            {% if sortie.enCours or sortie.passee or sortie.annulee or sortie.cloturee %} #}
+                            {#                                <p class="mb-0 mt-2 figure-caption">-</p> #}
+                            {#                            {% endif %} #}
+
+                        </td>
+
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <td>
+                                {% if not(sortie.enCours) and not(sortie.annulee) and not(sortie.passee) %}
+                                    <a class="btn btn-danger"
+                                       href="{{ path('app_sortie_cancel', { id: sortie.id, token: csrf_token('sortie_cancel' ~ sortie.id) }) }}"
+                                       onclick="return confirm('[ADMINISTRATEUR] Êtes-vous sûr·e de vouloir annuler cette sortie ?')">
+                                        Annuler
+                                    </a>
+                                {% endif %}
+                                {% if (sortie.etat.libelle === 'CREEE') %}
+                                    <a class="btn btn-danger"
+                                       href="{{ path('app_sortie_delete', { id: sortie.id, token: csrf_token('sortie_delete' ~ sortie.id) }) }}"
+                                       onclick="return confirm('[ADMINISTRATEUR] Êtes-vous sûr·e de vouloir supprimer cette sortie ?')">
+                                        Supprimer
+                                    </a>
+                                {% endif %}
+                                {% if (sortie.annulee or sortie.passee) %}
+                                    <a class="btn btn-danger"
+                                       href="{{ path('app_sortie_archive', { id: sortie.id, token: csrf_token('sortie_archive' ~ sortie.id) }) }}"
+                                       onclick="return confirm('[ADMINISTRATEUR] Êtes-vous sûr·e de vouloir archiver cette sortie ?')">
+                                        Archiver
+                                    </a>
+                                {% endif %}
+                            </td>
+                        {% endif %}
+
+                    </tr>
+                {% endfor %}
+                </tbody>
             </table>
         </div>
 
