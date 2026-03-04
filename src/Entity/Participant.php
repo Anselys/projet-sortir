@@ -10,6 +10,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 
 #[ORM\Entity(repositoryClass: ParticipantRepository::class)]
@@ -82,6 +83,34 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
         $this->sortiesOrganisees = new ArrayCollection();
         $this->sorties = new ArrayCollection();
     }
+
+    public static function loadValidatorMetadata(ClassMetadata $metadata): void
+    {
+        $metadata
+            ->addPropertyConstraint('email', new Assert\NotBlank())
+            ->addPropertyConstraint('email', new Assert\Email())
+            ->addPropertyConstraint('email', new Assert\Length(max: 50))
+
+            ->addPropertyConstraint('pseudo', new Assert\NotBlank())
+            ->addPropertyConstraint('pseudo', new Assert\Length(max: 30))
+
+            ->addPropertyConstraint('nom', new Assert\NotBlank())
+            ->addPropertyConstraint('nom', new Assert\Length(max: 30))
+            ->addPropertyConstraint('nom', new Assert\Regex("/^[a-z ,.'-]+$/i"))
+
+            ->addPropertyConstraint('prenom', new Assert\NotBlank())
+            ->addPropertyConstraint('prenom', new Assert\Length(max: 30))
+            ->addPropertyConstraint('prenom', new Assert\Regex("/^[a-z ,.'-]+$/i"))
+
+            ->addPropertyConstraint('telephone', new Assert\NotBlank())
+            ->addPropertyConstraint('telephone', new Assert\Regex("/^(?:(?:\+|00)33[\s.-]{0,3}(?:\(0\)[\s.-]{0,3})?|0)[1-9](?:(?:[\s.-]?\d{2}){4}|\d{2}(?:[\s.-]?\d{3}){2})$/"))
+            ->addPropertyConstraint('telephone', new Assert\Length(max: 15));
+
+
+    }
+
+
+
 
     public function getId(): ?int
     {
