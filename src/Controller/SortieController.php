@@ -215,7 +215,8 @@ final class SortieController extends AbstractController
 
         $etatAnnulee = $etatRepository->findOneByLibelle('ANNULEE');
         $etatCourant = $sortie->getEtat();
-        $etatEnBase = $etatRepository->findOneByLibelle($etatCourant->getLibelle());
+        $etatCourant->getLibelle();
+//        $etatEnBase = $etatRepository->findOneByLibelle($etatCourant->getLibelle());
 
         $annulationForm = $this->createForm(AnnulationType::class, $sortie);
         $annulationForm->handleRequest($request);
@@ -235,10 +236,8 @@ final class SortieController extends AbstractController
                 $sortie->setEtat($etatAnnulee);
                 $sortie->setMotifAnnulation($data->getMotifAnnulation());
 
-                // TODO: FIX TEMPORAIRE !! Voir pourquoi ça vide la colonne ETAT en base
-                $etatEnBase->setLibelle($etatCourant->getLibelle());
-
                 $em->flush();
+
                 $this->addFlash('success', 'La sortie a été annulée.');
 
                 return $this->redirectToRoute('app_sortie_detail', ['id' => $sortie->getId()]);

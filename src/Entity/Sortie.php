@@ -94,23 +94,23 @@ class Sortie
     }
 
     public function isOuverte() : bool {
-        return $this->etat->getLibelle() == 'OUVERTE';
+        return $this->etat?->getLibelle() == 'OUVERTE';
     }
 
     public function isAnnulee() : bool {
-        return $this->etat->getLibelle() == 'ANNULEE';
+        return $this->etat?->getLibelle() == 'ANNULEE';
     }
 
     public function isCloturee() : bool {
-        return $this->etat->getLibelle() == 'CLOTUREE';
+        return $this->etat?->getLibelle() == 'CLOTUREE';
     }
 
     public function isPassee() : bool {
-        return $this->etat->getLibelle() == 'PASSEE';
+        return $this->etat?->getLibelle() == 'PASSEE';
     }
 
     public function isCreee() : bool {
-        return $this->etat->getLibelle() == 'CREEE';
+        return $this->etat?->getLibelle() == 'CREEE';
     }
 
     //Retourne vrai si l'événement est en cours.
