@@ -46,10 +46,11 @@
             <div class="card-body mt-4">
                 {{ form_start(annuler_form) }}
                 {{ form_errors(annuler_form) }}
-                {{ form_end(annuler_form) }}
+                {{ form_widget(annuler_form) }}
                 <div class=" text-center mb-3">
-                    <button class="btn btn-primary">Annuler la sortie</button>
+                    <button type="submit" class="btn btn-primary">Annuler la sortie</button>
                 </div>
+                {{ form_end(annuler_form) }}
             </div>
         </div>
     </div>
