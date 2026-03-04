@@ -2,8 +2,23 @@
 
 {% block main %}
 
-    {{ form_start(annuler_form) }}
-    {{ form_errors(annuler_form) }}
-    {{ form_end(annuler_form) }}
+    <div class="row justify-content-center">
+        <div class="card text-white bg-secondary mb-3" style="max-width: 40rem;">
+            <div class="card-header d-flex align-items-center justify-content-center" style="min-height: 60px;">
+                <h2 class="card-title mb-0">
+                    Annuler la sortie
+                </h2>
+            </div>
+            <div class="card-body mt-4">
+                {{ form_start(annuler_form) }}
+                {{ form_errors(annuler_form) }}
+                {{ form_end(annuler_form) }}
+                <div class=" text-center mb-3">
+                    <button class="btn btn-primary">Annuler la sortie</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 {% endblock %}
