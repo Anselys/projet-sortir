@@ -7,6 +7,7 @@ use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
 
 class InscriptionCSVType extends AbstractType
 {
@@ -15,7 +16,12 @@ class InscriptionCSVType extends AbstractType
         $builder
             ->add('submitFile', FileType::class, [
                 'label' => 'Inserez un fichier CSV',
-            ])
+                'constraints' => [
+                    new File(mimeTypes: [
+                        'text/csv',
+                        'application/csv',
+                    ],
+                        mimeTypesMessage: 'Formats acceptés : .csv')]])
             ->add('submit', SubmitType::class, [
                 'label' => 'Valider',
             ])

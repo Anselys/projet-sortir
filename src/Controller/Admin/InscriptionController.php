@@ -6,6 +6,7 @@ use App\Entity\Participant;
 use App\Entity\Site;
 use App\Form\InscriptionCSVType;
 use App\Form\InscriptionType;
+use Container3xsNsFD\getValidator_EmailService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,6 +14,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use function PHPUnit\Framework\throwException;
 
 #[IsGranted('ROLE_ADMIN')]
 #[Route('/admin', name: 'app_admin')]
@@ -47,7 +50,7 @@ final class InscriptionController extends AbstractController
     }
 
     #[Route('/inscription/CSV', name: '_inscription_CSV')]
-    public function inscriptionCSV(Request $request, EntityManagerInterface $em): Response
+    public function inscriptionCSV(Request $request, EntityManagerInterface $em, ValidatorInterface $validator): Response
     {
         $csvForm = $this->createForm(InscriptionCSVType::class);
         $csvForm->handleRequest($request);
@@ -57,24 +60,60 @@ final class InscriptionController extends AbstractController
 
             // Open the file
             if (($handle = fopen($file->getPathname(), "r")) !== false) {
-                // Read and process the lines.
-                // Skip the first line if the file includes a header
-                while (($data = fgetcsv($handle)) !== false) {
-                    // Do the processing: Map line to entity, validate if needed
+                $index = 0;
+                $siteError = false;
+                fgetcsv($handle);
+                while (($data = fgetcsv($handle, 1500, ',')) !== false) {
+                    if(count($data) <= 1) {
+                        $this->addFlash('danger', "Votre fichier CSV n'est pas valide, verifiez son format. (Il doit utiliser des ',' comme séparateurs.");
+                        return $this->redirectToRoute('app_admin_inscription_CSV');
+                    }
                     $participant = new Participant();
-                    // TODO: check if correct data in column
                     $participant->setEmail($data[0]);
                     $participant->setPseudo($data[1]);
                     $participant->setNom($data[2]);
                     $participant->setPrenom($data[3]);
+                    $data[4] = preg_replace('/\s+/', '', $data[4]);
+                    if ($data[4][0] != 0 and $data[4][0] != "+") {
+                        $data[4] = '0' . $data[4];
+                    }
                     $participant->setTelephone($data[4]);
-                    $participant->setSite($em->getRepository(Site::class)->findOneBy(array('nom' => $data[5])));
+                    $site = $em->getRepository(Site::class)->findOneBy(array('nom' => $data[5]));
+                    if($site == null){
+                        $siteError = true;
+                    }
+                    $participant->setSite($site);
 
                     $participant->setPassword('DEFAULT');
                     $participant->setIsAdmin(false);
                     $participant->setIsActif(true);
 
+                    $errors = $validator->validate($participant);
+
+                    if (count($errors) > 0 or $siteError) {
+                        $this->addFlash('danger',"Il y a une erreur sur la ligne " . $index +1 . " de votre CSV.");
+                        foreach($errors as $error) {
+                            if($error->getPropertyPath() == "email") {
+                                $this->addFlash('danger', "Verifiez la colonne email, " . $error->getInvalidValue() . " n'est pas conforme.");
+                            }
+                            if($error->getPropertyPath() == "nom") {
+                                $this->addFlash('danger', "Verifiez la colonne nom, " . $error->getInvalidValue() . " n'est pas conforme.");
+                            }
+                            if($error->getPropertyPath() == "prenom") {
+                                $this->addFlash('danger', "Verifiez la colonne prenom, " . $error->getInvalidValue() . " n'est pas conforme.");
+                            }
+                            if($error->getPropertyPath() == "telephone") {
+                                $this->addFlash('danger', "Verifiez la colonne téléphone, " . $error->getInvalidValue() . " n'est pas conforme.");
+                            }
+                        }
+                        if($siteError) {
+                            $this->addFlash('danger', "Verifiez la colonne Campus, " . $error->getInvalidValue() . " n'est pas conforme.");
+                        }
+                        return $this->redirectToRoute('app_admin_inscription_CSV');
+                    }
+
                     $em->persist($participant);
+                    $index++;
                 }
                 fclose($handle);
                 $em->flush();
