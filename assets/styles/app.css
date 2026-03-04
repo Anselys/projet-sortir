@@ -18,6 +18,7 @@ body {
     color: #EEE;
     font-family: 'Roboto', sans-serif;
     padding-top: 150px;
+
     a {
         text-decoration: none;
     }
@@ -39,17 +40,17 @@ body {
 }
 
 main {
-    color : white;
+    color: white;
     padding: 1rem 1rem 8em;
     min-height: calc(100dvh - var(--header-h));
 }
 
-main h2, main h1, main h3, main h4{
-    text-align:center;
+main h2, main h1, main h3, main h4 {
+    text-align: center;
 }
 
-.liens-participants-inscrits{
-    text-align:center;
+.liens-participants-inscrits {
+    text-align: center;
 }
 
 .alert-box {
@@ -58,27 +59,27 @@ main h2, main h1, main h3, main h4{
     text-align: center;
 }
 
-.lien-admin{
-    color : red;
+.lien-admin {
+    color: red;
 }
 
-.alert{
-    text-align:center;
+.alert {
+    text-align: center;
 }
 
 .flash-container {
-    margin:0;
+    margin: 0;
     padding: 0;
 }
 
 .flash-container .alert {
     border-radius: 0;
-    max-width: 30%;          /* moins large */
+    max-width: 30%; /* moins large */
     margin: 0 auto;
 }
 
 .flash-container .alert + .alert {
-    margin-top: 4px;         /* petit espace entre messages */
+    margin-top: 4px; /* petit espace entre messages */
 }
 
 .form-check-input:checked {
@@ -92,7 +93,7 @@ td, tr {
 }
 
 .table-primary td div {
-    margin-bottom: 0!important;
+    margin-bottom: 0 !important;
 }
 
 .col-nom {
@@ -107,16 +108,16 @@ td, tr {
     width: 170px;
 }
 
-.col-date{
+.col-date {
     width: 160px;
 }
 
-.col-organisateur{
-    width:250px;
+.col-organisateur {
+    width: 250px;
 }
 
-.col-actions{
-    width:200px;
+.col-actions {
+    width: 200px;
 }
 
 .invalid-feedback {
@@ -128,6 +129,7 @@ td, tr {
 .form-select.is-invalid {
     border-color: #ffc107;
 }
+
 .form-control.is-invalid:focus {
     box-shadow: 0 0 0 0.25rem rgb(255, 193, 7);
 }
@@ -161,4 +163,21 @@ td, tr {
 /* Hover sur les items */
 .dropdown-item:hover {
     background-color: #3c3f58 !important;
+}
+
+.table-responsive {
+    overflow-y: auto;
+    overflow-x: auto;
+    max-height: 60vh;
+}
+
+.table-responsive table {
+    width: 100%;
+    margin-bottom: 0;
+}
+
+.table-responsive thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
 }

@@ -51,6 +51,23 @@
 
                 <tbody>
 
+                {{ form_start(villes_form) }}
+                <tr class="table-primary">
+                    <td>
+                        {{ form_row(villes_form.nom) }}
+                    </td>
+                    <td>
+                        {{ form_row(villes_form.cpo) }}
+                    </td>
+                    <td style="width: 50px;">
+                        {{ form_widget(villes_form.submit, {
+                            label: 'Ajouter',
+                            attr: { class: 'btn btn-success' }
+                        }) }}
+                    </td>
+                </tr>
+                {{ form_end(villes_form) }}
+
                 {% for ville in villes %}
                     <tr class="table-primary">
                         <td>{{ ville.nom|capitalize }}</td>
@@ -73,22 +90,7 @@
                     </tr>
                 {% endfor %}
 
-                {{ form_start(villes_form) }}
-                <tr class="table-primary">
-                    <td>
-                        {{ form_row(villes_form.nom) }}
-                    </td>
-                    <td>
-                        {{ form_row(villes_form.cpo) }}
-                    </td>
-                    <td style="width: 50px;">
-                        {{ form_widget(villes_form.submit, {
-                            label: 'Ajouter',
-                            attr: { class: 'btn btn-success' }
-                        }) }}
-                    </td>
-                </tr>
-                {{ form_end(villes_form) }}
+
 
                 </tbody>
 
