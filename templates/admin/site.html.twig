@@ -49,6 +49,22 @@
 
                 <tbody>
 
+                {{ form_start(site_form) }}
+                <tr class="table-primary">
+                    <td>
+                        {{ form_row(site_form.nom) }}
+                    </td>
+
+                    <td class="text-end" style="width: 20%;">
+                        {{ form_widget(site_form.submit, {
+                            label: 'Ajouter',
+                            attr: { class: 'btn btn-success' }
+                        }) }}
+                    </td>
+
+                </tr>
+                {{ form_end(site_form) }}
+
                 {% for site in sites %}
                     <tr class="table-primary">
                         <td>CAMPUS {{ site.nom|upper }}</td>
@@ -68,21 +84,7 @@
                     </tr>
                 {% endfor %}
 
-                {{ form_start(site_form) }}
-                <tr class="table-primary">
-                    <td>
-                        {{ form_row(site_form.nom) }}
-                    </td>
 
-                    <td class="text-end" style="width: 20%;">
-                        {{ form_widget(site_form.submit, {
-                            label: 'Ajouter',
-                            attr: { class: 'btn btn-success' }
-                        }) }}
-                    </td>
-
-                </tr>
-                {{ form_end(site_form) }}
 
                 </tbody>
 

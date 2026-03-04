@@ -1,8 +1,59 @@
 {% extends 'base.html.twig' %}
 
 {% block main %}
-    {{ form_errors(annuler_form) }}
-    {{ form_start(annuler_form) }}
-    {{ form_end(annuler_form) }}
+
+    <div class="row justify-content-center">
+        <div class="card text-white bg-primary mb-3" style="max-width: 40rem;">
+
+            <div class="card-header d-flex align-items-center justify-content-center" style="min-height: 60px;">
+                <h2 class="card-title mb-0 mx-4">Détails de la sortie</h2>
+
+
+            </div>
+
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p class="text-light">Nom : {{ sortie.nom }}</p>
+                        <p class="text-light">Date et heure : {{ sortie.dateDebut|date('d/m/Y à H:i') }}</p>
+                        <p class="text-light">Fin inscriptions : {{ sortie.dateCloture|date('d/m/Y à H:i') }}</p>
+                        <p class="text-light">Places : {{ sortie.participants.count }}
+                            / {{ sortie.nbInscriptionsMax }}</p>
+                        <p class="text-light">Durée : {{ sortie.duree }} minutes.</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <p class="text-light">Lieu : {{ sortie.lieu.nom }}</p>
+                        <p class="text-light">Rue : {{ sortie.lieu.rue }}</p>
+                        <p class="text-light">Ville : {{ sortie.lieu.ville.nom }}
+                            - {{ sortie.lieu.ville.cpo }}</p>
+                        <p class="text-light">Coordonnées : {{ sortie.lieu.latitude }} / {{ sortie.lieu.longitude }}</p>
+                        <p class="text-light">Campus : {{ sortie.siteOrganisateur.nom }}</p>
+                    </div>
+                    {#                    {{ ux_map(map, { style: 'height: 300px' }) }}#}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="card text-white bg-secondary mb-3" style="max-width: 40rem;">
+            <div class="card-header d-flex align-items-center justify-content-center" style="min-height: 60px;">
+                <h2 class="card-title mb-0">
+                    Annuler la sortie
+                </h2>
+            </div>
+            <div class="card-body mt-4">
+                {{ form_start(annuler_form) }}
+                {{ form_errors(annuler_form) }}
+                {{ form_widget(annuler_form) }}
+                <div class=" text-center mb-3">
+                    <button type="submit" class="btn btn-primary">Annuler la sortie</button>
+                </div>
+                {{ form_end(annuler_form) }}
+            </div>
+        </div>
+    </div>
+
 
 {% endblock %}

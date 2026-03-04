@@ -17,9 +17,6 @@ class AnnulationType extends AbstractType
                 'label' => 'Motif de l\'annulation: ',
                 'required' => true,
             ])
-            ->add('submit', SubmitType::class, [
-                'label' => 'Annuler la sortie',
-            ])
         ;
     }
 
