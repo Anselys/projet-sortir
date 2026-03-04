@@ -214,9 +214,6 @@ final class SortieController extends AbstractController
         $token = $request->query->get('token');
 
         $etatAnnulee = $etatRepository->findOneByLibelle('ANNULEE');
-        $etatCourant = $sortie->getEtat();
-        $etatCourant->getLibelle();
-//        $etatEnBase = $etatRepository->findOneByLibelle($etatCourant->getLibelle());
 
         $annulationForm = $this->createForm(AnnulationType::class, $sortie);
         $annulationForm->handleRequest($request);
@@ -233,7 +230,9 @@ final class SortieController extends AbstractController
 
             $data = $annulationForm->getData();
             if ($sortie->isCreee() or $sortie->isCloturee() or $sortie->isOuverte()) {
+
                 $sortie->setEtat($etatAnnulee);
+
                 $sortie->setMotifAnnulation($data->getMotifAnnulation());
 
                 $em->flush();

@@ -93,42 +93,29 @@ class Sortie
         return $this->participants->count() >= $this->nbInscriptionsMax;
     }
 
-    // TODO: remplacer le check par libellé par un check par id pour voir si ça répare le bug libellé effacé
+    public function isCreee() : bool {
+        return $this->etat?->getId() == 1;
+    }
+
     public function isOuverte() : bool {
         return $this->etat?->getId() == 2;
     }
 
-    public function isAnnulee() : bool {
-        return $this->etat?->getLibelle() == 'ANNULEE';
+    //Retourne vrai si l'événement est en cours.
+    public function isEnCours(): bool{
+        return $this->etat?->getId() == 3;
     }
 
     public function isCloturee() : bool {
-        return $this->etat?->getLibelle() == 'CLOTUREE';
+        return $this->etat?->getId() == 4;
     }
 
     public function isPassee() : bool {
-        return $this->etat?->getLibelle() == 'PASSEE';
+        return $this->etat?->getId() == 5;
     }
 
-    public function isCreee() : bool {
-        return $this->etat?->getLibelle() == 'CREEE';
-    }
-
-    //Retourne vrai si l'événement est en cours.
-    public function isEnCours(): bool
-    {
-       return $this->etat->getLibelle() == 'EN_COURS';
-
-//        if (!$this->dateDebut || $this->duree === null) {
-//            return false;
-//        }
-//
-//        $now = new \DateTimeImmutable('now', $this->dateDebut->getTimezone());
-//
-//        $dateFin = (clone $this->dateDebut)
-//            ->add(new \DateInterval('PT' . $this->duree . 'M'));
-//
-//        return $now >= $this->dateDebut && $now < $dateFin;
+    public function isAnnulee() : bool {
+        return $this->etat?->getId() == 6;
     }
 
     public function canDesinscrire() : bool {
