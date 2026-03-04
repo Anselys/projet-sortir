@@ -25,3 +25,5 @@ class Schedule implements ScheduleProviderInterface
         ;
     }
 }
+
+// MESSAGE POUR LANCER L'ARCHIVAGE TOUTES LES 24h: symfony console messenger:consume -v scheduler_default
