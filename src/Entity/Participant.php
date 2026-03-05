@@ -96,13 +96,16 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
 
             ->addPropertyConstraint('nom', new Assert\NotBlank())
             ->addPropertyConstraint('nom', new Assert\Length(max: 30))
-            ->addPropertyConstraint('nom', new Assert\Regex("/^[a-z ,.'-]+$/i"))
+            ->addPropertyConstraint('nom',
+                new Assert\Regex("/^[a-z ,.'-]+$/i"))
 
             ->addPropertyConstraint('prenom', new Assert\NotBlank())
             ->addPropertyConstraint('prenom', new Assert\Length(max: 30))
-            ->addPropertyConstraint('prenom', new Assert\Regex("/^[a-z ,.'-]+$/i"))
+            ->addPropertyConstraint('prenom',
+                new Assert\Regex("/^[a-z ,.'-]+$/i"))
 
-            ->addPropertyConstraint('telephone', new Assert\Regex("/^(?:(?:\+|00)33[\s.-]{0,3}(?:\(0\)[\s.-]{0,3})?|0)[1-9](?:(?:[\s.-]?\d{2}){4}|\d{2}(?:[\s.-]?\d{3}){2})$/"))
+            ->addPropertyConstraint('telephone',
+                new Assert\Regex("/^(?:(?:\+|00)33[\s.-]{0,3}(?:\(0\)[\s.-]{0,3})?|0)[1-9](?:(?:[\s.-]?\d{2}){4}|\d{2}(?:[\s.-]?\d{3}){2})$/"))
             ->addPropertyConstraint('telephone', new Assert\Length(max: 15));
 
 
