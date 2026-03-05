@@ -4,11 +4,9 @@ namespace App\Controller\Admin;
 
 use App\Entity\Etat;
 use App\Entity\Participant;
-use App\Entity\Site;
-use App\Entity\Sortie;
 use App\Form\SearchType;
 use App\Repository\ParticipantRepository;
-use App\Repository\SiteRepository;
+use App\Service\Admin\UtilisateurService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -51,7 +49,7 @@ final class UtilisateurController extends AbstractController
     }
 
     #[Route('/changer-statut-utilisateur/{id}', name: '_changer_statut_utilisateur', requirements: ['id' => '\d+'])]
-    public function changerStatutUtilisateur(Participant $participant, EntityManagerInterface $em): Response
+    public function changerStatutUtilisateur(Participant $participant, UtilisateurService $utilisateurService): Response
     {
         $utilisateurConnecte = $this->getUser();
 
@@ -59,9 +57,14 @@ final class UtilisateurController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        $participant->setIsActif(!$participant->isActif());
-        $em->persist($participant);
-        $em->flush();
+        $result = $utilisateurService->changerStatutCompteUtilisateur($participant);
+
+        if(!$result) {
+            $this->addFlash('error', 'Impossible de désactiver un compte administrateur');
+
+            return $this->redirectToRoute('app_admin_utilisateur');
+        }
+
 
         $statutString = $participant->isActif() ? 'actif' : 'inactif';
         $message = sprintf("Le compte de %s %s est désormais %s", $participant->getPrenom(), $participant->getNom(), $statutString);

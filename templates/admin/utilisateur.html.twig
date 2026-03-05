@@ -41,6 +41,7 @@
                     <th scope="col">Prénom et nom</th>
                     <th scope="col">Pseudo</th>
                     <th scope="col">Email</th>
+                    <th scope="col">Administrateur</th>
                     <th scope="col">Statut</th>
                     <th scope="col">Actions</th>
                 </tr>
@@ -56,8 +57,9 @@
                         </td>
                         <td style="width: 20%;">{{ utilisateur.pseudo }}</td>
                         <td style="width: 20%;">{{ utilisateur.email }}</td>
-                        <td class="{{ utilisateur.isActif ? 'text-success' : 'text-danger' }}" style="width: 20%;">{{ statut|capitalize }}</td>
-                        <td style="width: 100%;">
+                        <td style="width: 10%; text-align: center">{{ utilisateur.admin ? '✓' : '-' }}</td>
+                        <td class="{{ utilisateur.isActif ? 'text-success' : 'text-danger' }}" style="width: 10%;">{{ statut|capitalize }}</td>
+                        <td>
                             <a
                                 href="{{ path('app_admin_changer_statut_utilisateur', { id: utilisateur.id }) }}"
                                 class="btn {{ utilisateur.isActif ? 'btn-secondary' : 'btn-info' }}"
