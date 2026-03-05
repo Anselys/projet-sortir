@@ -58,12 +58,14 @@
                         <td style="width: 20%;">{{ utilisateur.pseudo }}</td>
                         <td style="width: 20%;">{{ utilisateur.email }}</td>
                         <td style="width: 10%; text-align: center">{{ utilisateur.admin ? '✓' : '-' }}</td>
-                        <td class="{{ utilisateur.isActif ? 'text-success' : 'text-danger' }}" style="width: 10%;">{{ statut|capitalize }}</td>
+                        <td class="{{ utilisateur.isActif ? 'text-success' : 'text-danger' }}"
+                            style="width: 10%;">{{ statut|capitalize }}</td>
                         <td>
+                            {% if app.user and app.user.id != utilisateur.id %}
                             <a
                                 href="{{ path('app_admin_changer_statut_utilisateur', { id: utilisateur.id }) }}"
                                 class="btn {{ utilisateur.isActif ? 'btn-secondary' : 'btn-info' }}"
-                                onclick="return confirm('{{ statutBtnText}} le compte de {{ prenomNom }} ?')"
+                                onclick="return confirm('{{ statutBtnText }} le compte de {{ prenomNom }} ?')"
                             >
                                 {{ statutBtnText }}
                             </a>
@@ -72,6 +74,7 @@
                                 onclick="return confirm('Êtes-vous sûr(e) de vouloir supprimer cet utilisateur ?')"
                                 class="btn btn-danger">Supprimer</a>
                         </td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
             </table>
