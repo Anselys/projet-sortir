@@ -6,23 +6,22 @@ use App\Entity\Participant;
 use App\Entity\Site;
 use App\Form\InscriptionCSVType;
 use App\Form\InscriptionType;
+use App\Service\Admin\InscriptionService;
 use Container3xsNsFD\getValidator_EmailService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use function PHPUnit\Framework\throwException;
 
 #[IsGranted('ROLE_ADMIN')]
 #[Route('/admin', name: 'app_admin')]
 final class InscriptionController extends AbstractController
 {
     #[Route('/inscription', name: '_inscription')]
-    public function inscription(Request $request, UserPasswordHasherInterface $participantPasswordHasher, EntityManagerInterface $entityManager): Response
+    public function inscription(Request $request, InscriptionService $inscriptionService): Response
     {
         $participant = new Participant();
         $form = $this->createForm(InscriptionType::class, $participant);
@@ -32,13 +31,7 @@ final class InscriptionController extends AbstractController
             /** @var string $plainPassword */
             $plainPassword = $form->get('plainPassword')->getData();
 
-            // encode the plain password
-            $participant->setPassword($participantPasswordHasher->hashPassword($participant, $plainPassword));
-
-            $entityManager->persist($participant);
-            $entityManager->flush();
-
-            // do anything else you need here, like send an email
+            $inscriptionService->inscrire($participant, $plainPassword);
 
             $this->addFlash('success', 'Nouvel utilisateur inscrit avec succès !');
             return $this->redirectToRoute('app_admin_utilisateur');

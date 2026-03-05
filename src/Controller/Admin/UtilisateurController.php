@@ -23,7 +23,6 @@ final class UtilisateurController extends AbstractController
     #[Route('/utilisateur', name: '_utilisateur')]
     public function index(Request $request, ParticipantRepository $participantRepository, EntityManagerInterface $em): Response
     {
-
         $utilisateurConnecte = $this->getUser();
 
         if (!$utilisateurConnecte) {
