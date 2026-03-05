@@ -3,12 +3,28 @@
 {% block title %} {{ parent() }} | Inscription par CSV{% endblock %}
 
 {% block main %}
+    <h2 class="mb-5">Inscription via import CSV</h2>
 
-    {{ form(csv_form) }}
-    <div>
-        <p>Attention à respecter l'ordre des colonnes:</p>
-        <p>E-mail | pseudo | Nom | Prénom | Téléphone | Campus</p>
+
+    <div class="row justify-content-center">
+        <div class="card text-white bg-secondary mb-3" style="width: 30%;">
+
+            <div class="card-body d-flex align-items-center">
+
+                <div class="w-100">
+                    <div class="input-group">
+                        <div>
+                            {{ form(csv_form) }}
+                            <p>Attention à respecter l'ordre des colonnes:</p>
+                            <p>E-mail | pseudo | Nom | Prénom | Téléphone | Campus</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
     </div>
+
 
 {% endblock %}
 

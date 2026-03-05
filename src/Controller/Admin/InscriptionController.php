@@ -94,7 +94,8 @@ final class InscriptionController extends AbstractController
                         $this->addFlash('danger',"Il y a une erreur sur la ligne " . $index +1 . " de votre CSV.");
                         foreach($errors as $error) {
                             if($error->getPropertyPath() == "email") {
-                                $this->addFlash('danger', "Verifiez la colonne email, " . $error->getInvalidValue() . " n'est pas conforme.");
+                                $this->addFlash('danger', "Verifiez la colonne email, " . $error->getInvalidValue() . " n'est pas conforme. \n
+                                L'email doit être unique et au format xx@xx.xx");
                             }
                             if($error->getPropertyPath() == "nom") {
                                 $this->addFlash('danger', "Verifiez la colonne nom, " . $error->getInvalidValue() . " n'est pas conforme.");
@@ -107,7 +108,7 @@ final class InscriptionController extends AbstractController
                             }
                         }
                         if($siteError) {
-                            $this->addFlash('danger', "Verifiez la colonne Campus, " . $error->getInvalidValue() . " n'est pas conforme.");
+                            $this->addFlash('danger', "Verifiez la colonne Campus, " .  $data[5] . " n'est pas conforme. \n Il doit correspondre à un campus existant");
                         }
                         return $this->redirectToRoute('app_admin_inscription_CSV');
                     }
