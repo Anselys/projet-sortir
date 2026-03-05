@@ -61,10 +61,8 @@ final class UtilisateurController extends AbstractController
 
         if(!$result) {
             $this->addFlash('error', 'Impossible de désactiver un compte administrateur');
-
             return $this->redirectToRoute('app_admin_utilisateur');
         }
-
 
         $statutString = $participant->isActif() ? 'actif' : 'inactif';
         $message = sprintf("Le compte de %s %s est désormais %s", $participant->getPrenom(), $participant->getNom(), $statutString);

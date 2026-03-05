@@ -12,7 +12,9 @@ readonly class UtilisateurService
     ){}
 
     public function changerStatutCompteUtilisateur(Participant $participant): bool {
-        if ($participant->isAdmin()) {
+
+        // Interdire de désactiver un compte admin
+        if ($participant->isAdmin() && $participant->isActif()) {
             return false;
         }
 
